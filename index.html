@@ -2266,8 +2266,8 @@
       await addBotMessage(`
         <div class="tip-bar">
           <span class="tip-bar-icon">💡</span>
-          <span class="tip-bar-text">买好轮胎后，可预约到店安装</span>
-          <button class="tip-bar-btn" onclick="openBooking('balanced')">预约安装</button>
+          <span class="tip-bar-text">点击方案可在线购买，或选择到店一站式服务（买+装）</span>
+          <button class="tip-bar-btn" onclick="openBooking('balanced')">到店安装</button>
         </div>
       `);
 
@@ -2776,6 +2776,8 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         } else {
           await addBotMessage(`这个问题我还在学习中 🤔<br><br>你可以试试问我：<br>• 轮胎需要换吗<br>• 怎么养车更省钱<br>• 车有异响怎么办<br>• 电池健康度如何<br>• 什么时候该保养<br><br><span style="font-size:12px;color:#999;">💡 提示：配置DeepSeek API Key后可支持自由对话</span>`);
         }
+        // 本地匹配也发送温馨提示
+        await sendWarmTip(text);
       }
 
       chatInput.disabled = false;
@@ -2797,28 +2799,26 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     });
 
     // ========== 预约流程 ==========
-    // 全局函数：点击方案卡片 → 跳转抖音商城
+    // 全局函数：点击方案卡片 → 选择购买方式
     function goToShop(planType) {
       const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
       const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
       const planPrices = { economy: '800-1200', balanced: '1200-1800', comfort: '1800-2400' };
 
       // 记录用户点击行为
-      const clickData = { planType, planLabel: planLabels[planType], brand: planBrands[planType], action: 'view_shop', timestamp: new Date().toISOString() };
+      const clickData = { planType, planLabel: planLabels[planType], brand: planBrands[planType], action: 'view_plan', timestamp: new Date().toISOString() };
       const shopClicks = JSON.parse(localStorage.getItem('dc_shop_clicks') || '[]');
       shopClicks.push(clickData);
       localStorage.setItem('dc_shop_clicks', JSON.stringify(shopClicks));
 
-      // 弹出跳转提示
+      // 弹出选择弹窗
       const shopOverlay = document.getElementById('shopOverlay');
       const shopBody = document.getElementById('shopBody');
       shopBody.innerHTML = `
-        <div style="text-align:center;padding:20px 0;">
-          <div style="font-size:48px;margin-bottom:16px;">🛒</div>
-          <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">即将跳转至抖音商城</div>
-          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
-            为你推荐 <b>${planLabels[planType]}</b> 方案<br>
-            ${planBrands[planType]} · ¥${planPrices[planType]}/条
+        <div style="padding:8px 0 20px;">
+          <div style="text-align:center;margin-bottom:20px;">
+            <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">${planLabels[planType]}方案</div>
+            <div style="font-size:13px;color:var(--text-secondary);">${planBrands[planType]} · ¥${planPrices[planType]}/条</div>
           </div>
           <div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:20px;">
             <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px;">商品信息</div>
@@ -2835,9 +2835,26 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
               <span style="color:var(--text-primary);">4条装</span>
             </div>
           </div>
-          <div style="display:flex;gap:10px;">
-            <button class="booking-btn secondary" style="flex:1;height:44px;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</button>
-            <button class="booking-btn primary" style="flex:1;height:44px;" onclick="window.open('https://www.douyin.com','_blank');document.getElementById('shopOverlay').classList.remove('active')">去购买</button>
+          <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">选择服务方式</div>
+          <div class="store-card" onclick="document.getElementById('shopOverlay').classList.remove('active');window.open('https://www.douyin.com','_blank');" style="margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:44px;height:44px;background:var(--dongchedi-yellow-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛒</div>
+              <div style="flex:1;">
+                <div style="font-size:15px;font-weight:600;color:var(--text-primary);">在线购买</div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">跳转抖音商城，自行购买后到店安装</div>
+              </div>
+              <span style="color:var(--text-tertiary);font-size:16px;">›</span>
+            </div>
+          </div>
+          <div class="store-card" onclick="document.getElementById('shopOverlay').classList.remove('active');openBooking('${planType}');">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:44px;height:44px;background:var(--dongchedi-yellow-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏪</div>
+              <div style="flex:1;">
+                <div style="font-size:15px;font-weight:600;color:var(--text-primary);">到店一站式服务</div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">到店选购+安装，省心省力</div>
+              </div>
+              <span style="color:var(--text-tertiary);font-size:16px;">›</span>
+            </div>
           </div>
         </div>
       `;
