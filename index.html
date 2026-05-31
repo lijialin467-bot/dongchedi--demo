@@ -137,9 +137,7 @@
 
     /* ========== 首页 - 弹窗欢迎信 ========== */
     .welcome-page {
-      background: rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      background: linear-gradient(180deg, #FAF8F5 0%, #F5F0E8 100%);
     }
 
     .welcome-body {
@@ -148,16 +146,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 32px 28px;
+      padding: 24px 20px;
     }
 
     /* 弹窗卡片 */
     .welcome-modal {
       width: 100%;
       background: var(--ivory-card);
-      border-radius: var(--radius-lg);
+      border-radius: 20px;
       padding: 0;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       overflow: hidden;
       animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       transform: translateY(60px);
@@ -173,124 +171,112 @@
 
     /* 弹窗顶部标题区 */
     .welcome-modal-header {
-      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
-      padding: 24px 24px 20px;
+      background: var(--ivory-card);
+      padding: 20px 24px 16px;
       text-align: center;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .welcome-modal-title {
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 4px;
     }
 
     .welcome-modal-sub {
-      font-size: 13px;
-      color: rgba(26, 26, 26, 0.6);
+      font-size: 14px;
+      color: var(--text-tertiary);
     }
 
     /* 弹窗内容区 */
     .welcome-modal-body {
-      padding: 24px;
+      padding: 20px;
     }
 
-    /* 欢迎信卡片 - 暖黄渐变 */
+    /* 欢迎信卡片 */
     .letter-card {
       width: 100%;
-      background: linear-gradient(145deg, #FFF8E1 0%, #FFECB3 50%, #FFE082 100%);
-      border-radius: var(--radius-lg);
-      padding: 28px 24px;
+      background: var(--ivory-card);
+      border-radius: 16px;
+      padding: 20px;
       position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(255, 200, 0, 0.2);
     }
 
-    /* 信纸纹理装饰 */
-    .letter-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.5) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .letter-card::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: -20px;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .letter-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .letter-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--dongchedi-yellow);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
-      box-shadow: 0 4px 12px rgba(230, 180, 0, 0.3);
-    }
-
-    .letter-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: white;
-    }
-
-    .letter-label {
-      font-size: 16px;
-      font-weight: 600;
+    .letter-badge {
+      display: inline-block;
+      background: var(--dongchedi-yellow-light);
       color: var(--dongchedi-yellow-dark);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-bottom: 16px;
     }
 
     .letter-content {
-      position: relative;
-      z-index: 1;
+      text-align: left;
     }
 
     .letter-greeting {
       font-size: 18px;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .letter-body {
       font-size: 14px;
-      color: #5D4E37;
-      line-height: 2;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .letter-highlight {
+      color: var(--dongchedi-yellow-dark);
+      font-weight: 500;
+    }
+
+    .letter-features {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+
+    .letter-features li {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.8;
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-dot {
+      color: var(--dongchedi-yellow);
+      margin-right: 8px;
+      font-size: 10px;
+    }
+
+    .letter-closing {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.6;
     }
 
     /* 按钮 */
     .welcome-btn-wrap {
       width: 100%;
-      margin-top: 24px;
+      margin-top: 20px;
     }
 
     .welcome-btn {
       width: 100%;
-      height: 52px;
+      height: 50px;
       background: var(--dongchedi-yellow);
       border: none;
-      border-radius: var(--radius-md);
+      border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
@@ -308,6 +294,13 @@
     .welcome-btn:active {
       transform: translateY(0);
       box-shadow: 0 2px 8px rgba(255, 200, 0, 0.3);
+    }
+
+    .welcome-footer-text {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-top: 12px;
     }
 
     /* ========== Loading 页 ========== */
@@ -849,31 +842,33 @@
         <div class="welcome-modal">
           <!-- 弹窗顶部 -->
           <div class="welcome-modal-header">
-            <h1 class="welcome-modal-title">懂车帝车主服务</h1>
-            <p class="welcome-modal-sub">AI 智能养车 · 专属个性化方案</p>
+            <h1 class="welcome-modal-title">懂车帝 · 车主服务</h1>
+            <p class="welcome-modal-sub">已为你准备专属养车档案</p>
           </div>
 
           <!-- 弹窗内容 -->
           <div class="welcome-modal-body">
             <!-- 欢迎信卡片 -->
             <div class="letter-card">
-              <div class="letter-header">
-                <div class="letter-icon">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                  </svg>
-                </div>
-                <span class="letter-label">专属欢迎信</span>
-              </div>
+              <div class="letter-badge">专属欢迎信</div>
               <div class="letter-content">
-                <p class="letter-greeting">您好，新车主：</p>
-                <p class="letter-body">感谢您选择懂车帝。<br><br>从今天开始，<br>除了帮您买到一辆放心的车，<br><br>我们也希望帮助您更轻松地养好这辆车。<br><br>我们已经根据车辆信息，<br>为您准备了一份专属养车规划。<br><br>点击即可查看。</p>
+                <p class="letter-greeting">感谢您选择懂车帝，张先生</p>
+                <p class="letter-body">恭喜您开启新的用车生活，您的 <span class="letter-highlight">宝马i5 2025款 eDrive40L M运动套装</span> 已加入懂车帝车主服务。</p>
+                <p class="letter-body">我们为您准备了专属养车档案，包含：</p>
+                <ul class="letter-features">
+                  <li><span class="feature-dot">◆</span>未来12个月养车成本趋势预估</li>
+                  <li><span class="feature-dot">◆</span>基于车况的风险诊断与预警</li>
+                  <li><span class="feature-dot">◆</span>易损件更换时机与成本预测</li>
+                  <li><span class="feature-dot">◆</span>同车型真实车主经验参考</li>
+                </ul>
+                <p class="letter-closing">希望它能帮助您少走弯路，养车更省心。</p>
               </div>
             </div>
 
             <!-- 按钮 -->
             <div class="welcome-btn-wrap">
               <button class="welcome-btn" id="startBtn">立即查看专属养车档案</button>
+              <p class="welcome-footer-text">点击即为同意授权车辆信息及隐私信息</p>
             </div>
           </div>
         </div>
