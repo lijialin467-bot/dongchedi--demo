@@ -769,567 +769,584 @@
     .swipe-subtext { font-size: 12px; color: var(--text-tertiary); }
     .swipe-savings { color: var(--dongchedi-yellow-dark); font-weight: 600; }
 
-    /* ========== 对话页 - 第四页 ========== */
+    /* ========== 对话页 - 第四页（豆包/Coze风格） ========== */
     .chat-page { background: var(--ivory-bg); }
 
     .chat-header {
       flex-shrink: 0;
-      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      background: var(--ivory-card);
       padding: 12px 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .chat-header-title {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--text-primary);
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .chat-header-back {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
     }
 
+    .chat-header-back:active { background: #F0F0F0; }
+
     .chat-header-back svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       stroke: var(--text-primary);
       stroke-width: 2.5;
+    }
+
+    .chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+      border-left: 3px solid var(--dongchedi-yellow);
+      padding-left: 10px;
+    }
+
+    .chat-header-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .chat-header-status {
+      font-size: 11px;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-header-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
     }
 
     .chat-content {
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding: 16px;
+      padding: 16px 16px 8px;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* 步骤容器 */
-    .step-container {
-      display: none;
-      animation: fadeIn 0.3s ease;
+    /* 消息行 */
+    .msg-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      animation: msgFadeIn 0.35s ease;
     }
 
-    .step-container.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes msgFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 进度条 */
-    .progress-bar {
+    .msg-row.user {
+      flex-direction: row-reverse;
+    }
+
+    /* 头像 */
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
-      padding: 8px 16px;
+      font-size: 18px;
+    }
+
+    .msg-avatar.bot {
+      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+    }
+
+    .msg-avatar.user {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-size: 14px;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* 气泡 */
+    .msg-bubble {
+      max-width: 280px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .msg-row.bot .msg-bubble {
       background: var(--ivory-card);
-      border-radius: 20px;
+      color: var(--text-primary);
+      border-top-left-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
-    .progress-dots {
+    .msg-row.user .msg-bubble {
+      background: var(--dongchedi-yellow);
+      color: var(--text-primary);
+      border-top-right-radius: 6px;
+    }
+
+    /* 打字指示器 */
+    .typing-indicator {
       display: flex;
-      gap: 8px;
+      gap: 4px;
+      padding: 4px 0;
     }
 
-    .progress-dot {
+    .typing-indicator span {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--border-color);
-      transition: background 0.3s ease;
+      background: var(--text-tertiary);
+      animation: typingBounce 1.2s infinite;
     }
 
-    .progress-dot.active { background: var(--dongchedi-yellow); }
-    .progress-dot.completed { background: var(--green); }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
 
-    .progress-text {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-left: 12px;
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
     }
 
-    /* AI消息气泡 */
-    .ai-message {
+    /* 推荐问题卡片 */
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .suggestion-chip {
+      padding: 10px 16px;
       background: var(--ivory-card);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
-    .ai-message-text {
-      font-size: 15px;
-      color: var(--text-primary);
-      line-height: 1.6;
-    }
-
-    .ai-message-text .typing-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 16px;
-      background: var(--dongchedi-yellow);
-      animation: blink 0.8s infinite;
-      vertical-align: middle;
-      margin-left: 2px;
-    }
-
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
-
-    /* 用户消息气泡 */
-    .user-message {
+    .suggestion-chip:active {
+      transform: scale(0.96);
+      border-color: var(--dongchedi-yellow);
       background: var(--dongchedi-yellow-light);
-      border-radius: 16px;
+    }
+
+    .suggestion-chip:hover {
+      border-color: var(--dongchedi-yellow);
+      color: var(--text-primary);
+    }
+
+    /* 选项按钮组（嵌入气泡内） */
+    .chat-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chat-option-btn {
       padding: 12px 16px;
-      margin-bottom: 16px;
-      margin-left: 40px;
-      text-align: right;
-    }
-
-    .user-message-text {
+      background: #FAFAFA;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
       font-size: 14px;
       color: var(--text-primary);
-    }
-
-    /* 场景卡片 */
-    .scene-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .scene-cards {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .scene-card {
-      background: var(--ivory-card);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      border: 2px solid transparent;
-    }
-
-    .scene-card:hover {
-      border-color: var(--dongchedi-yellow);
-      transform: translateX(4px);
-    }
-
-    .scene-card:active { transform: scale(0.98); }
-
-    .scene-card-icon {
-      width: 44px;
-      height: 44px;
-      background: var(--dongchedi-yellow-light);
-      border-radius: 12px;
+      text-align: left;
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin-right: 14px;
-      flex-shrink: 0;
-    }
-
-    .scene-card-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: var(--dongchedi-yellow-dark);
-    }
-
-    .scene-card-content { flex: 1; }
-
-    .scene-card-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .scene-card-desc {
-      font-size: 12px;
-      color: var(--text-tertiary);
-    }
-
-    .scene-card-arrow {
-      color: var(--text-tertiary);
-      font-size: 18px;
-    }
-
-    /* 选项按钮 */
-    .options-container {
-      display: flex;
-      flex-direction: column;
       gap: 10px;
-      margin-top: 16px;
     }
 
-    .option-btn {
-      background: var(--ivory-card);
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: left;
-      display: flex;
-      align-items: center;
-    }
+    .chat-option-btn:active { transform: scale(0.98); }
 
-    .option-btn:hover {
+    .chat-option-btn:hover {
       border-color: var(--dongchedi-yellow);
       background: var(--dongchedi-yellow-light);
     }
 
-    .option-btn.selected {
+    .chat-option-btn.selected {
       border-color: var(--dongchedi-yellow);
       background: var(--dongchedi-yellow-light);
     }
 
-    .option-btn .option-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid var(--border-color);
-      margin-right: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.2s ease;
-    }
-
-    .option-btn.selected .option-icon {
-      border-color: var(--dongchedi-yellow);
-      background: var(--dongchedi-yellow);
-    }
-
-    .option-btn.selected .option-icon::after {
-      content: '✓';
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    /* 多选框 */
-    .checkbox-btn {
-      background: var(--ivory-card);
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: left;
-      display: flex;
-      align-items: center;
-    }
-
-    .checkbox-btn:hover {
-      border-color: var(--dongchedi-yellow);
-    }
-
-    .checkbox-btn.selected {
-      border-color: var(--dongchedi-yellow);
-      background: var(--dongchedi-yellow-light);
-    }
-
-    .checkbox-btn .checkbox-icon {
+    .chat-option-btn .opt-radio {
       width: 20px;
       height: 20px;
-      border-radius: 4px;
+      border-radius: 50%;
       border: 2px solid var(--border-color);
-      margin-right: 12px;
+      flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .checkbox-btn.selected .checkbox-icon {
+    .chat-option-btn.selected .opt-radio {
       border-color: var(--dongchedi-yellow);
       background: var(--dongchedi-yellow);
     }
 
-    .checkbox-btn.selected .checkbox-icon::after {
+    .chat-option-btn.selected .opt-radio::after {
       content: '✓';
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
     }
 
-    /* 车辆档案卡片 */
-    .car-profile-card {
-      background: var(--ivory-card);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .car-profile-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 12px;
+    /* 多选按钮 */
+    .chat-option-btn .opt-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid var(--border-color);
+      flex-shrink: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
     }
 
-    .car-profile-title::before {
+    .chat-option-btn.selected .opt-check {
+      border-color: var(--dongchedi-yellow);
+      background: var(--dongchedi-yellow);
+    }
+
+    .chat-option-btn.selected .opt-check::after {
+      content: '✓';
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* 确认按钮（嵌入气泡） */
+    .chat-confirm-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: var(--dongchedi-yellow);
+      border: none;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .chat-confirm-btn:active { transform: scale(0.96); }
+    .chat-confirm-btn:disabled { background: var(--border-color); color: var(--text-tertiary); cursor: not-allowed; }
+
+    /* 车辆档案卡片（嵌入气泡） */
+    .profile-card {
+      background: #FAFAFA;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .profile-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-card-title::before {
       content: '';
       width: 3px;
-      height: 14px;
+      height: 13px;
       background: var(--dongchedi-yellow);
       border-radius: 2px;
-      margin-right: 8px;
     }
 
-    .car-profile-grid {
+    .profile-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 8px;
     }
 
-    .car-profile-item {
-      background: #FAFAFA;
+    .profile-item {
+      background: white;
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
     }
 
-    .car-profile-label {
+    .profile-label {
       font-size: 11px;
       color: var(--text-tertiary);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
-    .car-profile-value {
-      font-size: 14px;
+    .profile-value {
+      font-size: 13px;
       font-weight: 500;
       color: var(--text-primary);
     }
 
-    /* 分析结果卡片 */
-    .analysis-card {
-      background: var(--ivory-card);
+    /* 分析结果卡片（嵌入气泡） */
+    .result-card {
+      background: #FAFAFA;
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-top: 10px;
     }
 
-    .analysis-header {
+    .result-risk-row {
       display: flex;
       align-items: center;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
-    .analysis-risk-badge {
-      padding: 6px 12px;
+    .result-risk-badge {
+      padding: 4px 10px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
-      margin-right: 12px;
+      color: white;
     }
 
-    .analysis-risk-badge.low { background: var(--green); color: white; }
-    .analysis-risk-badge.medium { background: var(--orange); color: white; }
-    .analysis-risk-badge.high { background: var(--red); color: white; }
+    .result-risk-badge.medium { background: var(--orange); }
+    .result-risk-badge.low { background: var(--green); }
 
-    .analysis-title {
-      font-size: 15px;
+    .result-risk-text {
+      font-size: 14px;
       font-weight: 500;
       color: var(--text-primary);
     }
 
-    .analysis-reasons {
-      background: #FAFAFA;
+    .result-reasons {
+      background: white;
       border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
     }
 
-    .analysis-reasons-title {
-      font-size: 12px;
+    .result-reasons-title {
+      font-size: 11px;
       color: var(--text-tertiary);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .analysis-reasons-list {
+    .result-reasons-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
-    .analysis-reasons-list li {
-      font-size: 13px;
+    .result-reasons-list li {
+      font-size: 12px;
       color: var(--text-secondary);
       line-height: 1.8;
-      padding-left: 16px;
+      padding-left: 14px;
       position: relative;
     }
 
-    .analysis-reasons-list li::before {
+    .result-reasons-list li::before {
       content: '•';
       position: absolute;
       left: 0;
       color: var(--dongchedi-yellow);
     }
 
-    .analysis-detail-btn {
-      width: 100%;
-      padding: 10px;
-      background: var(--dongchedi-yellow-light);
-      border: none;
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--dongchedi-yellow-dark);
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    /* 推荐方案 */
-    .plan-cards {
+    /* 方案卡片（嵌入气泡） */
+    .plan-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
-    .plan-card {
-      background: var(--ivory-card);
-      border-radius: 12px;
-      padding: 16px;
-      border: 2px solid transparent;
+    .plan-item {
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      border: 1.5px solid transparent;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .plan-card:hover { border-color: var(--border-color); }
-    .plan-card.selected { border-color: var(--dongchedi-yellow); }
+    .plan-item:hover { border-color: var(--border-color); }
+    .plan-item.selected { border-color: var(--dongchedi-yellow); }
 
-    .plan-header {
+    .plan-item-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
-    .plan-type {
-      font-size: 15px;
+    .plan-item-type {
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
     }
 
-    .plan-price {
-      font-size: 16px;
+    .plan-item-price {
+      font-size: 14px;
       font-weight: 600;
       color: var(--dongchedi-yellow-dark);
     }
 
-    .plan-brand {
-      font-size: 12px;
+    .plan-item-brand {
+      font-size: 11px;
       color: var(--text-tertiary);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .plan-features {
+    .plan-item-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
+      gap: 4px;
+      margin-bottom: 4px;
     }
 
-    .plan-feature-tag {
-      padding: 3px 8px;
+    .plan-item-tag {
+      padding: 2px 6px;
       background: #F5F5F5;
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-secondary);
     }
 
-    .plan-suitable {
-      font-size: 12px;
+    .plan-item-suitable {
+      font-size: 11px;
       color: var(--text-tertiary);
     }
 
-    /* 省钱提示 */
-    .saving-tip {
-      background: linear-gradient(135deg, var(--dongchedi-yellow-light) 0%, #FFF4D6 100%);
-      border-radius: 12px;
-      padding: 14px 16px;
+    /* 省钱提示条 */
+    .tip-bar {
       display: flex;
       align-items: center;
-      margin-bottom: 16px;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--dongchedi-yellow-light) 0%, #FFF4D6 100%);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 10px;
     }
 
-    .saving-tip-icon {
-      font-size: 20px;
-      margin-right: 10px;
-    }
+    .tip-bar-icon { font-size: 16px; flex-shrink: 0; }
 
-    .saving-tip-text {
+    .tip-bar-text {
       flex: 1;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-primary);
+      line-height: 1.5;
     }
 
-    .saving-tip-btn {
-      padding: 8px 16px;
+    .tip-bar-btn {
+      padding: 6px 14px;
       background: var(--dongchedi-yellow);
       border: none;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--text-primary);
       cursor: pointer;
+      flex-shrink: 0;
     }
 
-    /* 底部操作栏 */
+    /* 底部输入栏 */
     .chat-footer {
       flex-shrink: 0;
       background: var(--ivory-card);
       border-top: 1px solid var(--border-color);
-      padding: 12px 16px 28px;
+      padding: 10px 16px 28px;
     }
 
-    .chat-footer-btn {
-      width: 100%;
-      height: 48px;
+    .chat-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 44px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 22px;
+      padding: 0 18px;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--ivory-bg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus { border-color: var(--dongchedi-yellow); }
+
+    .chat-input::placeholder { color: var(--text-tertiary); }
+
+    .chat-send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       background: var(--dongchedi-yellow);
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
     }
 
-    .chat-footer-btn:disabled {
+    .chat-send-btn:active { transform: scale(0.92); }
+
+    .chat-send-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-primary);
+    }
+
+    .chat-send-btn:disabled {
       background: var(--border-color);
-      color: var(--text-tertiary);
       cursor: not-allowed;
     }
-
-    .chat-footer-btn:active:not(:disabled) { transform: scale(0.98); }
 
     /* ========== 响应式适配 ========== */
     @media (max-width: 470px) {
@@ -1529,7 +1546,7 @@
       </div>
     </div>
 
-    <!-- ========== 对话页 - 第四页 ========== -->
+    <!-- ========== 对话页 - 第四页（豆包/Coze风格） ========== -->
     <div class="page chat-page" id="chatPage">
       <div class="status-bar">
         <span class="status-time" id="statusTime4">17:28</span>
@@ -1557,223 +1574,31 @@
       </div>
 
       <div class="chat-header">
-        <span class="chat-header-title">AI养车助手</span>
-        <div class="chat-header-back" id="chatBackBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
+        <div class="chat-header-left">
+          <div class="chat-header-back" id="chatBackBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </div>
+          <div class="chat-header-avatar">🚗</div>
+          <div class="chat-header-info">
+            <span class="chat-header-title">AI养车助手</span>
+            <span class="chat-header-status">在线</span>
+          </div>
         </div>
       </div>
 
       <div class="chat-content" id="chatContent">
-        <!-- Step 1: 场景推荐 -->
-        <div class="step-container active" id="step1">
-          <h2 class="scene-title">现在可能需要</h2>
-          <div class="scene-cards">
-            <div class="scene-card" data-scene="tire">
-              <div class="scene-card-icon">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#E6B400" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4" fill="#E6B400"/></svg>
-              </div>
-              <div class="scene-card-content">
-                <div class="scene-card-title">轮胎快到更换周期了</div>
-                <div class="scene-card-desc">查看更换建议和省钱方案</div>
-              </div>
-              <span class="scene-card-arrow">→</span>
-            </div>
-            <div class="scene-card" data-scene="noise">
-              <div class="scene-card-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="#E6B400"/></svg>
-              </div>
-              <div class="scene-card-content">
-                <div class="scene-card-title">车辆有异响</div>
-                <div class="scene-card-desc">排查异响来源</div>
-              </div>
-              <span class="scene-card-arrow">→</span>
-            </div>
-            <div class="scene-card" data-scene="save">
-              <div class="scene-card-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z" fill="#E6B400"/></svg>
-              </div>
-              <div class="scene-card-content">
-                <div class="scene-card-title">想省钱养车</div>
-                <div class="scene-card-desc">获取个性化省钱方案</div>
-              </div>
-              <span class="scene-card-arrow">→</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: 意图确认 -->
-        <div class="step-container" id="step2">
-          <div class="progress-bar">
-            <div class="progress-dots">
-              <div class="progress-dot completed"></div>
-              <div class="progress-dot active"></div>
-              <div class="progress-dot"></div>
-            </div>
-            <span class="progress-text">已完成 1/3 步</span>
-          </div>
-          
-          <div class="user-message">
-            <div class="user-message-text">我想换轮胎</div>
-          </div>
-
-          <div class="ai-message">
-            <div class="ai-message-text" id="aiMessage2">我来帮你分析轮胎情况。首先，你更关注哪方面？</div>
-          </div>
-
-          <div class="options-container" id="priorityOptions">
-            <button class="option-btn" data-value="save"><div class="option-icon"></div>更省钱（性价比优先）</button>
-            <button class="option-btn" data-value="durable"><div class="option-icon"></div>更耐用（使用寿命）</button>
-            <button class="option-btn" data-value="stable"><div class="option-icon"></div>高速更稳（操控安全）</button>
-            <button class="option-btn" data-value="quiet"><div class="option-icon"></div>更静音（舒适体验）</button>
-            <button class="option-btn" data-value="unsure"><div class="option-icon"></div>不确定（让AI推荐）</button>
-          </div>
-        </div>
-
-        <!-- Step 3: 风险信号采集 -->
-        <div class="step-container" id="step3">
-          <div class="progress-bar">
-            <div class="progress-dots">
-              <div class="progress-dot completed"></div>
-              <div class="progress-dot completed"></div>
-              <div class="progress-dot active"></div>
-            </div>
-            <span class="progress-text">已完成 2/3 步</span>
-          </div>
-
-          <div class="ai-message">
-            <div class="ai-message-text">最近开车有没有遇到这些情况？（可多选）</div>
-          </div>
-
-          <div class="options-container" id="symptomOptions">
-            <button class="checkbox-btn" data-value="unstable"><div class="checkbox-icon"></div>高速发飘、方向不稳</button>
-            <button class="checkbox-btn" data-value="slip"><div class="checkbox-icon"></div>雨天打滑、刹车距离变长</button>
-            <button class="checkbox-btn" data-value="noise"><div class="checkbox-icon"></div>胎噪明显变大</button>
-            <button class="checkbox-btn" data-value="crack"><div class="checkbox-icon"></div>轮胎有裂纹或鼓包</button>
-            <button class="checkbox-btn" data-value="none"><div class="checkbox-icon"></div>以上都没有</button>
-          </div>
-        </div>
-
-        <!-- Step 4: 车辆档案展示 -->
-        <div class="step-container" id="step4">
-          <div class="progress-bar">
-            <div class="progress-dots">
-              <div class="progress-dot completed"></div>
-              <div class="progress-dot completed"></div>
-              <div class="progress-dot completed"></div>
-            </div>
-            <span class="progress-text">分析完成</span>
-          </div>
-
-          <div class="ai-message">
-            <div class="ai-message-text">正在调取您的车辆档案...</div>
-          </div>
-
-          <div class="car-profile-card">
-            <div class="car-profile-title">车辆档案</div>
-            <div class="car-profile-grid">
-              <div class="car-profile-item">
-                <div class="car-profile-label">车型</div>
-                <div class="car-profile-value">2021款 丰田凯美瑞 2.5L</div>
-              </div>
-              <div class="car-profile-item">
-                <div class="car-profile-label">当前里程</div>
-                <div class="car-profile-value">45,000公里</div>
-              </div>
-              <div class="car-profile-item">
-                <div class="car-profile-label">轮胎使用时长</div>
-                <div class="car-profile-value">3年2个月</div>
-              </div>
-              <div class="car-profile-item">
-                <div class="car-profile-label">上次检查</div>
-                <div class="car-profile-value">2025年12月</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="ai-message">
-            <div class="ai-message-text">根据你的车况，前轮胎纹深度约3.2mm，接近建议更换线（3mm）。</div>
-          </div>
-        </div>
-
-        <!-- Step 5: AI分析结论 -->
-        <div class="step-container" id="step5">
-          <div class="ai-message">
-            <div class="ai-message-text">分析完成，这是我的建议：</div>
-          </div>
-
-          <div class="analysis-card">
-            <div class="analysis-header">
-              <span class="analysis-risk-badge medium">🔶 中风险</span>
-              <span class="analysis-title">建议优先检测并准备更换前轮轮胎</span>
-            </div>
-            <div class="analysis-reasons">
-              <div class="analysis-reasons-title">原因：</div>
-              <ul class="analysis-reasons-list">
-                <li>里程45,000km，轮胎已使用3年+</li>
-                <li>你反馈"雨天打滑"，说明抓地力下降</li>
-                <li>前轮胎纹深度接近更换线</li>
-              </ul>
-            </div>
-            <button class="analysis-detail-btn">查看详细检测建议</button>
-          </div>
-
-          <div class="ai-message">
-            <div class="ai-message-text">为你推荐以下轮胎方案：</div>
-          </div>
-
-          <div class="plan-cards" id="planCards">
-            <div class="plan-card selected" data-plan="economy">
-              <div class="plan-header">
-                <span class="plan-type">经济型</span>
-                <span class="plan-price">¥800-1,200</span>
-              </div>
-              <div class="plan-brand">朝阳/玲珑</div>
-              <div class="plan-features">
-                <span class="plan-feature-tag">耐磨</span>
-                <span class="plan-feature-tag">性价比</span>
-              </div>
-              <div class="plan-suitable">适合：预算有限、日常通勤</div>
-            </div>
-            <div class="plan-card" data-plan="balanced">
-              <div class="plan-header">
-                <span class="plan-type">均衡型</span>
-                <span class="plan-price">¥1,200-1,800</span>
-              </div>
-              <div class="plan-brand">米其林/马牌</div>
-              <div class="plan-features">
-                <span class="plan-feature-tag">静音</span>
-                <span class="plan-feature-tag">操控</span>
-                <span class="plan-feature-tag">长寿命</span>
-              </div>
-              <div class="plan-suitable">适合：综合路况、品质保障</div>
-            </div>
-            <div class="plan-card" data-plan="comfort">
-              <div class="plan-header">
-                <span class="plan-type">舒适型</span>
-                <span class="plan-price">¥1,800-2,400</span>
-              </div>
-              <div class="plan-brand">米其林浩悦/马牌CC7</div>
-              <div class="plan-features">
-                <span class="plan-feature-tag">静音</span>
-                <span class="plan-feature-tag">舒适</span>
-                <span class="plan-feature-tag">湿地安全</span>
-              </div>
-              <div class="plan-suitable">适合：高速多、追求静音</div>
-            </div>
-          </div>
-
-          <div class="saving-tip">
-            <span class="saving-tip-icon">💡</span>
-            <span class="saving-tip-text">选择高性价比品牌件 + 就近合作门店，预计节省 ¥300-600</span>
-            <button class="saving-tip-btn">一键预约</button>
-          </div>
-        </div>
+        <!-- 消息由JS动态生成 -->
       </div>
 
       <div class="chat-footer">
-        <button class="chat-footer-btn" id="chatNextBtn" disabled>请先选择</button>
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chatInput" placeholder="输入你的养车问题..." />
+          <button class="chat-send-btn" id="chatSendBtn">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1793,26 +1618,60 @@
     updateTime();
     setInterval(updateTime, 10000);
 
-    // ========== Mock 数据 ==========
-    const mockData = {
-      owner: '张先生',
+    // ========== 统一数据源：宝马i5车主数据 ==========
+    const carOwnerData = {
+      owner: {
+        name: '张先生',
+        joinDate: '2025年3月',
+        avatar: '张'
+      },
       car: {
         brand: '宝马',
         model: 'i5',
         year: '2025款',
         variant: 'eDrive40L M运动套装',
         fullName: '宝马 i5 2025款 eDrive40L M运动套装',
+        price: 43.99,
         mileage: 2000,
         mileageUnit: '公里',
         currentPrice: 29.98,
         priceUnit: '万',
-        tags: ['准新车', '新能源', '过户少', '北京']
+        tags: ['准新车', '新能源', '过户少', '北京'],
+        tireUsage: '5个月',
+        lastCheck: '2026年5月',
+        tireDepth: '7.8mm'
       },
-      annualOverview: {
-        costRange: { min: 8500, max: 12000 },
-        nextMaintenance: { date: '2026年8月', mileage: '10000公里' },
-        insurance: { budgetRange: { min: 5800, max: 7200 }, optimization: '建议对比三家报价，预计可节省800-1200元' }
+      yearlyCost: {
+        total: { min: 8500, max: 12000 },
+        monthly: { min: 708, max: 1000 },
+        breakdown: [
+          { name: '保险', range: '5,800-7,200元', tip: '建议对比三家报价，预计可节省800-1200元' },
+          { name: '保养', range: '800-1,200元', tip: '新能源车保养项目较少，主要检查三电系统' },
+          { name: '能耗', range: '1,200-1,800元/年', tip: '家充桩谷电充电，每公里成本低至0.08元' },
+          { name: '停车', range: '3,600-5,400元', tip: '北京地区，含小区+公司停车' }
+        ]
       },
+      maintenanceAlerts: [
+        { id: 1, item: '空调滤芯', level: 'medium', message: '使用已5个月，北京空气质量因素建议6个月更换', estimatedCost: '200-350元', probability: '85%' },
+        { id: 2, item: '雨刮器', level: 'low', message: '日常磨损，北方温差影响寿命', estimatedCost: '150-300元', probability: '60%' },
+        { id: 3, item: '刹车油', level: 'low', message: '新能源制动使用频率低，但仍需定期检查', estimatedCost: '400-600元', probability: '30%' }
+      ],
+      ownerExperiences: [
+        { user: '北京李车主', tip: '空调滤芯自己买京东自营件，去途虎安装，比4S店省一半', rating: 4.8 },
+        { user: '上海王车主', tip: '宝马i5能耗很低，家充桩每月电费不到100块', rating: 4.9 },
+        { user: '深圳赵车主', tip: '原厂轮胎偏硬，换米其林浩悦4静音效果提升明显', rating: 4.6 }
+      ],
+      savingsTips: [
+        { title: '保险比价', desc: '对比三家报价，预计节省800-1200元', saving: '800-1200元' },
+        { title: '自购配件', desc: '京东自营件+途虎安装，比4S店省40%', saving: '40%' },
+        { title: '谷电充电', desc: '利用夜间谷电，每公里成本0.08元', saving: '60%' }
+      ],
+      depreciation: {
+        currentRate: '68%',
+        prediction: '一年后约62%，三年后约48%',
+        advice: '准新车阶段保值率较高，建议3年内出手可保持较好残值'
+      },
+      nextMaintenance: { date: '2026年8月', mileage: '10000公里' },
       riskDiagnosis: {
         level: 'low',
         levelText: '低风险',
@@ -1823,22 +1682,16 @@
           { title: '制动系统', level: 'low', description: '刹车片厚度正常，预计可使用至30000公里' }
         ]
       },
-      partsPrediction: {
-        items: [
-          { name: '空调滤芯', probability: '85%', estimatedCost: '200-350元', reminderTime: '6个月后', reason: '北京地区空气质量因素，建议定期更换以保证车内空气质量', action: '建议每6个月或10000公里更换一次' },
-          { name: '雨刮器', probability: '60%', estimatedCost: '150-300元', reminderTime: '8个月后', reason: '日常使用磨损，北方地区温差变化会影响雨刮寿命', action: '定期清洁雨刮条，避免干刮' },
-          { name: '刹车油', probability: '30%', estimatedCost: '400-600元', reminderTime: '1年后', reason: '新能源车制动系统使用频率相对较低，但仍需定期检查', action: '建议每2年或40000公里更换' }
-        ]
-      },
       savings: { annual: 3200, daily: 8.8 }
     };
 
-    // ========== 对话流程数据 ==========
+    // ========== 对话状态 ==========
     const chatState = {
-      currentStep: 1,
+      currentStep: 0, // 0=初始, 1=选场景, 2=选偏好, 3=症状, 4=档案, 5=结果
       selectedScene: null,
       selectedPriority: null,
-      selectedSymptoms: []
+      selectedSymptoms: [],
+      initialized: false
     };
 
     // ========== DOM 元素 ==========
@@ -1846,13 +1699,14 @@
     const closeBtn = document.getElementById('closeBtn');
     const swipeIndicator = document.getElementById('swipeIndicator');
     const chatBackBtn = document.getElementById('chatBackBtn');
-    const chatNextBtn = document.getElementById('chatNextBtn');
+    const chatContent = document.getElementById('chatContent');
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
     const progressBar = document.getElementById('progressBar');
     const loadingText = document.getElementById('loadingText');
     const loadingText2 = document.getElementById('loadingText2');
     const loadingSavingsNum = document.getElementById('loadingSavingsNum');
     const reportContent = document.getElementById('reportContent');
-    const chatContent = document.getElementById('chatContent');
 
     // ========== 页面切换 ==========
     function showPage(pageId) {
@@ -1871,7 +1725,7 @@
 
         const duration = 3000;
         const startTime = Date.now();
-        const targetSavings = mockData.savings.annual;
+        const targetSavings = carOwnerData.savings.annual;
         let switched = false;
 
         const updateInterval = setInterval(() => {
@@ -1899,11 +1753,11 @@
 
     // ========== 渲染报告页 ==========
     function renderReport() {
-      document.getElementById('carName').textContent = mockData.car.fullName;
+      document.getElementById('carName').textContent = carOwnerData.car.fullName;
 
       const tagsContainer = document.getElementById('carTags');
       tagsContainer.innerHTML = '';
-      mockData.car.tags.forEach((tag, index) => {
+      carOwnerData.car.tags.forEach((tag, index) => {
         const tagEl = document.createElement('span');
         tagEl.className = `car-tag ${index === 0 ? 'highlight' : ''}`;
         tagEl.textContent = tag;
@@ -1911,144 +1765,570 @@
       });
 
       document.getElementById('overviewGrid').innerHTML = `
-        <div class="overview-item"><div class="overview-label">预计年度花费</div><div class="overview-value highlight">${mockData.annualOverview.costRange.min}-${mockData.annualOverview.costRange.max}元</div></div>
-        <div class="overview-item"><div class="overview-label">下次保养时间</div><div class="overview-value">${mockData.annualOverview.nextMaintenance.date}</div><div class="overview-subvalue">约${mockData.annualOverview.nextMaintenance.mileage}</div></div>
-        <div class="overview-item"><div class="overview-label">保险预算区间</div><div class="overview-value">${mockData.annualOverview.insurance.budgetRange.min}-${mockData.annualOverview.insurance.budgetRange.max}元</div></div>
-        <div class="overview-item"><div class="overview-label">当前里程</div><div class="overview-value">${mockData.car.mileage}${mockData.car.mileageUnit}</div><div class="overview-subvalue">当前估值 ${mockData.car.currentPrice}${mockData.car.priceUnit}</div></div>
-        <div class="overview-item full-width"><div class="overview-tip"><span class="overview-tip-badge">省钱建议</span><span class="overview-tip-text">${mockData.annualOverview.insurance.optimization}</span></div></div>
+        <div class="overview-item"><div class="overview-label">预计年度花费</div><div class="overview-value highlight">${carOwnerData.yearlyCost.total.min}-${carOwnerData.yearlyCost.total.max}元</div></div>
+        <div class="overview-item"><div class="overview-label">下次保养时间</div><div class="overview-value">${carOwnerData.nextMaintenance.date}</div><div class="overview-subvalue">约${carOwnerData.nextMaintenance.mileage}</div></div>
+        <div class="overview-item"><div class="overview-label">保险预算区间</div><div class="overview-value">${carOwnerData.yearlyCost.breakdown[0].range}</div></div>
+        <div class="overview-item"><div class="overview-label">当前里程</div><div class="overview-value">${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</div><div class="overview-subvalue">当前估值 ${carOwnerData.car.currentPrice}${carOwnerData.car.priceUnit}</div></div>
+        <div class="overview-item full-width"><div class="overview-tip"><span class="overview-tip-badge">省钱建议</span><span class="overview-tip-text">${carOwnerData.yearlyCost.breakdown[0].tip}</span></div></div>
       `;
 
       document.getElementById('riskSection').innerHTML = `
-        <div class="risk-level ${mockData.riskDiagnosis.level}"><span class="risk-level-badge">${mockData.riskDiagnosis.levelText}</span><div class="risk-level-text"><div class="risk-level-title">${mockData.riskDiagnosis.levelDesc}</div></div></div>
-        <div class="risk-items">${mockData.riskDiagnosis.focusItems.map(item => `<div class="risk-item ${item.level}"><div class="risk-item-content"><div class="risk-item-title">${item.title}</div><div class="risk-item-desc">${item.description}</div></div></div>`).join('')}</div>
+        <div class="risk-level ${carOwnerData.riskDiagnosis.level}"><span class="risk-level-badge">${carOwnerData.riskDiagnosis.levelText}</span><div class="risk-level-text"><div class="risk-level-title">${carOwnerData.riskDiagnosis.levelDesc}</div></div></div>
+        <div class="risk-items">${carOwnerData.riskDiagnosis.focusItems.map(item => `<div class="risk-item ${item.level}"><div class="risk-item-content"><div class="risk-item-title">${item.title}</div><div class="risk-item-desc">${item.description}</div></div></div>`).join('')}</div>
       `;
 
-      document.getElementById('partsList').innerHTML = mockData.partsPrediction.items.map(part => `
-        <div class="part-item"><div class="part-header"><span class="part-name">${part.name}</span><span class="part-probability">${part.probability}</span></div><div class="part-details"><div class="part-detail"><span class="part-detail-label">预计成本：</span><span class="part-detail-value">${part.estimatedCost}</span></div><div class="part-detail"><span class="part-detail-label">提醒时间：</span><span class="part-detail-value">${part.reminderTime}</span></div></div><div class="part-reason"><div class="part-reason-title">产生原因</div><div class="part-reason-text">${part.reason}</div></div><div class="part-action"><span class="part-action-text">💡 ${part.action}</span></div></div>
+      document.getElementById('partsList').innerHTML = carOwnerData.maintenanceAlerts.map(alert => `
+        <div class="part-item"><div class="part-header"><span class="part-name">${alert.item}</span><span class="part-probability">${alert.probability}</span></div><div class="part-details"><div class="part-detail"><span class="part-detail-label">预计成本：</span><span class="part-detail-value">${alert.estimatedCost}</span></div></div><div class="part-reason"><div class="part-reason-title">提醒</div><div class="part-reason-text">${alert.message}</div></div></div>
       `).join('');
 
-      document.getElementById('footerSavings').textContent = mockData.savings.annual;
+      document.getElementById('footerSavings').textContent = carOwnerData.savings.annual;
     }
 
-    // ========== 对话流程控制 ==========
-    function showStep(stepNum) {
-      chatState.currentStep = stepNum;
-      document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
-      document.getElementById(`step${stepNum}`).classList.add('active');
-      chatContent.scrollTop = 0;
-      updateNextButton();
+    // ========== 对话页：消息渲染工具 ==========
+    function scrollChatToBottom() {
+      setTimeout(() => { chatContent.scrollTop = chatContent.scrollHeight; }, 50);
     }
 
-    function updateNextButton() {
-      const step = chatState.currentStep;
-      if (step === 1) {
-        chatNextBtn.disabled = !chatState.selectedScene;
-        chatNextBtn.textContent = chatState.selectedScene ? '下一步' : '请先选择';
-      } else if (step === 2) {
-        chatNextBtn.disabled = !chatState.selectedPriority;
-        chatNextBtn.textContent = chatState.selectedPriority ? '下一步' : '请先选择';
-      } else if (step === 3) {
-        chatNextBtn.disabled = chatState.selectedSymptoms.length === 0;
-        chatNextBtn.textContent = chatState.selectedSymptoms.length > 0 ? '开始分析' : '请先选择';
-      } else if (step === 4) {
-        chatNextBtn.disabled = false;
-        chatNextBtn.textContent = '查看分析结果';
-      } else if (step === 5) {
-        chatNextBtn.disabled = false;
-        chatNextBtn.textContent = '完成';
+    function addBotMessage(html, delay = 0) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'msg-row bot';
+          row.innerHTML = `
+            <div class="msg-avatar bot">🚗</div>
+            <div class="msg-bubble">${html}</div>
+          `;
+          chatContent.appendChild(row);
+          scrollChatToBottom();
+          resolve(row);
+        }, delay);
+      });
+    }
+
+    function addUserMessage(text, delay = 0) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const row = document.createElement('div');
+          row.className = 'msg-row user';
+          row.innerHTML = `
+            <div class="msg-avatar user">${carOwnerData.owner.avatar}</div>
+            <div class="msg-bubble">${text}</div>
+          `;
+          chatContent.appendChild(row);
+          scrollChatToBottom();
+          resolve(row);
+        }, delay);
+      });
+    }
+
+    function addTypingIndicator() {
+      const row = document.createElement('div');
+      row.className = 'msg-row bot';
+      row.id = 'typingRow';
+      row.innerHTML = `
+        <div class="msg-avatar bot">🚗</div>
+        <div class="msg-bubble">
+          <div class="typing-indicator"><span></span><span></span><span></span></div>
+        </div>
+      `;
+      chatContent.appendChild(row);
+      scrollChatToBottom();
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typingRow');
+      if (el) el.remove();
+    }
+
+    // ========== 对话流程 ==========
+    function initChat() {
+      if (chatState.initialized) return;
+      chatState.initialized = true;
+      chatContent.innerHTML = '';
+
+      // 小car打招呼
+      addBotMessage(`你好 ${carOwnerData.owner.name}！我是你的AI养车助手小car 🚗<br><br>我已经了解了你的 <b>${carOwnerData.car.fullName}</b> 的车况，有什么养车问题都可以问我哦！`, 400)
+        .then(() => addBotMessage('你可以这样问我：', 600))
+        .then(() => {
+          // 添加推荐问题卡片
+          const row = document.createElement('div');
+          row.className = 'msg-row bot';
+          row.innerHTML = `
+            <div class="msg-avatar bot" style="visibility:hidden">🚗</div>
+            <div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;">
+              <div class="suggestions">
+                <div class="suggestion-chip" data-topic="tire">🛞 轮胎需要换吗</div>
+                <div class="suggestion-chip" data-topic="save">💰 怎么养车更省钱</div>
+                <div class="suggestion-chip" data-topic="noise">🔧 车有异响怎么办</div>
+                <div class="suggestion-chip" data-topic="battery">🔋 电池健康度如何</div>
+                <div class="suggestion-chip" data-topic="maintain">📅 什么时候该保养</div>
+              </div>
+            </div>
+          `;
+          chatContent.appendChild(row);
+          scrollChatToBottom();
+
+          // 绑定推荐问题点击
+          row.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+              const topic = chip.dataset.topic;
+              handleTopicClick(topic, chip.textContent.trim());
+            });
+          });
+        });
+    }
+
+    async function handleTopicClick(topic, displayText) {
+      // 移除推荐问题区域
+      const sugRows = chatContent.querySelectorAll('.suggestions');
+      sugRows.forEach(s => s.closest('.msg-row').remove());
+
+      // 用户点击了推荐问题
+      await addUserMessage(displayText, 200);
+      chatState.currentStep = 1;
+      chatState.selectedScene = topic;
+
+      // 根据不同话题进入不同对话分支
+      if (topic === 'tire') {
+        await startTireFlow();
+      } else if (topic === 'save') {
+        await startSaveFlow();
+      } else if (topic === 'noise') {
+        await startNoiseFlow();
+      } else if (topic === 'battery') {
+        await startBatteryFlow();
+      } else if (topic === 'maintain') {
+        await startMaintainFlow();
       }
     }
 
+    // --- 轮胎话题流程 ---
+    async function startTireFlow() {
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`好的，我来帮你分析一下 <b>${carOwnerData.car.fullName}</b> 的轮胎情况。<br><br>你的车目前行驶了 <b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，轮胎使用了 <b>${carOwnerData.car.tireUsage}</b>，胎纹深度约 <b>${carOwnerData.car.tireDepth}</b>，状态还不错！`);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      // 询问偏好
+      await addBotMessage('如果你要换轮胎，你更关注哪方面？', 200);
+      const optRow = await addOptionButtons([
+        { value: 'save', label: '更省钱（性价比优先）', type: 'radio' },
+        { value: 'durable', label: '更耐用（使用寿命）', type: 'radio' },
+        { value: 'stable', label: '高速更稳（操控安全）', type: 'radio' },
+        { value: 'quiet', label: '更静音（舒适体验）', type: 'radio' },
+        { value: 'unsure', label: '不确定（让AI推荐）', type: 'radio' }
+      ], handlePrioritySelect);
+    }
+
+    async function handlePrioritySelect(value, label) {
+      chatState.selectedPriority = value;
+      await addUserMessage(label, 200);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      // 询问症状
+      await addBotMessage('最近开车有没有遇到这些情况？', 200);
+      await addCheckboxButtons([
+        { value: 'unstable', label: '高速发飘、方向不稳' },
+        { value: 'slip', label: '雨天打滑、刹车距离变长' },
+        { value: 'noise', label: '胎噪明显变大' },
+        { value: 'crack', label: '轮胎有裂纹或鼓包' },
+        { value: 'none', label: '以上都没有' }
+      ], handleSymptomSubmit);
+    }
+
+    async function handleSymptomSubmit(selectedValues, selectedLabels) {
+      chatState.selectedSymptoms = selectedValues;
+      const symptomText = selectedValues.includes('none') ? '以上都没有' : selectedLabels.join('、');
+      await addUserMessage(symptomText, 200);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      // 展示车辆档案
+      await addBotMessage('正在调取你的车辆档案...', 200);
+      await addBotMessage(`
+        <div class="profile-card">
+          <div class="profile-card-title">车辆档案</div>
+          <div class="profile-grid">
+            <div class="profile-item"><div class="profile-label">车型</div><div class="profile-value">${carOwnerData.car.fullName}</div></div>
+            <div class="profile-item"><div class="profile-label">当前里程</div><div class="profile-value">${carOwnerData.car.mileage.toLocaleString()}${carOwnerData.car.mileageUnit}</div></div>
+            <div class="profile-item"><div class="profile-label">轮胎使用时长</div><div class="profile-value">${carOwnerData.car.tireUsage}</div></div>
+            <div class="profile-item"><div class="profile-label">上次检查</div><div class="profile-value">${carOwnerData.car.lastCheck}</div></div>
+          </div>
+        </div>
+      `);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 1000));
+      removeTypingIndicator();
+
+      // 分析结论
+      await addBotMessage(`
+        <div class="result-card">
+          <div class="result-risk-row">
+            <span class="result-risk-badge low">✅ 低风险</span>
+            <span class="result-risk-text">轮胎状态良好，暂无需更换</span>
+          </div>
+          <div class="result-reasons">
+            <div class="result-reasons-title">评估依据：</div>
+            <ul class="result-reasons-list">
+              <li>里程仅${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}，轮胎使用${carOwnerData.car.tireUsage}</li>
+              <li>胎纹深度${carOwnerData.car.tireDepth}，远高于更换线3mm</li>
+              <li>准新车阶段，原厂轮胎品质有保障</li>
+            </ul>
+          </div>
+        </div>
+        建议每 <b>10,000公里</b> 检查一次胎纹深度，下次保养时让技师帮忙看一下。
+      `);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      // 推荐方案（以备将来参考）
+      await addBotMessage('不过如果你将来需要换胎，这里有几个方案供你参考：');
+      await addBotMessage(`
+        <div class="plan-list">
+          <div class="plan-item" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+            <div class="plan-item-header"><span class="plan-item-type">经济型</span><span class="plan-item-price">¥800-1,200/条</span></div>
+            <div class="plan-item-brand">朝阳/玲珑</div>
+            <div class="plan-item-tags"><span class="plan-item-tag">耐磨</span><span class="plan-item-tag">性价比</span></div>
+            <div class="plan-item-suitable">适合：预算有限、日常通勤</div>
+          </div>
+          <div class="plan-item selected" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+            <div class="plan-item-header"><span class="plan-item-type">均衡型</span><span class="plan-item-price">¥1,200-1,800/条</span></div>
+            <div class="plan-item-brand">米其林/马牌</div>
+            <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">操控</span><span class="plan-item-tag">长寿命</span></div>
+            <div class="plan-item-suitable">适合：综合路况、品质保障</div>
+          </div>
+          <div class="plan-item" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+            <div class="plan-item-header"><span class="plan-item-type">舒适型</span><span class="plan-item-price">¥1,800-2,400/条</span></div>
+            <div class="plan-item-brand">米其林浩悦/马牌CC7</div>
+            <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">舒适</span><span class="plan-item-tag">湿地安全</span></div>
+            <div class="plan-item-suitable">适合：高速多、追求静音</div>
+          </div>
+        </div>
+      `);
+
+      await addBotMessage(`
+        <div class="tip-bar">
+          <span class="tip-bar-icon">💡</span>
+          <span class="tip-bar-text">选择高性价比品牌件 + 就近合作门店，预计节省 ¥300-600</span>
+          <button class="tip-bar-btn">一键预约</button>
+        </div>
+      `);
+
+      // 添加同车型车主经验
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      await addBotMessage('对了，看看其他宝马i5车主怎么说：');
+      let expHtml = '';
+      carOwnerData.ownerExperiences.forEach(exp => {
+        expHtml += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-top:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;color:#666;">${exp.user}</span>
+            <span style="font-size:11px;color:#FFC800;">⭐ ${exp.rating}</span>
+          </div>
+          <div style="font-size:13px;color:#333;line-height:1.5;">"${exp.tip}"</div>
+        </div>`;
+      });
+      await addBotMessage(expHtml);
+    }
+
+    // --- 省钱话题流程 ---
+    async function startSaveFlow() {
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`根据你的 <b>${carOwnerData.car.fullName}</b> 用车数据，我帮你算了一笔账：<br><br>你目前的月均养车成本约 <b>¥${carOwnerData.yearlyCost.monthly.min}-${carOwnerData.yearlyCost.monthly.max}</b>，年度总花费 <b>¥${carOwnerData.yearlyCost.total.min}-${carOwnerData.yearlyCost.total.max}</b>。`);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      let tipsHtml = '<div style="margin-top:8px;">';
+      carOwnerData.savingsTips.forEach(tip => {
+        tipsHtml += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:14px;font-weight:500;color:#1A1A1A;">${tip.title}</span>
+            <span style="font-size:13px;font-weight:600;color:#E6B400;">省${tip.saving}</span>
+          </div>
+          <div style="font-size:12px;color:#666;margin-top:4px;">${tip.desc}</div>
+        </div>`;
+      });
+      tipsHtml += '</div>';
+      await addBotMessage(`这是我的省钱建议：${tipsHtml}<br>综合下来，今年预计能帮你省下 <b>¥${carOwnerData.savings.annual}</b>！`);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      await addBotMessage(`还有其他车主的真实经验供你参考：`);
+      let expHtml2 = '';
+      carOwnerData.ownerExperiences.forEach(exp => {
+        expHtml2 += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-top:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:12px;color:#666;">${exp.user}</span>
+            <span style="font-size:11px;color:#FFC800;">⭐ ${exp.rating}</span>
+          </div>
+          <div style="font-size:13px;color:#333;line-height:1.5;">"${exp.tip}"</div>
+        </div>`;
+      });
+      await addBotMessage(expHtml2);
+    }
+
+    // --- 异响话题流程 ---
+    async function startNoiseFlow() {
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`车辆异响可能的原因比较多，我来帮你逐步排查。<br><br>你的 <b>${carOwnerData.car.fullName}</b> 目前才行驶了 <b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，属于准新车阶段，异响大概率是小问题。`);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      await addBotMessage('异响出现在什么场景？', 200);
+      await addOptionButtons([
+        { value: 'brake', label: '刹车时异响', type: 'radio' },
+        { value: 'turn', label: '转弯时异响', type: 'radio' },
+        { value: 'speed', label: '高速行驶时异响', type: 'radio' },
+        { value: 'bump', label: '过减速带时异响', type: 'radio' },
+        { value: 'cold', label: '冷车启动时异响', type: 'radio' }
+      ], async (value, label) => {
+        await addUserMessage(label, 200);
+        addTypingIndicator();
+        await new Promise(r => setTimeout(r, 800));
+        removeTypingIndicator();
+
+        await addBotMessage(`
+          <div class="result-card">
+            <div class="result-risk-row">
+              <span class="result-risk-badge low">✅ 低风险</span>
+              <span class="result-risk-text">大概率是正常现象</span>
+            </div>
+            <div class="result-reasons">
+              <div class="result-reasons-title">初步判断：</div>
+              <ul class="result-reasons-list">
+                <li>准新车阶段，零部件在磨合期内</li>
+                <li>新能源车低速行驶时电机声音可能被误认为异响</li>
+                <li>建议下次保养时让技师重点检查</li>
+              </ul>
+            </div>
+          </div>
+          如果异响持续或加重，建议尽早去检查。需要我帮你预约附近门店吗？
+        `);
+      });
+    }
+
+    // --- 电池话题流程 ---
+    async function startBatteryFlow() {
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`
+        <div class="result-card">
+          <div class="result-risk-row">
+            <span class="result-risk-badge low">✅ 状态良好</span>
+            <span class="result-risk-text">电池健康度正常</span>
+          </div>
+          <div class="result-reasons">
+            <div class="result-reasons-title">电池评估：</div>
+            <ul class="result-reasons-list">
+              <li>行驶${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}，电池循环次数极少</li>
+              <li>宝马i5搭载最新电池管理系统</li>
+              <li>电池质保8年/16万公里，安心无忧</li>
+            </ul>
+          </div>
+        </div>
+        <br>你的车电池状态很好！建议：<br>
+        • 避免经常充到100%，日常充到80%更利于电池寿命<br>
+        • 每月至少一次满充放循环，校准电量显示<br>
+        • 极端温度下尽量停在室内
+      `);
+    }
+
+    // --- 保养话题流程 ---
+    async function startMaintainFlow() {
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`根据你的用车情况，下次保养时间是 <b>${carOwnerData.nextMaintenance.date}</b>（约${carOwnerData.nextMaintenance.mileage}）。<br><br>这是你的保养提醒：`);
+
+      let alertHtml = '';
+      carOwnerData.maintenanceAlerts.forEach(alert => {
+        const levelColor = alert.level === 'medium' ? '#FF8F1F' : '#00B578';
+        alertHtml += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-top:8px;border-left:3px solid ${levelColor};">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:14px;font-weight:500;color:#1A1A1A;">${alert.item}</span>
+            <span style="font-size:12px;color:${levelColor};font-weight:500;">${alert.probability}</span>
+          </div>
+          <div style="font-size:12px;color:#666;margin-top:4px;">${alert.message}</div>
+          <div style="font-size:12px;color:#999;margin-top:2px;">预计费用：${alert.estimatedCost}</div>
+        </div>`;
+      });
+      await addBotMessage(alertHtml);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      await addBotMessage(`另外，你的车保值率目前约 <b>${carOwnerData.depreciation.currentRate}</b>，${carOwnerData.depreciation.advice}。`);
+    }
+
+    // ========== 选项按钮渲染 ==========
+    function addOptionButtons(options, callback) {
+      return new Promise(resolve => {
+        const row = document.createElement('div');
+        row.className = 'msg-row bot';
+        let html = `<div class="msg-avatar bot" style="visibility:hidden">🚗</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options">`;
+        options.forEach(opt => {
+          html += `<div class="chat-option-btn" data-value="${opt.value}" data-label="${opt.label}">
+            <div class="${opt.type === 'radio' ? 'opt-radio' : 'opt-check'}"></div>
+            ${opt.label}
+          </div>`;
+        });
+        html += '</div></div>';
+        row.innerHTML = html;
+        chatContent.appendChild(row);
+        scrollChatToBottom();
+
+        row.querySelectorAll('.chat-option-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            row.querySelectorAll('.chat-option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            callback(btn.dataset.value, btn.dataset.label);
+            resolve();
+          });
+        });
+      });
+    }
+
+    function addCheckboxButtons(options, callback) {
+      return new Promise(resolve => {
+        const row = document.createElement('div');
+        row.className = 'msg-row bot';
+        let html = `<div class="msg-avatar bot" style="visibility:hidden">🚗</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options" id="symptomOpts">`;
+        options.forEach(opt => {
+          html += `<div class="chat-option-btn" data-value="${opt.value}" data-label="${opt.label}">
+            <div class="opt-check"></div>
+            ${opt.label}
+          </div>`;
+        });
+        html += `<button class="chat-confirm-btn" id="symptomConfirm" disabled>确认提交</button></div></div>`;
+        row.innerHTML = html;
+        chatContent.appendChild(row);
+        scrollChatToBottom();
+
+        const selected = [];
+        const confirmBtn = row.querySelector('#symptomConfirm');
+
+        row.querySelectorAll('.chat-option-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.dataset.value;
+            if (val === 'none') {
+              row.querySelectorAll('.chat-option-btn').forEach(b => b.classList.remove('selected'));
+              btn.classList.add('selected');
+              selected.length = 0;
+              selected.push(val);
+            } else {
+              row.querySelector('.chat-option-btn[data-value="none"]').classList.remove('selected');
+              const idx = selected.indexOf('none');
+              if (idx > -1) selected.splice(idx, 1);
+              btn.classList.toggle('selected');
+              if (btn.classList.contains('selected')) {
+                if (!selected.includes(val)) selected.push(val);
+              } else {
+                const i = selected.indexOf(val);
+                if (i > -1) selected.splice(i, 1);
+              }
+            }
+            confirmBtn.disabled = selected.length === 0;
+          });
+        });
+
+        confirmBtn.addEventListener('click', () => {
+          const labels = selected.map(v => {
+            const btn = row.querySelector(`.chat-option-btn[data-value="${v}"]`);
+            return btn ? btn.dataset.label : v;
+          });
+          callback([...selected], labels);
+          resolve();
+        });
+      });
+    }
+
     // ========== 事件绑定 ==========
-    // 首页按钮
     startBtn.addEventListener('click', async () => {
       await runLoadingAnimation();
+      renderReport();
       showPage('reportPage');
       reportContent.scrollTop = 0;
     });
 
-    // 报告页返回
     closeBtn.addEventListener('click', () => showPage('welcomePage'));
 
-    // 进入对话页
     swipeIndicator.addEventListener('click', () => {
       showPage('chatPage');
-      showStep(1);
+      initChat();
     });
 
-    // 对话页返回
-    chatBackBtn.addEventListener('click', () => {
-      if (chatState.currentStep > 1) {
-        showStep(chatState.currentStep - 1);
-      } else {
-        showPage('reportPage');
+    chatBackBtn.addEventListener('click', () => showPage('reportPage'));
+
+    chatSendBtn.addEventListener('click', handleUserInput);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleUserInput();
       }
     });
 
-    // 场景卡片点击
-    document.querySelectorAll('.scene-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        chatState.selectedScene = card.dataset.scene;
-        updateNextButton();
-      });
-    });
+    async function handleUserInput() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      chatInput.value = '';
 
-    // 优先级选项点击
-    document.querySelectorAll('#priorityOptions .option-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#priorityOptions .option-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        chatState.selectedPriority = btn.dataset.value;
-        updateNextButton();
-      });
-    });
+      await addUserMessage(text, 0);
 
-    // 症状选项点击（多选）
-    document.querySelectorAll('#symptomOptions .checkbox-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const value = btn.dataset.value;
-        if (value === 'none') {
-          // 选择"以上都没有"时清除其他选项
-          document.querySelectorAll('#symptomOptions .checkbox-btn').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          chatState.selectedSymptoms = ['none'];
-        } else {
-          // 取消"以上都没有"
-          document.querySelector('#symptomOptions .checkbox-btn[data-value="none"]').classList.remove('selected');
-          const idx = chatState.selectedSymptoms.indexOf('none');
-          if (idx > -1) chatState.selectedSymptoms.splice(idx, 1);
-          
-          btn.classList.toggle('selected');
-          if (btn.classList.contains('selected')) {
-            chatState.selectedSymptoms.push(value);
-          } else {
-            const i = chatState.selectedSymptoms.indexOf(value);
-            if (i > -1) chatState.selectedSymptoms.splice(i, 1);
-          }
-        }
-        updateNextButton();
-      });
-    });
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
 
-    // 方案卡片点击
-    document.querySelectorAll('.plan-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-      });
-    });
-
-    // 下一步按钮
-    chatNextBtn.addEventListener('click', () => {
-      const step = chatState.currentStep;
-      if (step < 5) {
-        showStep(step + 1);
+      // 简单关键词匹配回复
+      const lowerText = text.toLowerCase();
+      if (lowerText.includes('轮胎') || lowerText.includes('换胎')) {
+        await startTireFlow();
+      } else if (lowerText.includes('省钱') || lowerText.includes('便宜') || lowerText.includes('花费') || lowerText.includes('费用')) {
+        await startSaveFlow();
+      } else if (lowerText.includes('异响') || lowerText.includes('响') || lowerText.includes('声音')) {
+        await startNoiseFlow();
+      } else if (lowerText.includes('电池') || lowerText.includes('续航') || lowerText.includes('充电')) {
+        await startBatteryFlow();
+      } else if (lowerText.includes('保养') || lowerText.includes('维护') || lowerText.includes('什么时候')) {
+        await startMaintainFlow();
+      } else if (lowerText.includes('保值') || lowerText.includes('残值') || lowerText.includes('卖')) {
+        await addBotMessage(`你的 <b>${carOwnerData.car.fullName}</b> 当前保值率约 <b>${carOwnerData.depreciation.currentRate}</b>，${carOwnerData.depreciation.prediction}。<br><br>${carOwnerData.depreciation.advice}。`);
+      } else if (lowerText.includes('你好') || lowerText.includes('hi') || lowerText.includes('hello')) {
+        await addBotMessage(`你好 ${carOwnerData.owner.name}！有什么养车问题需要帮忙的吗？😊`);
       } else {
-        alert('已完成！实际产品中会跳转到预约页面。');
+        await addBotMessage(`这个问题我还在学习中 🤔<br><br>你可以试试问我：<br>• 轮胎需要换吗<br>• 怎么养车更省钱<br>• 车有异响怎么办<br>• 电池健康度如何<br>• 什么时候该保养`);
       }
-    });
+    }
 
     // Esc 键返回
     document.addEventListener('keydown', (e) => {
@@ -2056,7 +2336,7 @@
         const reportPage = document.getElementById('reportPage');
         const chatPage = document.getElementById('chatPage');
         if (chatPage.classList.contains('active')) {
-          chatBackBtn.click();
+          showPage('reportPage');
         } else if (reportPage.classList.contains('active')) {
           showPage('welcomePage');
         }
