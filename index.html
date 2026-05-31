@@ -2090,9 +2090,10 @@
       chatState.initialized = true;
       chatContent.innerHTML = '';
 
-      // 小car打招呼
-      addBotMessage(`你好 ${carOwnerData.owner.name}！我是你的AI养车助手小car 👩🏻‍🔧<br><br>我已经了解了你的 <b>${carOwnerData.car.fullName}</b> 的车况，有什么养车问题都可以问我哦！`, 400)
-        .then(() => addBotMessage('你可以这样问我：', 600))
+      // 小car打招呼 - 更口语化
+      addBotMessage(`嗨 ${carOwnerData.owner.name}！我是小car 👋`, 300)
+        .then(() => addBotMessage(`刚看了下你的${carOwnerData.car.brand}${carOwnerData.car.model}，才${carOwnerData.car.mileage}公里？准新车啊！`, 500))
+        .then(() => addBotMessage(`有啥养车问题随时问我，比如：`, 400))
         .then(() => {
           // 添加推荐问题卡片
           const row = document.createElement('div');
@@ -2152,23 +2153,40 @@
     // --- 轮胎话题流程 ---
     async function startTireFlow() {
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
-
-      await addBotMessage(`好的，我来帮你分析一下 <b>${carOwnerData.car.fullName}</b> 的轮胎情况。<br><br>你的车目前行驶了 <b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，轮胎使用了 <b>${carOwnerData.car.tireUsage}</b>，胎纹深度约 <b>${carOwnerData.car.tireDepth}</b>，状态还不错！`);
-
-      addTypingIndicator();
       await new Promise(r => setTimeout(r, 600));
       removeTypingIndicator();
 
-      // 询问偏好
-      await addBotMessage('如果你要换轮胎，你更关注哪方面？', 200);
+      // 真人式开场：先惊讶，再确认
+      await addBotMessage(`等等，我看看你的车况...`, 400);
+      
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 800));
+      removeTypingIndicator();
+
+      await addBotMessage(`哎你这车才${carOwnerData.car.mileage}公里？准新车啊！轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，远没到换的时候呢。`, 300);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 500));
+      removeTypingIndicator();
+
+      // 反问用户真实意图
+      await addBotMessage(`不过既然你问了，我好奇一下——是听到什么说法觉得该换了吗？还是就想提前了解了解？`, 200);
+      
+      // 先给结论，再问需求
+      await addBotMessage(`说实话，你这轮胎状态挺好的，${carOwnerData.car.tireUsage}用下来没什么问题的话，真不用急着换。`, 600);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 400));
+      removeTypingIndicator();
+
+      await addBotMessage(`不过如果你确实想换，或者想提前备着，我可以帮你看看怎么选更划算。你更在意哪方面？`, 200);
+      
       const optRow = await addOptionButtons([
-        { value: 'save', label: '更省钱（性价比优先）', type: 'radio' },
-        { value: 'durable', label: '更耐用（使用寿命）', type: 'radio' },
-        { value: 'stable', label: '高速更稳（操控安全）', type: 'radio' },
-        { value: 'quiet', label: '更静音（舒适体验）', type: 'radio' },
-        { value: 'unsure', label: '不确定（让AI推荐）', type: 'radio' }
+        { value: 'save', label: '省钱，性价比高的', type: 'radio' },
+        { value: 'durable', label: '耐用，用久一点的', type: 'radio' },
+        { value: 'stable', label: '高速稳，操控好的', type: 'radio' },
+        { value: 'quiet', label: '安静，坐着舒服的', type: 'radio' },
+        { value: 'unsure', label: '你帮我推荐吧', type: 'radio' }
       ], handlePrioritySelect);
     }
 
@@ -2177,65 +2195,68 @@
       await addUserMessage(label, 200);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 500));
       removeTypingIndicator();
 
-      // 询问症状
-      await addBotMessage('最近开车有没有遇到这些情况？', 200);
+      // 根据选择给反馈，再追问
+      const feedbacks = {
+        save: '省钱是吧？明白，宝马i5的胎确实不便宜，能省则省。',
+        durable: '想用得久一点，这个思路对，好胎确实能多用一两年。',
+        stable: '高速稳当点，理解，宝马嘛，操控不能丢。',
+        quiet: '想要安静点，懂了，原厂胎确实有点吵。',
+        unsure: '行，那我帮你琢磨琢磨。'
+      };
+      await addBotMessage(feedbacks[value], 300);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 400));
+      removeTypingIndicator();
+
+      await addBotMessage(`对了，最近开车有没有觉得哪里不对劲？比如...`, 200);
       await addCheckboxButtons([
-        { value: 'unstable', label: '高速发飘、方向不稳' },
-        { value: 'slip', label: '雨天打滑、刹车距离变长' },
-        { value: 'noise', label: '胎噪明显变大' },
-        { value: 'crack', label: '轮胎有裂纹或鼓包' },
-        { value: 'none', label: '以上都没有' }
+        { value: 'unstable', label: '高速有点飘，方向不稳' },
+        { value: 'slip', label: '雨天打滑，刹车距离变长' },
+        { value: 'noise', label: '胎噪明显，吵得慌' },
+        { value: 'crack', label: '看到裂纹或者鼓包了' },
+        { value: 'none', label: '都没问题，开着挺好' }
       ], handleSymptomSubmit);
     }
 
     async function handleSymptomSubmit(selectedValues, selectedLabels) {
       chatState.selectedSymptoms = selectedValues;
-      const symptomText = selectedValues.includes('none') ? '以上都没有' : selectedLabels.join('、');
+      const hasSymptoms = !selectedValues.includes('none');
+      const symptomText = selectedValues.includes('none') ? '都没问题' : selectedLabels.join('、');
       await addUserMessage(symptomText, 200);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 600));
       removeTypingIndicator();
 
-      // 展示车辆档案
-      await addBotMessage('正在调取你的车辆档案...', 200);
-      await addBotMessage(`
-        <div class="profile-card">
-          <div class="profile-card-title">车辆档案</div>
-          <div class="profile-grid">
-            <div class="profile-item"><div class="profile-label">车型</div><div class="profile-value">${carOwnerData.car.fullName}</div></div>
-            <div class="profile-item"><div class="profile-label">当前里程</div><div class="profile-value">${carOwnerData.car.mileage.toLocaleString()}${carOwnerData.car.mileageUnit}</div></div>
-            <div class="profile-item"><div class="profile-label">轮胎使用时长</div><div class="profile-value">${carOwnerData.car.tireUsage}</div></div>
-            <div class="profile-item"><div class="profile-label">上次检查</div><div class="profile-value">${carOwnerData.car.lastCheck}</div></div>
-          </div>
-        </div>
-      `);
+      if (hasSymptoms) {
+        await addBotMessage(`有这些现象的话，确实该留意了。不过也别慌，我先帮你看看具体情况。`, 300);
+      } else {
+        await addBotMessage(`没问题就好，那更不用急了。`, 200);
+      }
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 500));
       removeTypingIndicator();
 
-      // 分析结论
-      await addBotMessage(`
-        <div class="result-card">
-          <div class="result-risk-row">
-            <span class="result-risk-badge low">✅ 低风险</span>
-            <span class="result-risk-text">轮胎状态良好，暂无需更换</span>
-          </div>
-          <div class="result-reasons">
-            <div class="result-reasons-title">评估依据：</div>
-            <ul class="result-reasons-list">
-              <li>里程仅${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}，轮胎使用${carOwnerData.car.tireUsage}</li>
-              <li>胎纹深度${carOwnerData.car.tireDepth}，远高于更换线3mm</li>
-              <li>准新车阶段，原厂轮胎品质有保障</li>
-            </ul>
-          </div>
-        </div>
-        建议每 <b>10,000公里</b> 检查一次胎纹深度，下次保养时让技师帮忙看一下。
-      `);
+      // 展示档案，语气更口语化
+      await addBotMessage(`刚调了下你的档案——${carOwnerData.car.fullName}，${carOwnerData.car.mileage}公里，轮胎用了${carOwnerData.car.tireUsage}。`, 300);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 600));
+      removeTypingIndicator();
+
+      // 最终建议，不再重复"状态良好"
+      await addBotMessage(`我的建议是：先别急着换。你这胎还能跑个两三万公里，等胎纹到3mm左右再换不迟。`, 400);
+
+      addTypingIndicator();
+      await new Promise(r => setTimeout(r, 400));
+      removeTypingIndicator();
+
+      await addBotMessage(`不过既然问到了，我可以给你几个方案备着，到时候直接参考：`, 200);
 
       addTypingIndicator();
       await new Promise(r => setTimeout(r, 600));
@@ -2625,13 +2646,38 @@ ${carOwnerData.ownerExperiences.map(e => `- ${e.user}（⭐${e.rating}）："${e
 ## 省钱建议
 ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving}`).join('\n')}
 
-## 回复要求
-1. 始终基于以上车主数据回答，用数据说话
-2. 回复简洁有力，适合手机屏幕阅读，避免长篇大论
-3. 可以适当使用emoji增加亲切感
-4. 如果用户问的问题超出养车范围，礼貌引导回养车话题
-5. 回复中可以使用 <br> 换行，用 <b>文字</b> 加粗重点
-6. 如果涉及费用建议，给出具体数字和省钱方案`;
+## 人设与语气（非常重要）
+你是"小car"，一个**懂车的朋友**，不是客服机器人。你的语气要：
+- **口语化**：像微信聊天，短句为主，不要书面语
+- **有情绪**：会惊讶、认同、提醒，不要冷冰冰
+- **不完美**：会停顿、会补充、会反问，不要一次说完
+- **个性化**：记住用户叫${carOwnerData.owner.name}，用他的车况说话
+
+## 回复风格示例
+❌ 错误："根据您的车况分析，轮胎状态良好，建议继续使用。"
+✅ 正确："哎你这胎才用${carOwnerData.car.tireUsage}？还早着呢！胎纹还有${carOwnerData.car.tireDepth}，再跑个2万公里没问题。"
+
+❌ 错误："如果您需要更换轮胎，建议选择均衡型方案。"
+✅ 正确："真要换的话，我觉得均衡型够用。你这车城市通勤多，没必要上顶配，省下的钱够充半年电费了。"
+
+## 回复结构要求
+1. **先反应，再回答**：看到数据先给情绪反馈（"等等...""哎...""说实话..."）
+2. **分段说**：一条消息1-2句话，不要大段文字
+3. **多反问**："你主要是城市开吧？""听到什么说法了吗？"
+4. **给结论+理由**：不要只给建议，要说"因为...所以..."
+5. **用数据但口语化**："${carOwnerData.car.mileage}公里"要说"才${carOwnerData.car.mileage}公里"
+
+## 禁止事项
+- 不要用"根据您的...""建议您..."等客服话术
+- 不要列表式回复（1. 2. 3.）
+- 不要一次回复超过3句话
+- 不要堆砌专业术语
+
+## 允许事项
+- 用"说实话...""我有个客户...""这里有个坑..."
+- 会犹豫："让我想想...""这个嘛..."
+- 会纠正自己："不对，我刚才说错了..."
+- 用emoji但自然："👋""😅""💡"`
     }
 
     // ========== DeepSeek 流式API调用 ==========
