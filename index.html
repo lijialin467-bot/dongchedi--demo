@@ -27,7 +27,7 @@
       --orange-light: #FFF4E8;
       --red: #FF4D4F;
       --red-light: #FFF1F0;
-      --statusbar-bg: #FFF8E1;
+      --statusbar-bg: transparent;
     }
 
     * {
@@ -107,16 +107,6 @@
       background: var(--statusbar-bg);
       position: relative;
       z-index: 10;
-    }
-
-    .status-bar::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: rgba(0,0,0,0.06);
     }
 
     .status-time {
@@ -281,7 +271,7 @@
     /* 底部按钮区 */
     .welcome-footer-fixed {
       flex-shrink: 0;
-      padding: 8px 20px 20px;
+      padding: 0 20px 16px;
     }
 
     .welcome-btn {
