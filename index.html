@@ -140,7 +140,7 @@
 
     /* ========== 首页 - 弹窗欢迎信 ========== */
     .welcome-page {
-      background: linear-gradient(180deg, #FAF9F6 0%, #FFF8E1 60%, #FFECB3 100%);
+      background: #FAF9F6;
     }
 
     .welcome-body {
@@ -384,17 +384,32 @@
     /* 报告页导航栏 */
     .report-header {
       flex-shrink: 0;
-      background: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 100%);
+      background: var(--ivory-card);
       padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .report-header-title {
       font-size: 17px;
       font-weight: 600;
       color: var(--text-primary);
+      position: relative;
+      padding-left: 12px;
+    }
+
+    .report-header-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 16px;
+      background: var(--dongchedi-yellow);
+      border-radius: 2px;
     }
 
     .report-header-close {
