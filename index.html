@@ -268,14 +268,11 @@
       line-height: 1.5;
     }
 
-    /* 底部按钮区 */
-    .welcome-footer-fixed {
-      flex-shrink: 0;
-      padding: 0 20px 24px;
-      margin-top: -30px;
-      background: linear-gradient(180deg, transparent 0%, #FAF9F6 50%);
-      position: relative;
-      z-index: 10;
+    /* 卡片下方的按钮区域 */
+    .letter-footer {
+      width: 100%;
+      margin-top: 28px;
+      text-align: center;
     }
 
     .welcome-btn {
@@ -868,12 +865,11 @@
               <p class="letter-closing">希望它能帮助您少走弯路，养车更省心。</p>
             </div>
           </div>
-        </div>
-
-        <!-- 底部按钮区 -->
-        <div class="welcome-footer-fixed">
-          <button class="welcome-btn" id="startBtn">立即查看专属养车档案</button>
-          <p class="welcome-footer-text">点击即为同意授权车辆信息及隐私信息</p>
+          <!-- 按钮紧跟在卡片下方 -->
+          <div class="letter-footer">
+            <button class="welcome-btn" id="startBtn">立即查看专属养车档案</button>
+            <p class="welcome-footer-text">点击即为同意授权车辆信息及隐私信息</p>
+          </div>
         </div>
       </div>
     </div>
