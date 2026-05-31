@@ -1346,6 +1346,212 @@
       cursor: not-allowed;
     }
 
+    /* ========== 预约弹窗 ========== */
+    .booking-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      animation: overlayIn 0.25s ease;
+    }
+    .booking-overlay.active { display: flex; }
+    @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .booking-panel {
+      width: 100%;
+      max-height: 85%;
+      background: var(--ivory-bg);
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      animation: panelSlideUp 0.3s ease;
+    }
+    @keyframes panelSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .booking-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+    }
+    .booking-header-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    .booking-close {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; cursor: pointer;
+      background: var(--ivory-card);
+    }
+    .booking-close:active { background: #E0E0E0; }
+    .booking-close svg { width: 16px; height: 16px; stroke: var(--text-secondary); stroke-width: 2.5; }
+
+    .booking-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 步骤指示器 */
+    .booking-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 20px;
+      padding: 0 20px;
+    }
+    .booking-step-dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--border-color);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; color: var(--text-tertiary);
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    .booking-step-dot.active { background: var(--dongchedi-yellow); color: var(--text-primary); }
+    .booking-step-dot.done { background: var(--green); color: white; }
+    .booking-step-line {
+      flex: 1; height: 2px; background: var(--border-color); margin: 0 4px;
+    }
+    .booking-step-line.done { background: var(--green); }
+
+    /* 门店卡片 */
+    .store-card {
+      background: var(--ivory-card);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .store-card:active { transform: scale(0.98); }
+    .store-card.selected { border-color: var(--dongchedi-yellow); }
+    .store-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .store-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .store-distance { font-size: 12px; color: var(--text-tertiary); }
+    .store-rating { display: flex; align-items: center; gap: 4px; }
+    .store-rating-stars { font-size: 12px; color: var(--dongchedi-yellow); }
+    .store-rating-num { font-size: 12px; color: var(--text-secondary); }
+    .store-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .store-tag { padding: 3px 8px; background: #F5F5F5; border-radius: 4px; font-size: 11px; color: var(--text-secondary); }
+    .store-info-row { display: flex; gap: 16px; margin-top: 8px; }
+    .store-info-item { font-size: 12px; color: var(--text-tertiary); display: flex; align-items: center; gap: 4px; }
+
+    /* 时间选择 */
+    .time-slots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .time-slot {
+      padding: 10px 16px;
+      background: var(--ivory-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .time-slot:active { transform: scale(0.96); }
+    .time-slot.selected { border-color: var(--dongchedi-yellow); background: var(--dongchedi-yellow-light); }
+    .time-slot.disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* 订单确认卡片 */
+    .order-summary {
+      background: var(--ivory-card);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .order-summary-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+    .order-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
+    .order-row-label { color: var(--text-secondary); }
+    .order-row-value { color: var(--text-primary); font-weight: 500; }
+    .order-row-value.highlight { color: var(--dongchedi-yellow-dark); font-size: 16px; font-weight: 700; }
+    .order-divider { height: 1px; background: var(--border-color); margin: 8px 0; }
+
+    /* 履约追踪 */
+    .tracking-timeline { padding: 0 4px; }
+    .tracking-step {
+      display: flex; gap: 14px; position: relative; padding-bottom: 24px;
+    }
+    .tracking-step:last-child { padding-bottom: 0; }
+    .tracking-step:last-child .tracking-line { display: none; }
+    .tracking-dot-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .tracking-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--border-color); flex-shrink: 0;
+    }
+    .tracking-dot.done { background: var(--green); }
+    .tracking-dot.active { background: var(--dongchedi-yellow); box-shadow: 0 0 0 4px rgba(255,200,0,0.2); }
+    .tracking-line { width: 2px; flex: 1; background: var(--border-color); margin-top: 4px; }
+    .tracking-line.done { background: var(--green); }
+    .tracking-content { flex: 1; padding-top: 0; }
+    .tracking-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .tracking-title.active { color: var(--dongchedi-yellow-dark); }
+    .tracking-desc { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+
+    /* 评价 */
+    .rating-stars { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+    .rating-star {
+      font-size: 32px; cursor: pointer; transition: transform 0.15s;
+      filter: grayscale(1); opacity: 0.3;
+    }
+    .rating-star.active { filter: grayscale(0); opacity: 1; }
+    .rating-star:active { transform: scale(1.2); }
+    .feedback-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0; }
+    .feedback-tag {
+      padding: 8px 14px;
+      background: var(--ivory-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .feedback-tag:active { transform: scale(0.96); }
+    .feedback-tag.selected { border-color: var(--dongchedi-yellow); background: var(--dongchedi-yellow-light); color: var(--text-primary); }
+    .feedback-textarea {
+      width: 100%;
+      height: 80px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--ivory-card);
+      outline: none;
+      resize: none;
+      margin-top: 12px;
+    }
+    .feedback-textarea:focus { border-color: var(--dongchedi-yellow); }
+
+    /* 预约底部按钮 */
+    .booking-footer {
+      flex-shrink: 0;
+      padding: 12px 20px 28px;
+      background: var(--ivory-bg);
+    }
+    .booking-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .booking-btn:active:not(:disabled) { transform: scale(0.98); }
+    .booking-btn.primary { background: var(--dongchedi-yellow); }
+    .booking-btn.primary:disabled { background: var(--border-color); color: var(--text-tertiary); cursor: not-allowed; }
+    .booking-btn.secondary { background: var(--ivory-card); border: 1.5px solid var(--border-color); }
+
     /* ========== 响应式适配 ========== */
     @media (max-width: 470px) {
       body { padding: 0; }
@@ -1597,6 +1803,33 @@
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 预约弹窗 ========== -->
+  <div class="booking-overlay" id="bookingOverlay">
+    <div class="booking-panel">
+      <div class="booking-header">
+        <span class="booking-header-title" id="bookingTitle">预约到店</span>
+        <div class="booking-close" id="bookingClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+      </div>
+      <div class="booking-steps" id="bookingSteps">
+        <div class="booking-step-dot active" data-step="1">1</div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step="2">2</div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step="3">3</div>
+        <div class="booking-step-line"></div>
+        <div class="booking-step-dot" data-step="4">4</div>
+      </div>
+      <div class="booking-body" id="bookingBody">
+        <!-- 由JS动态渲染 -->
+      </div>
+      <div class="booking-footer" id="bookingFooter">
+        <!-- 由JS动态渲染 -->
       </div>
     </div>
   </div>
@@ -1996,19 +2229,19 @@
       await addBotMessage('不过如果你将来需要换胎，这里有几个方案供你参考：');
       await addBotMessage(`
         <div class="plan-list">
-          <div class="plan-item" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+          <div class="plan-item" data-plan="economy" onclick="selectPlanAndBook(this,'economy')">
             <div class="plan-item-header"><span class="plan-item-type">经济型</span><span class="plan-item-price">¥800-1,200/条</span></div>
             <div class="plan-item-brand">朝阳/玲珑</div>
             <div class="plan-item-tags"><span class="plan-item-tag">耐磨</span><span class="plan-item-tag">性价比</span></div>
             <div class="plan-item-suitable">适合：预算有限、日常通勤</div>
           </div>
-          <div class="plan-item selected" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+          <div class="plan-item selected" data-plan="balanced" onclick="selectPlanAndBook(this,'balanced')">
             <div class="plan-item-header"><span class="plan-item-type">均衡型</span><span class="plan-item-price">¥1,200-1,800/条</span></div>
             <div class="plan-item-brand">米其林/马牌</div>
             <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">操控</span><span class="plan-item-tag">长寿命</span></div>
             <div class="plan-item-suitable">适合：综合路况、品质保障</div>
           </div>
-          <div class="plan-item" onclick="this.parentElement.querySelectorAll('.plan-item').forEach(p=>p.classList.remove('selected'));this.classList.add('selected')">
+          <div class="plan-item" data-plan="comfort" onclick="selectPlanAndBook(this,'comfort')">
             <div class="plan-item-header"><span class="plan-item-type">舒适型</span><span class="plan-item-price">¥1,800-2,400/条</span></div>
             <div class="plan-item-brand">米其林浩悦/马牌CC7</div>
             <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">舒适</span><span class="plan-item-tag">湿地安全</span></div>
@@ -2021,7 +2254,7 @@
         <div class="tip-bar">
           <span class="tip-bar-icon">💡</span>
           <span class="tip-bar-text">选择高性价比品牌件 + 就近合作门店，预计节省 ¥300-600</span>
-          <button class="tip-bar-btn">一键预约</button>
+          <button class="tip-bar-btn" onclick="openBooking('balanced')">一键预约</button>
         </div>
       `);
 
@@ -2549,6 +2782,351 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         }
       }
     });
+
+    // ========== 预约流程 ==========
+    // 全局函数：选择方案并打开预约
+    function selectPlanAndBook(el, planType) {
+      el.parentElement.querySelectorAll('.plan-item').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      openBooking(planType);
+    }
+
+    const mockStores = [
+      { id: 1, name: '途虎养车（朝阳大悦城店）', distance: '1.2km', rating: 4.8, orders: 2360, waitTime: '约30分钟', tags: ['官方认证', '免费洗车'], price: '¥1,400' },
+      { id: 2, name: '京东养车（望京SOHO店）', distance: '2.8km', rating: 4.6, orders: 1580, waitTime: '约45分钟', tags: ['价格透明', '工时短'], price: '¥1,350' },
+      { id: 3, name: '天猫养车（三里屯店）', distance: '3.5km', rating: 4.7, orders: 1920, waitTime: '约20分钟', tags: ['品牌直供', '质保1年'], price: '¥1,500' }
+    ];
+
+    const mockTimeSlots = [
+      { label: '今天 14:00', available: true },
+      { label: '今天 15:30', available: true },
+      { label: '今天 17:00', available: false },
+      { label: '明天 09:00', available: true },
+      { label: '明天 10:30', available: true },
+      { label: '明天 14:00', available: true },
+      { label: '后天 09:00', available: true },
+      { label: '后天 10:30', available: true }
+    ];
+
+    const bookingState = {
+      step: 1, // 1=选门店, 2=选时间, 3=确认订单, 4=履约追踪, 5=评价
+      selectedStore: null,
+      selectedTime: null,
+      selectedPlan: 'balanced',
+      orderId: 'DC' + Date.now().toString().slice(-8),
+      orderStatus: 'pending' // pending/confirmed/in_progress/completed
+    };
+
+    const bookingOverlay = document.getElementById('bookingOverlay');
+    const bookingBody = document.getElementById('bookingBody');
+    const bookingFooter = document.getElementById('bookingFooter');
+    const bookingTitle = document.getElementById('bookingTitle');
+    const bookingClose = document.getElementById('bookingClose');
+
+    function openBooking(planType) {
+      bookingState.step = 1;
+      bookingState.selectedStore = null;
+      bookingState.selectedTime = null;
+      bookingState.selectedPlan = planType || 'balanced';
+      bookingState.orderStatus = 'pending';
+      bookingOverlay.classList.add('active');
+      renderBookingStep();
+    }
+
+    function closeBooking() {
+      bookingOverlay.classList.remove('active');
+    }
+
+    bookingClose.addEventListener('click', closeBooking);
+    bookingOverlay.addEventListener('click', (e) => {
+      if (e.target === bookingOverlay) closeBooking();
+    });
+
+    function updateBookingSteps(currentStep) {
+      const dots = document.querySelectorAll('.booking-step-dot');
+      const lines = document.querySelectorAll('.booking-step-line');
+      dots.forEach((dot, i) => {
+        dot.classList.remove('active', 'done');
+        if (i + 1 < currentStep) { dot.classList.add('done'); dot.textContent = '✓'; }
+        else if (i + 1 === currentStep) { dot.classList.add('active'); dot.textContent = i + 1; }
+        else { dot.textContent = i + 1; }
+      });
+      lines.forEach((line, i) => {
+        line.classList.toggle('done', i + 1 < currentStep);
+      });
+    }
+
+    function renderBookingStep() {
+      const step = bookingState.step;
+      updateBookingSteps(step);
+
+      if (step === 1) renderStoreSelection();
+      else if (step === 2) renderTimeSelection();
+      else if (step === 3) renderOrderConfirm();
+      else if (step === 4) renderTracking();
+      else if (step === 5) renderReview();
+    }
+
+    // Step 1: 选门店
+    function renderStoreSelection() {
+      bookingTitle.textContent = '选择门店';
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planPrices = { economy: '¥800-1,200', balanced: '¥1,200-1,800', comfort: '¥1,800-2,400' };
+
+      bookingBody.innerHTML = `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:13px;color:var(--text-tertiary);margin-bottom:4px;">已选方案</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:15px;font-weight:600;color:var(--text-primary);">${planLabels[bookingState.selectedPlan]}</span>
+            <span style="font-size:13px;color:var(--dongchedi-yellow-dark);font-weight:500;">${planPrices[bookingState.selectedPlan]}/条</span>
+          </div>
+        </div>
+        <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">推荐附近门店</div>
+        ${mockStores.map(store => `
+          <div class="store-card ${bookingState.selectedStore === store.id ? 'selected' : ''}" data-store-id="${store.id}">
+            <div class="store-card-top">
+              <div>
+                <div class="store-name">${store.name}</div>
+                <div class="store-distance">📍 ${store.distance}</div>
+              </div>
+              <div class="store-rating">
+                <span class="store-rating-stars">⭐ ${store.rating}</span>
+                <span class="store-rating-num">(${store.orders}单)</span>
+              </div>
+            </div>
+            <div class="store-tags">${store.tags.map(t => `<span class="store-tag">${t}</span>`).join('')}</div>
+            <div class="store-info-row">
+              <span class="store-info-item">⏱ ${store.waitTime}</span>
+              <span class="store-info-item">💰 参考价 ${store.price}</span>
+            </div>
+          </div>
+        `).join('')}
+      `;
+
+      bookingBody.querySelectorAll('.store-card').forEach(card => {
+        card.addEventListener('click', () => {
+          bookingBody.querySelectorAll('.store-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          bookingState.selectedStore = parseInt(card.dataset.storeId);
+          bookingFooter.innerHTML = `<button class="booking-btn primary" id="bookingNextBtn">下一步</button>`;
+          document.getElementById('bookingNextBtn').addEventListener('click', () => {
+            bookingState.step = 2;
+            renderBookingStep();
+          });
+        });
+      });
+
+      bookingFooter.innerHTML = `<button class="booking-btn primary" disabled>请选择门店</button>`;
+    }
+
+    // Step 2: 选时间
+    function renderTimeSelection() {
+      bookingTitle.textContent = '选择时间';
+      const store = mockStores.find(s => s.id === bookingState.selectedStore);
+
+      bookingBody.innerHTML = `
+        <div style="margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:500;color:var(--text-primary);">${store.name}</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">📍 ${store.distance} · ⏱ ${store.waitTime}</div>
+        </div>
+        <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px;">选择到店时间</div>
+        <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px;">灰色时段已约满</div>
+        <div class="time-slots">
+          ${mockTimeSlots.map(slot => `
+            <div class="time-slot ${!slot.available ? 'disabled' : ''} ${bookingState.selectedTime === slot.label ? 'selected' : ''}" data-time="${slot.label}">${slot.label}</div>
+          `).join('')}
+        </div>
+      `;
+
+      bookingBody.querySelectorAll('.time-slot:not(.disabled)').forEach(slot => {
+        slot.addEventListener('click', () => {
+          bookingBody.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+          slot.classList.add('selected');
+          bookingState.selectedTime = slot.dataset.time;
+          bookingFooter.innerHTML = `<button class="booking-btn primary" id="bookingNextBtn">确认预约</button>`;
+          document.getElementById('bookingNextBtn').addEventListener('click', () => {
+            bookingState.step = 3;
+            renderBookingStep();
+          });
+        });
+      });
+
+      bookingFooter.innerHTML = `<button class="booking-btn primary" disabled>请选择时间</button>`;
+    }
+
+    // Step 3: 确认订单
+    function renderOrderConfirm() {
+      bookingTitle.textContent = '确认订单';
+      const store = mockStores.find(s => s.id === bookingState.selectedStore);
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      const planPrices = { economy: '¥800-1,200', balanced: '¥1,200-1,800', comfort: '¥1,800-2,400' };
+      const midPrice = { economy: 1000, balanced: 1500, comfort: 2100 };
+      const installFee = 200;
+      const total = midPrice[bookingState.selectedPlan] + installFee;
+
+      bookingBody.innerHTML = `
+        <div class="order-summary">
+          <div class="order-summary-title">轮胎方案</div>
+          <div class="order-row"><span class="order-row-label">方案类型</span><span class="order-row-value">${planLabels[bookingState.selectedPlan]}</span></div>
+          <div class="order-row"><span class="order-row-label">推荐品牌</span><span class="order-row-value">${planBrands[bookingState.selectedPlan]}</span></div>
+          <div class="order-row"><span class="order-row-label">数量</span><span class="order-row-value">4条</span></div>
+        </div>
+        <div class="order-summary">
+          <div class="order-summary-title">门店信息</div>
+          <div class="order-row"><span class="order-row-label">门店</span><span class="order-row-value">${store.name}</span></div>
+          <div class="order-row"><span class="order-row-label">预约时间</span><span class="order-row-value">${bookingState.selectedTime}</span></div>
+          <div class="order-row"><span class="order-row-label">预计工时</span><span class="order-row-value">${store.waitTime}</span></div>
+        </div>
+        <div class="order-summary">
+          <div class="order-summary-title">费用明细</div>
+          <div class="order-row"><span class="order-row-label">材料费（4条）</span><span class="order-row-value">¥${midPrice[bookingState.selectedPlan] * 4}</span></div>
+          <div class="order-row"><span class="order-row-label">安装费</span><span class="order-row-value">¥${installFee}</span></div>
+          <div class="order-row"><span class="order-row-label">优惠券</span><span class="order-row-value" style="color:var(--green);">-¥200</span></div>
+          <div class="order-divider"></div>
+          <div class="order-row"><span class="order-row-label" style="font-weight:600;">合计</span><span class="order-row-value highlight">¥${midPrice[bookingState.selectedPlan] * 4 + installFee - 200}</span></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:8px;">订单号：${bookingState.orderId}</div>
+      `;
+
+      bookingFooter.innerHTML = `
+        <button class="booking-btn primary" id="bookingNextBtn">提交订单</button>
+      `;
+      document.getElementById('bookingNextBtn').addEventListener('click', () => {
+        bookingState.orderStatus = 'confirmed';
+        bookingState.step = 4;
+        renderBookingStep();
+      });
+    }
+
+    // Step 4: 履约追踪
+    function renderTracking() {
+      bookingTitle.textContent = '订单追踪';
+      const store = mockStores.find(s => s.id === bookingState.selectedStore);
+      const steps = [
+        { title: '订单已提交', desc: `订单号 ${bookingState.orderId}`, done: true },
+        { title: '门店已接单', desc: `${store.name} 已确认`, done: true },
+        { title: '施工中', desc: '技师正在更换轮胎...', active: true },
+        { title: '已完成', desc: '等待确认', done: false }
+      ];
+
+      bookingBody.innerHTML = `
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="font-size:28px;margin-bottom:8px;">👩🏻‍🔧</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary);">施工进行中</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">预计还需约15分钟</div>
+        </div>
+        <div class="tracking-timeline">
+          ${steps.map((s, i) => `
+            <div class="tracking-step">
+              <div class="tracking-dot-col">
+                <div class="tracking-dot ${s.done ? 'done' : ''} ${s.active ? 'active' : ''}"></div>
+                ${i < steps.length - 1 ? `<div class="tracking-line ${s.done ? 'done' : ''}"></div>` : ''}
+              </div>
+              <div class="tracking-content">
+                <div class="tracking-title ${s.active ? 'active' : ''}">${s.title}</div>
+                <div class="tracking-desc">${s.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      bookingFooter.innerHTML = `
+        <button class="booking-btn primary" id="bookingNextBtn">模拟完成 → 评价</button>
+      `;
+      document.getElementById('bookingNextBtn').addEventListener('click', () => {
+        bookingState.orderStatus = 'completed';
+        bookingState.step = 5;
+        renderBookingStep();
+      });
+    }
+
+    // Step 5: 满意度评价
+    function renderReview() {
+      bookingTitle.textContent = '服务评价';
+
+      bookingBody.innerHTML = `
+        <div style="text-align:center;margin-bottom:8px;">
+          <div style="font-size:15px;font-weight:600;color:var(--text-primary);">服务完成！</div>
+          <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">请对本次服务进行评价</div>
+        </div>
+        <div style="text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:4px;">整体满意度</div>
+        <div class="rating-stars" id="ratingStars">
+          <span class="rating-star" data-rating="1">⭐</span>
+          <span class="rating-star" data-rating="2">⭐</span>
+          <span class="rating-star" data-rating="3">⭐</span>
+          <span class="rating-star" data-rating="4">⭐</span>
+          <span class="rating-star" data-rating="5">⭐</span>
+        </div>
+        <div style="text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:4px;">选择评价标签</div>
+        <div class="feedback-tags" id="feedbackTags">
+          <div class="feedback-tag" data-tag="价格合理">价格合理</div>
+          <div class="feedback-tag" data-tag="服务专业">服务专业</div>
+          <div class="feedback-tag" data-tag="等待时间短">等待时间短</div>
+          <div class="feedback-tag" data-tag="推荐准确">推荐准确</div>
+          <div class="feedback-tag" data-tag="门店环境好">门店环境好</div>
+          <div class="feedback-tag" data-tag="还会再来">还会再来</div>
+        </div>
+        <textarea class="feedback-textarea" id="feedbackText" placeholder="说说你的感受（选填）"></textarea>
+      `;
+
+      let selectedRating = 0;
+      const selectedTags = new Set();
+
+      bookingBody.querySelectorAll('.rating-star').forEach(star => {
+        star.addEventListener('click', () => {
+          selectedRating = parseInt(star.dataset.rating);
+          bookingBody.querySelectorAll('.rating-star').forEach((s, i) => {
+            s.classList.toggle('active', i < selectedRating);
+          });
+        });
+      });
+
+      bookingBody.querySelectorAll('.feedback-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+          tag.classList.toggle('selected');
+          if (tag.classList.contains('selected')) selectedTags.add(tag.dataset.tag);
+          else selectedTags.delete(tag.dataset.tag);
+        });
+      });
+
+      bookingFooter.innerHTML = `<button class="booking-btn primary" id="bookingNextBtn" disabled>提交评价</button>`;
+      const submitBtn = document.getElementById('bookingNextBtn');
+      const checkEnabled = () => { submitBtn.disabled = selectedRating === 0; };
+      bookingBody.querySelector('.rating-stars').addEventListener('click', checkEnabled);
+      submitBtn.addEventListener('click', () => {
+        // 保存评价数据到localStorage
+        const reviewData = {
+          orderId: bookingState.orderId,
+          planType: bookingState.selectedPlan,
+          storeId: bookingState.selectedStore,
+          storeName: mockStores.find(s => s.id === bookingState.selectedStore)?.name,
+          rating: selectedRating,
+          tags: [...selectedTags],
+          feedback: bookingBody.querySelector('#feedbackText').value,
+          timestamp: new Date().toISOString()
+        };
+        const reviews = JSON.parse(localStorage.getItem('dc_reviews') || '[]');
+        reviews.push(reviewData);
+        localStorage.setItem('dc_reviews', JSON.stringify(reviews));
+
+        // 保存订单数据
+        const orderData = {
+          ...reviewData,
+          appointmentTime: bookingState.selectedTime,
+          status: 'completed'
+        };
+        const orders = JSON.parse(localStorage.getItem('dc_orders') || '[]');
+        orders.push(orderData);
+        localStorage.setItem('dc_orders', JSON.stringify(orders));
+
+        closeBooking();
+
+        // Bot回复确认
+        addBotMessage(`已收到你的评价！⭐${selectedRating}分<br><br>感谢反馈，你的评价将帮助我们优化推荐服务。下次养车时，我会根据这次的使用体验给你更精准的建议。`, 400);
+      });
+    }
 
     // ========== 初始化 ==========
     renderReport();
