@@ -811,7 +811,7 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      background: var(--dongchedi-yellow-light);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -822,8 +822,6 @@
     .chat-header-info {
       display: flex;
       flex-direction: column;
-      border-left: 3px solid var(--dongchedi-yellow);
-      padding-left: 10px;
     }
 
     .chat-header-title {
@@ -888,7 +886,7 @@
     }
 
     .msg-avatar.bot {
-      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      background: var(--dongchedi-yellow-light);
     }
 
     .msg-avatar.user {
@@ -1580,7 +1578,7 @@
               <path d="M15 18l-6-6 6-6"/>
             </svg>
           </div>
-          <div class="chat-header-avatar">🚗</div>
+          <div class="chat-header-avatar">🐯</div>
           <div class="chat-header-info">
             <span class="chat-header-title">AI养车助手</span>
             <span class="chat-header-status">在线</span>
@@ -1795,7 +1793,7 @@
           const row = document.createElement('div');
           row.className = 'msg-row bot';
           row.innerHTML = `
-            <div class="msg-avatar bot">🚗</div>
+            <div class="msg-avatar bot">🐯</div>
             <div class="msg-bubble">${html}</div>
           `;
           chatContent.appendChild(row);
@@ -1826,7 +1824,7 @@
       row.className = 'msg-row bot';
       row.id = 'typingRow';
       row.innerHTML = `
-        <div class="msg-avatar bot">🚗</div>
+        <div class="msg-avatar bot">🐯</div>
         <div class="msg-bubble">
           <div class="typing-indicator"><span></span><span></span><span></span></div>
         </div>
@@ -1847,14 +1845,14 @@
       chatContent.innerHTML = '';
 
       // 小car打招呼
-      addBotMessage(`你好 ${carOwnerData.owner.name}！我是你的AI养车助手小car 🚗<br><br>我已经了解了你的 <b>${carOwnerData.car.fullName}</b> 的车况，有什么养车问题都可以问我哦！`, 400)
+      addBotMessage(`你好 ${carOwnerData.owner.name}！我是你的AI养车助手小car 🐯<br><br>我已经了解了你的 <b>${carOwnerData.car.fullName}</b> 的车况，有什么养车问题都可以问我哦！`, 400)
         .then(() => addBotMessage('你可以这样问我：', 600))
         .then(() => {
           // 添加推荐问题卡片
           const row = document.createElement('div');
           row.className = 'msg-row bot';
           row.innerHTML = `
-            <div class="msg-avatar bot" style="visibility:hidden">🚗</div>
+            <div class="msg-avatar bot" style="visibility:hidden">🐯</div>
             <div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;">
               <div class="suggestions">
                 <div class="suggestion-chip" data-topic="tire">🛞 轮胎需要换吗</div>
@@ -2196,7 +2194,7 @@
       return new Promise(resolve => {
         const row = document.createElement('div');
         row.className = 'msg-row bot';
-        let html = `<div class="msg-avatar bot" style="visibility:hidden">🚗</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options">`;
+        let html = `<div class="msg-avatar bot" style="visibility:hidden">🐯</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options">`;
         options.forEach(opt => {
           html += `<div class="chat-option-btn" data-value="${opt.value}" data-label="${opt.label}">
             <div class="${opt.type === 'radio' ? 'opt-radio' : 'opt-check'}"></div>
@@ -2223,7 +2221,7 @@
       return new Promise(resolve => {
         const row = document.createElement('div');
         row.className = 'msg-row bot';
-        let html = `<div class="msg-avatar bot" style="visibility:hidden">🚗</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options" id="symptomOpts">`;
+        let html = `<div class="msg-avatar bot" style="visibility:hidden">🐯</div><div class="msg-bubble" style="background:transparent;box-shadow:none;padding:4px 0 0 0;max-width:320px;"><div class="chat-options" id="symptomOpts">`;
         options.forEach(opt => {
           html += `<div class="chat-option-btn" data-value="${opt.value}" data-label="${opt.label}">
             <div class="opt-check"></div>
@@ -2370,7 +2368,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       const row = document.createElement('div');
       row.className = 'msg-row bot';
       row.innerHTML = `
-        <div class="msg-avatar bot">🚗</div>
+        <div class="msg-avatar bot">🐯</div>
         <div class="msg-bubble"><span class="stream-text"></span><span class="stream-cursor" style="display:inline-block;width:2px;height:16px;background:var(--dongchedi-yellow);animation:blink 0.8s infinite;vertical-align:middle;margin-left:2px;"></span></div>
       `;
       chatContent.appendChild(row);
