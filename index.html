@@ -2273,6 +2273,165 @@
       });
     }
 
+    // ========== DeepSeek API 配置 ==========
+    const DEEPSEEK_CONFIG = {
+      apiKey: 'sk-xxx',  // ← 替换为你的 DeepSeek API Key
+      baseUrl: 'https://api.deepseek.com/v1/chat/completions',
+      model: 'deepseek-chat'
+    };
+
+    // 对话历史
+    const chatHistory = [];
+
+    // 构建 system prompt（注入车主数据上下文）
+    function buildSystemPrompt() {
+      return `你是"小car"，一位专业、亲切的AI养车助手，为懂车帝平台服务。你的语气像一个懂车的朋友，专业但不生硬。
+
+## 当前用户的车主档案
+- 车主：${carOwnerData.owner.name}（${carOwnerData.owner.joinDate}加入懂车帝）
+- 车型：${carOwnerData.car.fullName}
+- 指导价：${carOwnerData.car.price}万
+- 当前估值：${carOwnerData.car.currentPrice}${carOwnerData.car.priceUnit}
+- 当前里程：${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}
+- 车辆标签：${carOwnerData.car.tags.join('、')}
+- 轮胎使用时长：${carOwnerData.car.tireUsage}
+- 胎纹深度：${carOwnerData.car.tireDepth}
+- 上次检查：${carOwnerData.car.lastCheck}
+
+## 养车成本数据
+- 年度总花费：¥${carOwnerData.yearlyCost.total.min}-${carOwnerData.yearlyCost.total.max}
+- 月均花费：¥${carOwnerData.yearlyCost.monthly.min}-${carOwnerData.yearlyCost.monthly.max}
+- 成本明细：
+${carOwnerData.yearlyCost.breakdown.map(b => `  - ${b.name}：${b.range}（${b.tip}）`).join('\n')}
+- 年度可节省：¥${carOwnerData.savings.annual}
+
+## 维修提醒
+${carOwnerData.maintenanceAlerts.map(a => `- ${a.item}（${a.level === 'medium' ? '中风险' : '低风险'}）：${a.message}，预计费用${a.estimatedCost}，概率${a.probability}`).join('\n')}
+
+## 保养信息
+- 下次保养：${carOwnerData.nextMaintenance.date}（约${carOwnerData.nextMaintenance.mileage}）
+- 风险等级：${carOwnerData.riskDiagnosis.levelText}
+${carOwnerData.riskDiagnosis.focusItems.map(f => `- ${f.title}：${f.description}`).join('\n')}
+
+## 保值率
+- 当前保值率：${carOwnerData.depreciation.currentRate}
+- 预测：${carOwnerData.depreciation.prediction}
+- 建议：${carOwnerData.depreciation.advice}
+
+## 同车型车主经验
+${carOwnerData.ownerExperiences.map(e => `- ${e.user}（⭐${e.rating}）："${e.tip}"`).join('\n')}
+
+## 省钱建议
+${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving}`).join('\n')}
+
+## 回复要求
+1. 始终基于以上车主数据回答，用数据说话
+2. 回复简洁有力，适合手机屏幕阅读，避免长篇大论
+3. 可以适当使用emoji增加亲切感
+4. 如果用户问的问题超出养车范围，礼貌引导回养车话题
+5. 回复中可以使用 <br> 换行，用 <b>文字</b> 加粗重点
+6. 如果涉及费用建议，给出具体数字和省钱方案`;
+    }
+
+    // ========== DeepSeek 流式API调用 ==========
+    async function callDeepSeekStream(userMessage) {
+      chatHistory.push({ role: 'user', content: userMessage });
+
+      // 限制历史长度（保留最近10轮）
+      const messages = [
+        { role: 'system', content: buildSystemPrompt() },
+        ...chatHistory.slice(-20)
+      ];
+
+      const response = await fetch(DEEPSEEK_CONFIG.baseUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_CONFIG.apiKey}`
+        },
+        body: JSON.stringify({
+          model: DEEPSEEK_CONFIG.model,
+          messages: messages,
+          stream: true,
+          temperature: 0.7,
+          max_tokens: 800
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API请求失败: ${response.status}`);
+      }
+
+      return response.body;
+    }
+
+    // 流式渲染Bot消息（逐字打字效果）
+    async function streamBotMessage(stream) {
+      const row = document.createElement('div');
+      row.className = 'msg-row bot';
+      row.innerHTML = `
+        <div class="msg-avatar bot">🚗</div>
+        <div class="msg-bubble"><span class="stream-text"></span><span class="stream-cursor" style="display:inline-block;width:2px;height:16px;background:var(--dongchedi-yellow);animation:blink 0.8s infinite;vertical-align:middle;margin-left:2px;"></span></div>
+      `;
+      chatContent.appendChild(row);
+      scrollChatToBottom();
+
+      const textEl = row.querySelector('.stream-text');
+      const cursorEl = row.querySelector('.stream-cursor');
+      let fullText = '';
+
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data:')) continue;
+            const data = trimmed.slice(5).trim();
+            if (data === '[DONE]') continue;
+
+            try {
+              const json = JSON.parse(data);
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullText += delta;
+                // 将换行符转为 <br>
+                textEl.innerHTML = fullText.replace(/\n/g, '<br>');
+                scrollChatToBottom();
+              }
+            } catch (e) { /* skip parse errors */ }
+          }
+        }
+      } catch (e) {
+        console.error('Stream error:', e);
+      }
+
+      // 移除光标
+      if (cursorEl) cursorEl.remove();
+
+      // 保存assistant回复到历史
+      chatHistory.push({ role: 'assistant', content: fullText });
+
+      return fullText;
+    }
+
+    // 添加CSS闪烁动画（如果不存在）
+    if (!document.getElementById('blinkStyle')) {
+      const style = document.createElement('style');
+      style.id = 'blinkStyle';
+      style.textContent = `@keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }`;
+      document.head.appendChild(style);
+    }
+
     // ========== 事件绑定 ==========
     startBtn.addEventListener('click', async () => {
       await runLoadingAnimation();
@@ -2302,32 +2461,52 @@
       const text = chatInput.value.trim();
       if (!text) return;
       chatInput.value = '';
+      chatInput.disabled = true;
+      chatSendBtn.disabled = true;
 
       await addUserMessage(text, 0);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
-
-      // 简单关键词匹配回复
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes('轮胎') || lowerText.includes('换胎')) {
-        await startTireFlow();
-      } else if (lowerText.includes('省钱') || lowerText.includes('便宜') || lowerText.includes('花费') || lowerText.includes('费用')) {
-        await startSaveFlow();
-      } else if (lowerText.includes('异响') || lowerText.includes('响') || lowerText.includes('声音')) {
-        await startNoiseFlow();
-      } else if (lowerText.includes('电池') || lowerText.includes('续航') || lowerText.includes('充电')) {
-        await startBatteryFlow();
-      } else if (lowerText.includes('保养') || lowerText.includes('维护') || lowerText.includes('什么时候')) {
-        await startMaintainFlow();
-      } else if (lowerText.includes('保值') || lowerText.includes('残值') || lowerText.includes('卖')) {
-        await addBotMessage(`你的 <b>${carOwnerData.car.fullName}</b> 当前保值率约 <b>${carOwnerData.depreciation.currentRate}</b>，${carOwnerData.depreciation.prediction}。<br><br>${carOwnerData.depreciation.advice}。`);
-      } else if (lowerText.includes('你好') || lowerText.includes('hi') || lowerText.includes('hello')) {
-        await addBotMessage(`你好 ${carOwnerData.owner.name}！有什么养车问题需要帮忙的吗？😊`);
+      // 判断是否使用API（Key已配置）还是本地关键词匹配
+      if (DEEPSEEK_CONFIG.apiKey && DEEPSEEK_CONFIG.apiKey !== 'sk-xxx') {
+        try {
+          addTypingIndicator();
+          const stream = await callDeepSeekStream(text);
+          removeTypingIndicator();
+          await streamBotMessage(stream);
+        } catch (err) {
+          removeTypingIndicator();
+          console.error('DeepSeek API Error:', err);
+          await addBotMessage('网络好像出了点问题 😅<br>请检查API Key配置是否正确，或稍后再试。');
+        }
       } else {
-        await addBotMessage(`这个问题我还在学习中 🤔<br><br>你可以试试问我：<br>• 轮胎需要换吗<br>• 怎么养车更省钱<br>• 车有异响怎么办<br>• 电池健康度如何<br>• 什么时候该保养`);
+        // 本地关键词匹配（无API Key时的降级方案）
+        addTypingIndicator();
+        await new Promise(r => setTimeout(r, 800));
+        removeTypingIndicator();
+
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes('轮胎') || lowerText.includes('换胎')) {
+          await startTireFlow();
+        } else if (lowerText.includes('省钱') || lowerText.includes('便宜') || lowerText.includes('花费') || lowerText.includes('费用')) {
+          await startSaveFlow();
+        } else if (lowerText.includes('异响') || lowerText.includes('响') || lowerText.includes('声音')) {
+          await startNoiseFlow();
+        } else if (lowerText.includes('电池') || lowerText.includes('续航') || lowerText.includes('充电')) {
+          await startBatteryFlow();
+        } else if (lowerText.includes('保养') || lowerText.includes('维护') || lowerText.includes('什么时候')) {
+          await startMaintainFlow();
+        } else if (lowerText.includes('保值') || lowerText.includes('残值') || lowerText.includes('卖')) {
+          await addBotMessage(`你的 <b>${carOwnerData.car.fullName}</b> 当前保值率约 <b>${carOwnerData.depreciation.currentRate}</b>，${carOwnerData.depreciation.prediction}。<br><br>${carOwnerData.depreciation.advice}。`);
+        } else if (lowerText.includes('你好') || lowerText.includes('hi') || lowerText.includes('hello')) {
+          await addBotMessage(`你好 ${carOwnerData.owner.name}！有什么养车问题需要帮忙的吗？😊`);
+        } else {
+          await addBotMessage(`这个问题我还在学习中 🤔<br><br>你可以试试问我：<br>• 轮胎需要换吗<br>• 怎么养车更省钱<br>• 车有异响怎么办<br>• 电池健康度如何<br>• 什么时候该保养<br><br><span style="font-size:12px;color:#999;">💡 提示：配置DeepSeek API Key后可支持自由对话</span>`);
+        }
       }
+
+      chatInput.disabled = false;
+      chatSendBtn.disabled = false;
+      chatInput.focus();
     }
 
     // Esc 键返回
