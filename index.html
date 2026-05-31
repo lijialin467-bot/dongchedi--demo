@@ -2132,6 +2132,9 @@
       chatState.currentStep = 1;
       chatState.selectedScene = topic;
 
+      // 先发送温馨提示
+      await sendWarmTip(displayText);
+
       // 推荐问题走本地结构化卡片流程
       if (topic === 'tire') {
         await startTireFlow();
