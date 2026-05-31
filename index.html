@@ -2328,18 +2328,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
 3. 可以适当使用emoji增加亲切感
 4. 如果用户问的问题超出养车范围，礼貌引导回养车话题
 5. 回复中可以使用 <br> 换行，用 <b>文字</b> 加粗重点
-6. 如果涉及费用建议，给出具体数字和省钱方案
-7. **重要：每次回复结尾都要加一段"温馨提示"**，根据以下规则智能匹配：
-   - 结合用户当前所在城市（北京）的实时/近期天气情况给出用车建议
-   - 结合用户刚才问的话题给出延伸提醒
-   - 示例场景：
-     * 用户问轮胎 → 提示"最近北京天气炎热/有雨，高温路面温度高注意胎压，雨天注意湿地抓地力"
-     * 用户问保养 → 提示"近期气温变化大，建议检查冷却液和空调系统"
-     * 用户问省钱 → 提示"夏季空调使用频繁，合理使用可降低能耗成本"
-     * 用户问电池 → 提示"高温天气避免暴晒充电，建议夜间谷电充电"
-     * 用户问异响 → 提示"高温可能导致零部件热胀，冷车启动异响属正常现象"
-   - 温馨提示格式：用 <br>---<br> 分隔，以 "💡 温馨提示：" 开头，1-2句话即可，不要啰嗦
-   - 可以适当编造合理的近期天气情况（如"最近北京气温35°C+"、"明后天有雷阵雨"等），让建议更真实贴心`;
+6. 如果涉及费用建议，给出具体数字和省钱方案`;
     }
 
     // ========== DeepSeek 流式API调用 ==========
@@ -2433,6 +2422,34 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       return fullText;
     }
 
+    // 根据用户问题主动发送温馨提示
+    async function sendWarmTip(userText) {
+      const lower = userText.toLowerCase();
+      let tip = '';
+
+      if (lower.includes('轮胎') || lower.includes('换胎') || lower.includes('胎压')) {
+        tip = '最近北京气温较高，路面温度可达60°C+，注意监测胎压避免过高。明后天有雷阵雨预报，雨天行驶请减速慢行，湿地抓地力下降，保持安全车距。';
+      } else if (lower.includes('保养') || lower.includes('维护') || lower.includes('检查')) {
+        tip = '近期气温变化较大，建议顺便检查一下冷却液液位和空调滤芯状态。高温天气空调使用频繁，滤芯堵塞会影响制冷效果和车内空气质量。';
+      } else if (lower.includes('省钱') || lower.includes('便宜') || lower.includes('花费') || lower.includes('费用')) {
+        tip = '夏季空调使用频繁，能耗会有所增加。建议利用夜间谷电充电（22:00-6:00），电费低至0.3元/度，每月可省不少。';
+      } else if (lower.includes('电池') || lower.includes('续航') || lower.includes('充电')) {
+        tip = '高温天气尽量避免在烈日下暴晒充电，建议选择夜间或阴凉处充电，有利于延长电池寿命。当前北京气温35°C+，充电时留意电池温度监控。';
+      } else if (lower.includes('异响') || lower.includes('响') || lower.includes('声音')) {
+        tip = '高温天气可能导致部分零部件热胀，冷车启动时偶尔出现轻微异响属正常现象。如果异响持续或加重，建议尽早到店检查。';
+      } else if (lower.includes('保值') || lower.includes('残值') || lower.includes('卖') || lower.includes('二手')) {
+        tip = '准新车阶段是保值率最高的时期，建议定期保养保持车况，3年内出手可保持较好残值。近期二手车市场活跃，如有出售意向可关注行情。';
+      } else if (lower.includes('保险') || lower.includes('险')) {
+        tip = '商业险即将到期的车主建议提前30天比价续保，避免脱保。近期多家保险公司有夏季优惠活动，对比三家报价可节省800-1200元。';
+      } else if (lower.includes('刹车') || lower.includes('制动')) {
+        tip = '高温天气连续下坡路段频繁刹车可能导致刹车片过热，建议利用动能回收辅助减速。雨天刹车距离会变长，请提前预判。';
+      } else {
+        tip = '最近北京天气炎热，请确保车内空调系统正常工作，长途出行前检查胎压和冷却液。明后天有雷阵雨，出行注意安全。';
+      }
+
+      await addBotMessage(`<span style="font-size:13px;color:#FF8F1F;font-weight:500;">💡 温馨提示</span><br><span style="font-size:13px;color:#666;line-height:1.6;">${tip}</span>`, 600);
+    }
+
     // 添加CSS闪烁动画（如果不存在）
     if (!document.getElementById('blinkStyle')) {
       const style = document.createElement('style');
@@ -2482,6 +2499,8 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
           const stream = await callDeepSeekStream(text);
           removeTypingIndicator();
           await streamBotMessage(stream);
+          // API回复后主动发送温馨提示
+          await sendWarmTip(text);
         } catch (err) {
           removeTypingIndicator();
           console.error('DeepSeek API Error:', err);
