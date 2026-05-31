@@ -1886,31 +1886,17 @@
       chatState.currentStep = 1;
       chatState.selectedScene = topic;
 
-      // 有API时走DeepSeek自由对话
-      if (DEEPSEEK_CONFIG.apiKey && DEEPSEEK_CONFIG.apiKey !== 'sk-xxx') {
-        try {
-          addTypingIndicator();
-          const stream = await callDeepSeekStream(displayText);
-          removeTypingIndicator();
-          await streamBotMessage(stream);
-        } catch (err) {
-          removeTypingIndicator();
-          console.error('DeepSeek API Error:', err);
-          await addBotMessage('网络好像出了点问题 😅<br>请稍后再试。');
-        }
-      } else {
-        // 无API时走本地硬编码流程
-        if (topic === 'tire') {
-          await startTireFlow();
-        } else if (topic === 'save') {
-          await startSaveFlow();
-        } else if (topic === 'noise') {
-          await startNoiseFlow();
-        } else if (topic === 'battery') {
-          await startBatteryFlow();
-        } else if (topic === 'maintain') {
-          await startMaintainFlow();
-        }
+      // 推荐问题走本地结构化卡片流程
+      if (topic === 'tire') {
+        await startTireFlow();
+      } else if (topic === 'save') {
+        await startSaveFlow();
+      } else if (topic === 'noise') {
+        await startNoiseFlow();
+      } else if (topic === 'battery') {
+        await startBatteryFlow();
+      } else if (topic === 'maintain') {
+        await startMaintainFlow();
       }
     }
 
