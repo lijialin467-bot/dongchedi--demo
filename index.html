@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>懂车帝车主养车档案</title>
+  <style>
+    /* ========== 基础重置与变量 ========== */
+    :root {
+      --dongchedi-yellow: #FFC800;
+      --dongchedi-yellow-light: #FFF4CC;
+      --dongchedi-yellow-dark: #E6B400;
+      --ivory-bg: #FDFBF7;
+      --ivory-card: #FFFEF9;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --border-color: #F0EDE5;
+      --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #F5F3EE 0%, #E8E6E0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* ========== 手机容器 ========== */
+    .phone-container {
+      width: 430px;
+      height: 932px;
+      background: var(--ivory-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== 页面基础样式 ========== */
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .page.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ========== 首页 - 欢迎信 ========== */
+    .welcome-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 32px;
+      background: var(--ivory-bg);
+    }
+
+    .welcome-card {
+      background: var(--ivory-card);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      box-shadow: var(--shadow-card);
+      width: 100%;
+      max-width: 366px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .welcome-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(255, 200, 0, 0.3);
+    }
+
+    .welcome-icon svg {
+      width: 44px;
+      height: 44px;
+      fill: white;
+    }
+
+    .welcome-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .welcome-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .welcome-info {
+      background: var(--dongchedi-yellow-light);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .welcome-info-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .welcome-info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .welcome-info-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .welcome-info-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .welcome-btn {
+      width: 100%;
+      height: 56px;
+      background: linear-gradient(135deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 16px rgba(255, 200, 0, 0.4);
+    }
+
+    .welcome-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 200, 0, 0.5);
+    }
+
+    .welcome-btn:active {
+      transform: translateY(0);
+    }
+
+    .welcome-footer {
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* ========== Loading 页 ========== */
+    .loading-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: var(--ivory-bg);
+      padding: 40px;
+    }
+
+    .loading-car-icon {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, var(--dongchedi-yellow-light) 0%, #FFF8E0 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .loading-car-icon svg {
+      width: 60px;
+      height: 60px;
+      fill: var(--dongchedi-yellow-dark);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    .loading-text {
+      font-size: 18px;
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-align: center;
+      min-height: 27px;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-subtext {
+      font-size: 15px;
+      color: var(--text-secondary);
+      text-align: center;
+      min-height: 22px;
+    }
+
+    .loading-savings {
+      color: var(--dongchedi-yellow-dark);
+      font-weight: 600;
+    }
+
+    .loading-progress {
+      width: 200px;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 2px;
+      margin-top: 32px;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--dongchedi-yellow) 0%, var(--dongchedi-yellow-dark) 100%);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ========== 报告页 ========== */
+    .report-page {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .report-header {
+      flex-shrink: 0;
+      background: var(--ivory-card);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .report-header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .report-header-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--dongchedi-yellow);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .report-header-logo svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .report-header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .report-header-close {
+      width: 32px;
+      height: 32px;
+      background: var(--border-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .report-header-close:hover {
+      background: #E5E2DA;
+    }
+
+    .report-header-close svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-secondary);
+    }
+
+    .report-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    /* ========== 车辆头图区域 ========== */
+    .car-hero {
+      background: linear-gradient(180deg, #F8F6F0 0%, var(--ivory-bg) 100%);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .car-image-container {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .car-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .car-image-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #F0EDE5 0%, #E8E5DD 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+    }
+
+    .car-image-placeholder svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 12px;
+      fill: var(--text-tertiary);
+    }
+
+    .car-image-placeholder span {
+      font-size: 13px;
+    }
+
+    .car-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .car-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .car-tag {
+      padding: 6px 14px;
+      background: var(--ivory-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .car-tag.highlight {
+      background: var(--dongchedi-yellow-light);
+      border-color: var(--dongchedi-yellow);
+      color: var(--dongchedi-yellow-dark);
+    }
+
+    /* ========== 报告板块通用样式 ========== */
+    .report-section {
+      background: var(--ivory-card);
+      margin: 12px 16px;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--dongchedi-yellow-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+
+    .section-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--dongchedi-yellow-dark);
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ========== 年度总览 ========== */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .overview-item {
+      background: var(--ivory-bg);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .overview-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .overview-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .overview-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .overview-value.highlight {
+      color: var(--dongchedi-yellow-dark);
+    }
+
+    .overview-subvalue {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .overview-tip {
+      display: flex;
+      align-items: flex-start;
+      background: var(--dongchedi-yellow-light);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .overview-tip-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .overview-tip-text {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* ========== 风险诊断 ========== */
+    .risk-level {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+      border-radius: var(--radius-sm);
+    }
+
+    .risk-level.low {
+      background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+    }
+
+    .risk-level.medium {
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+    }
+
+    .risk-level.high {
+      background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+    }
+
+    .risk-level-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+
+    .risk-level-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .risk-level-text {
+      flex: 1;
+    }
+
+    .risk-level-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .risk-level-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .risk-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .risk-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 14px;
+      background: var(--ivory-bg);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--dongchedi-yellow);
+    }
+
+    .risk-item.high {
+      border-left-color: #FF5252;
+    }
+
+    .risk-item.medium {
+      border-left-color: #FFB300;
+    }
+
+    .risk-item.low {
+      border-left-color: #4CAF50;
+    }
+
+    .risk-item-content {
+      flex: 1;
+    }
+
+    .risk-item-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .risk-item-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ========== 易损件预测 ========== */
+    .parts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .part-item {
+      background: var(--ivory-bg);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .part-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .part-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .part-probability {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dongchedi-yellow-dark);
+    }
+
+    .part-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .part-detail {
+      font-size: 13px;
+    }
+
+    .part-detail-label {
+      color: var(--text-tertiary);
+    }
+
+    .part-detail-value {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .part-reason {
+      background: var(--ivory-card);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .part-reason-title {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .part-reason-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .part-action {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--dongchedi-yellow-light);
+      border-radius: 8px;
+    }
+
+    .part-action-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .part-action-text {
+      font-size: 13px;
+      color: var(--dongchedi-yellow-dark);
+      font-weight: 500;
+    }
+
+    /* ========== 页底引导 ========== */
+    .page-footer {
+      padding: 24px 20px 40px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--ivory-bg) 0%, var(--ivory-card) 100%);
+    }
+
+    .swipe-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      transition: background 0.2s ease;
+    }
+
+    .swipe-indicator:hover {
+      background: var(--dongchedi-yellow-light);
+    }
+
+    .swipe-arrow {
+      width: 40px;
+      height: 40px;
+      background: var(--dongchedi-yellow);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .swipe-arrow svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      transform: rotate(-90deg);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .swipe-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .swipe-subtext {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .swipe-savings {
+      color: var(--dongchedi-yellow-dark);
+      font-weight: 600;
+    }
+
+    /* ========== 响应式适配 ========== */
+    @media (max-width: 470px) {
+      body {
+        padding: 0;
+      }
+      .phone-container {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 手机容器 -->
+  <div class="phone-container" id="phoneContainer">
+    
+    <!-- 首页 - 欢迎信 -->
+    <div class="page welcome-page active" id="welcomePage">
+      <div class="welcome-card">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h1 class="welcome-title">您的专属养车档案</h1>
+        <p class="welcome-subtitle">基于您的车辆信息和驾驶习惯，AI为您生成个性化养车方案</p>
+        
+        <div class="welcome-info">
+          <div class="welcome-info-item">
+            <svg class="welcome-info-icon" viewBox="0 0 24 24" fill="none" stroke="#FFC800" stroke-width="2">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="welcome-info-text">智能分析您的用车成本趋势</span>
+          </div>
+          <div class="welcome-info-item">
+            <svg class="welcome-info-icon" viewBox="0 0 24 24" fill="none" stroke="#FFC800" stroke-width="2">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="welcome-info-text">预测潜在风险，提前规避损失</span>
+          </div>
+          <div class="welcome-info-item">
+            <svg class="welcome-info-icon" viewBox="0 0 24 24" fill="none" stroke="#FFC800" stroke-width="2">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="welcome-info-text">每日对话，持续优化养车方案</span>
+          </div>
+        </div>
+        
+        <button class="welcome-btn" id="startBtn">查看我的档案</button>
+        <p class="welcome-footer">懂车帝 · 让养车更省心</p>
+      </div>
+    </div>
+
+    <!-- Loading 页 -->
+    <div class="page loading-page" id="loadingPage">
+      <div class="loading-car-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+        </svg>
+      </div>
+      <p class="loading-text" id="loadingText">您的专属档案即将呈现</p>
+      <p class="loading-subtext" id="loadingSubtext"></p>
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <!-- 报告页 -->
+    <div class="page report-page" id="reportPage">
+      <div class="report-header">
+        <div class="report-header-left">
+          <div class="report-header-logo">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="report-header-title">养车档案</span>
+        </div>
+        <div class="report-header-close" id="closeBtn" title="按 Esc 也可关闭">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="report-content" id="reportContent">
+        <!-- 车辆头图区域 -->
+        <div class="car-hero">
+          <div class="car-image-container">
+            <img class="car-image" id="carImage" src="./car.jpg" alt="车辆图片" onerror="this.style.display='none'; document.getElementById('carImagePlaceholder').style.display='flex';">
+            <div class="car-image-placeholder" id="carImagePlaceholder" style="display: none;">
+              <svg viewBox="0 0 24 24">
+                <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+              </svg>
+              <span>车辆图片加载中...</span>
+            </div>
+          </div>
+          <h2 class="car-name" id="carName"></h2>
+          <div class="car-tags" id="carTags"></div>
+        </div>
+
+        <!-- 年度总览 -->
+        <div class="report-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+              </svg>
+            </div>
+            <h3 class="section-title">年度总览</h3>
+          </div>
+          <div class="overview-grid" id="overviewGrid"></div>
+        </div>
+
+        <!-- 风险诊断 -->
+        <div class="report-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h3 class="section-title">风险诊断</h3>
+          </div>
+          <div id="riskSection"></div>
+        </div>
+
+        <!-- 易损件预测 -->
+        <div class="report-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+              </svg>
+            </div>
+            <h3 class="section-title">易损件预测</h3>
+          </div>
+          <div class="parts-list" id="partsList"></div>
+        </div>
+
+        <!-- 页底引导 -->
+        <div class="page-footer">
+          <div class="swipe-indicator" id="swipeIndicator">
+            <div class="swipe-arrow">
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </div>
+            <p class="swipe-text">上滑进入下一步对话</p>
+            <p class="swipe-subtext">每天与我聊天五分钟，今年预计为您节省 <span class="swipe-savings" id="footerSavings">0</span> 元</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== Mock 数据 ==========
+    const mockData = {
+      owner: '张先生',
+      car: {
+        brand: '宝马',
+        model: 'i5',
+        year: '2025款',
+        variant: 'eDrive40L M运动套装',
+        fullName: '宝马 i5 2025款 eDrive40L M运动套装',
+        mileage: 2000,
+        mileageUnit: '公里',
+        currentPrice: 29.98,
+        priceUnit: '万',
+        tags: ['准新车', '新能源', '过户少', '北京']
+      },
+      annualOverview: {
+        costRange: {
+          min: 8500,
+          max: 12000
+        },
+        nextMaintenance: {
+          date: '2026年8月',
+          mileage: '10000公里',
+          items: ['常规检查', '空调滤芯更换', '制动系统检测']
+        },
+        insurance: {
+          budgetRange: {
+            min: 5800,
+            max: 7200
+          },
+          optimization: '建议对比三家报价，预计可节省800-1200元'
+        }
+      },
+      riskDiagnosis: {
+        level: 'low',
+        levelText: '低风险',
+        levelDesc: '您的车辆状况良好，继续保持定期保养',
+        highRiskParts: [],
+        checkAdvice: '建议每5000公里进行一次常规检查',
+        focusItems: [
+          {
+            title: '轮胎磨损监测',
+            level: 'low',
+            description: '当前里程较低，轮胎状态良好，建议每10000公里检查一次'
+          },
+          {
+            title: '电池健康度',
+            level: 'low',
+            description: '新能源车型电池状态正常，建议定期检查电池管理系统'
+          },
+          {
+            title: '制动系统',
+            level: 'low',
+            description: '刹车片厚度正常，预计可使用至30000公里'
+          }
+        ]
+      },
+      partsPrediction: {
+        items: [
+          {
+            name: '空调滤芯',
+            probability: '85%',
+            estimatedCost: '200-350元',
+            reminderTime: '6个月后',
+            reason: '北京地区空气质量因素，建议定期更换以保证车内空气质量',
+            action: '建议每6个月或10000公里更换一次'
+          },
+          {
+            name: '雨刮器',
+            probability: '60%',
+            estimatedCost: '150-300元',
+            reminderTime: '8个月后',
+            reason: '日常使用磨损，北方地区温差变化会影响雨刮寿命',
+            action: '定期清洁雨刮条，避免干刮'
+          },
+          {
+            name: '刹车油',
+            probability: '30%',
+            estimatedCost: '400-600元',
+            reminderTime: '1年后',
+            reason: '新能源车制动系统使用频率相对较低，但仍需定期检查',
+            action: '建议每2年或40000公里更换'
+          }
+        ]
+      },
+      savings: {
+        annual: 3200,
+        daily: 8.8
+      }
+    };
+
+    // ========== DOM 元素 ==========
+    const welcomePage = document.getElementById('welcomePage');
+    const loadingPage = document.getElementById('loadingPage');
+    const reportPage = document.getElementById('reportPage');
+    const startBtn = document.getElementById('startBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const loadingText = document.getElementById('loadingText');
+    const loadingSubtext = document.getElementById('loadingSubtext');
+    const progressBar = document.getElementById('progressBar');
+    const reportContent = document.getElementById('reportContent');
+    const swipeIndicator = document.getElementById('swipeIndicator');
+
+    // ========== 页面切换函数 ==========
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    // ========== Loading 动画 ==========
+    function runLoadingAnimation() {
+      return new Promise((resolve) => {
+        showPage('loadingPage');
+        
+        const duration = 3000;
+        const startTime = Date.now();
+        const targetSavings = mockData.savings.annual;
+        let currentSavings = 0;
+        let textIndex = 0;
+        
+        const texts = [
+          '您的专属档案即将呈现',
+          `每天和我聊天五分钟，今年预计为您节省 ${targetSavings} 元`
+        ];
+        
+        // 更新进度条和数字
+        const updateInterval = setInterval(() => {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          progressBar.style.width = `${progress * 100}%`;
+          
+          // 数字递增动画
+          currentSavings = Math.floor(targetSavings * progress);
+          if (textIndex === 1) {
+            loadingText.textContent = `每天和我聊天五分钟，今年预计为您节省 ${currentSavings} 元`;
+          }
+          
+          if (progress >= 1) {
+            clearInterval(updateInterval);
+            resolve();
+          }
+        }, 30);
+        
+        // 文案切换
+        setTimeout(() => {
+          textIndex = 1;
+          loadingText.style.opacity = '0';
+          setTimeout(() => {
+            loadingText.textContent = texts[1];
+            loadingText.style.opacity = '1';
+          }, 300);
+        }, 1500);
+      });
+    }
+
+    // ========== 渲染报告页 ==========
+    function renderReport() {
+      // 车辆名称
+      document.getElementById('carName').textContent = mockData.car.fullName;
+      
+      // 车辆标签
+      const tagsContainer = document.getElementById('carTags');
+      mockData.car.tags.forEach((tag, index) => {
+        const tagEl = document.createElement('span');
+        tagEl.className = `car-tag ${index === 0 ? 'highlight' : ''}`;
+        tagEl.textContent = tag;
+        tagsContainer.appendChild(tagEl);
+      });
+      
+      // 年度总览
+      const overviewGrid = document.getElementById('overviewGrid');
+      overviewGrid.innerHTML = `
+        <div class="overview-item">
+          <div class="overview-label">预计年度花费</div>
+          <div class="overview-value highlight">${mockData.annualOverview.costRange.min}-${mockData.annualOverview.costRange.max}元</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-label">下次保养时间</div>
+          <div class="overview-value">${mockData.annualOverview.nextMaintenance.date}</div>
+          <div class="overview-subvalue">约${mockData.annualOverview.nextMaintenance.mileage}</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-label">保险预算区间</div>
+          <div class="overview-value">${mockData.annualOverview.insurance.budgetRange.min}-${mockData.annualOverview.insurance.budgetRange.max}元</div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-label">当前里程</div>
+          <div class="overview-value">${mockData.car.mileage}${mockData.car.mileageUnit}</div>
+          <div class="overview-subvalue">当前估值 ${mockData.car.currentPrice}${mockData.car.priceUnit}</div>
+        </div>
+        <div class="overview-item full-width">
+          <div class="overview-tip">
+            <svg class="overview-tip-icon" viewBox="0 0 24 24" fill="none" stroke="#E6B400" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            <span class="overview-tip-text">${mockData.annualOverview.insurance.optimization}</span>
+          </div>
+        </div>
+      `;
+      
+      // 风险诊断
+      const riskSection = document.getElementById('riskSection');
+      const riskLevelClass = mockData.riskDiagnosis.level;
+      const riskLevelIconColor = riskLevelClass === 'low' ? '#4CAF50' : (riskLevelClass === 'medium' ? '#FFB300' : '#FF5252');
+      
+      riskSection.innerHTML = `
+        <div class="risk-level ${riskLevelClass}">
+          <div class="risk-level-icon">
+            <svg viewBox="0 0 24 24" fill="${riskLevelIconColor}">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+          <div class="risk-level-text">
+            <div class="risk-level-title">${mockData.riskDiagnosis.levelText}</div>
+            <div class="risk-level-desc">${mockData.riskDiagnosis.levelDesc}</div>
+          </div>
+        </div>
+        <div class="risk-items">
+          ${mockData.riskDiagnosis.focusItems.map(item => `
+            <div class="risk-item ${item.level}">
+              <div class="risk-item-content">
+                <div class="risk-item-title">${item.title}</div>
+                <div class="risk-item-desc">${item.description}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      // 易损件预测
+      const partsList = document.getElementById('partsList');
+      partsList.innerHTML = mockData.partsPrediction.items.map(part => `
+        <div class="part-item">
+          <div class="part-header">
+            <span class="part-name">${part.name}</span>
+            <span class="part-probability">更换概率 ${part.probability}</span>
+          </div>
+          <div class="part-details">
+            <div class="part-detail">
+              <span class="part-detail-label">预计成本：</span>
+              <span class="part-detail-value">${part.estimatedCost}</span>
+            </div>
+            <div class="part-detail">
+              <span class="part-detail-label">提醒时间：</span>
+              <span class="part-detail-value">${part.reminderTime}</span>
+            </div>
+          </div>
+          <div class="part-reason">
+            <div class="part-reason-title">产生原因</div>
+            <div class="part-reason-text">${part.reason}</div>
+          </div>
+          <div class="part-action">
+            <svg class="part-action-icon" viewBox="0 0 24 24" fill="none" stroke="#E6B400" stroke-width="2">
+              <path d="M9 12l2 2 4-4"/>
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span class="part-action-text">${part.action}</span>
+          </div>
+        </div>
+      `).join('');
+      
+      // 页底节省金额
+      document.getElementById('footerSavings').textContent = mockData.savings.annual;
+    }
+
+    // ========== 事件绑定 ==========
+    startBtn.addEventListener('click', async () => {
+      await runLoadingAnimation();
+      showPage('reportPage');
+      reportContent.scrollTop = 0;
+    });
+
+    closeBtn.addEventListener('click', () => {
+      showPage('welcomePage');
+    });
+
+    swipeIndicator.addEventListener('click', () => {
+      alert('即将进入对话界面...\n\n此功能为演示，实际产品中会进入AI对话页面');
+    });
+
+    // Esc 键关闭
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && reportPage.classList.contains('active')) {
+        showPage('welcomePage');
+      }
+    });
+
+    // ========== 初始化 ==========
+    renderReport();
+  </script>
+</body>
+</html>
