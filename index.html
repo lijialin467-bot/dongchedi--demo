@@ -1807,6 +1807,19 @@
     </div>
   </div>
 
+  <!-- ========== 抖音商城跳转弹窗 ========== -->
+  <div class="booking-overlay" id="shopOverlay">
+    <div class="booking-panel" style="max-height:60%;">
+      <div class="booking-header">
+        <span class="booking-header-title">商品购买</span>
+        <div class="booking-close" onclick="document.getElementById('shopOverlay').classList.remove('active')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+      </div>
+      <div class="booking-body" id="shopBody"></div>
+    </div>
+  </div>
+
   <!-- ========== 预约弹窗 ========== -->
   <div class="booking-overlay" id="bookingOverlay">
     <div class="booking-panel">
@@ -2229,19 +2242,19 @@
       await addBotMessage('不过如果你将来需要换胎，这里有几个方案供你参考：');
       await addBotMessage(`
         <div class="plan-list">
-          <div class="plan-item" data-plan="economy" onclick="selectPlanAndBook(this,'economy')">
+          <div class="plan-item" data-plan="economy" onclick="goToShop('economy')">
             <div class="plan-item-header"><span class="plan-item-type">经济型</span><span class="plan-item-price">¥800-1,200/条</span></div>
             <div class="plan-item-brand">朝阳/玲珑</div>
             <div class="plan-item-tags"><span class="plan-item-tag">耐磨</span><span class="plan-item-tag">性价比</span></div>
             <div class="plan-item-suitable">适合：预算有限、日常通勤</div>
           </div>
-          <div class="plan-item selected" data-plan="balanced" onclick="selectPlanAndBook(this,'balanced')">
+          <div class="plan-item selected" data-plan="balanced" onclick="goToShop('balanced')">
             <div class="plan-item-header"><span class="plan-item-type">均衡型</span><span class="plan-item-price">¥1,200-1,800/条</span></div>
             <div class="plan-item-brand">米其林/马牌</div>
             <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">操控</span><span class="plan-item-tag">长寿命</span></div>
             <div class="plan-item-suitable">适合：综合路况、品质保障</div>
           </div>
-          <div class="plan-item" data-plan="comfort" onclick="selectPlanAndBook(this,'comfort')">
+          <div class="plan-item" data-plan="comfort" onclick="goToShop('comfort')">
             <div class="plan-item-header"><span class="plan-item-type">舒适型</span><span class="plan-item-price">¥1,800-2,400/条</span></div>
             <div class="plan-item-brand">米其林浩悦/马牌CC7</div>
             <div class="plan-item-tags"><span class="plan-item-tag">静音</span><span class="plan-item-tag">舒适</span><span class="plan-item-tag">湿地安全</span></div>
@@ -2253,8 +2266,8 @@
       await addBotMessage(`
         <div class="tip-bar">
           <span class="tip-bar-icon">💡</span>
-          <span class="tip-bar-text">选择高性价比品牌件 + 就近合作门店，预计节省 ¥300-600</span>
-          <button class="tip-bar-btn" onclick="openBooking('balanced')">一键预约</button>
+          <span class="tip-bar-text">买好轮胎后，可预约到店安装</span>
+          <button class="tip-bar-btn" onclick="openBooking('balanced')">预约安装</button>
         </div>
       `);
 
@@ -2784,11 +2797,51 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     });
 
     // ========== 预约流程 ==========
-    // 全局函数：选择方案并打开预约
-    function selectPlanAndBook(el, planType) {
-      el.parentElement.querySelectorAll('.plan-item').forEach(p => p.classList.remove('selected'));
-      el.classList.add('selected');
-      openBooking(planType);
+    // 全局函数：点击方案卡片 → 跳转抖音商城
+    function goToShop(planType) {
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      const planPrices = { economy: '800-1200', balanced: '1200-1800', comfort: '1800-2400' };
+
+      // 记录用户点击行为
+      const clickData = { planType, planLabel: planLabels[planType], brand: planBrands[planType], action: 'view_shop', timestamp: new Date().toISOString() };
+      const shopClicks = JSON.parse(localStorage.getItem('dc_shop_clicks') || '[]');
+      shopClicks.push(clickData);
+      localStorage.setItem('dc_shop_clicks', JSON.stringify(shopClicks));
+
+      // 弹出跳转提示
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopBody = document.getElementById('shopBody');
+      shopBody.innerHTML = `
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:48px;margin-bottom:16px;">🛒</div>
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">即将跳转至抖音商城</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
+            为你推荐 <b>${planLabels[planType]}</b> 方案<br>
+            ${planBrands[planType]} · ¥${planPrices[planType]}/条
+          </div>
+          <div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:20px;">
+            <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px;">商品信息</div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+              <span style="color:var(--text-secondary);">适用车型</span>
+              <span style="color:var(--text-primary);">${carOwnerData.car.fullName}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+              <span style="color:var(--text-secondary);">规格</span>
+              <span style="color:var(--text-primary);">245/45 R18</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:var(--text-secondary);">数量</span>
+              <span style="color:var(--text-primary);">4条装</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="booking-btn secondary" style="flex:1;height:44px;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</button>
+            <button class="booking-btn primary" style="flex:1;height:44px;" onclick="window.open('https://www.douyin.com','_blank');document.getElementById('shopOverlay').classList.remove('active')">去购买</button>
+          </div>
+        </div>
+      `;
+      shopOverlay.classList.add('active');
     }
 
     const mockStores = [
