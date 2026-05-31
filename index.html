@@ -158,10 +158,25 @@
     }
 
     .welcome-header-title {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .welcome-header-title::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--dongchedi-yellow);
+      border-radius: 2px;
     }
 
     .welcome-header-sub {
