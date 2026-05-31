@@ -64,6 +64,19 @@
       overflow: hidden;
     }
 
+    /* 灵动岛 */
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 36px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
     /* ========== 页面基础样式 ========== */
     .page {
       position: absolute;
@@ -137,7 +150,7 @@
 
     /* ========== 首页 - 弹窗欢迎信 ========== */
     .welcome-page {
-      background: linear-gradient(180deg, #FAF8F5 0%, #F5F0E8 100%);
+      background: #FAF9F6;
     }
 
     .welcome-body {
@@ -147,10 +160,10 @@
       padding: 0;
     }
 
-    /* 顶部标题区 - 固定在上端 */
+    /* 顶部标题区 */
     .welcome-header-fixed {
       flex-shrink: 0;
-      padding: 20px 24px 16px;
+      padding: 16px 20px 12px;
       text-align: center;
     }
 
@@ -158,7 +171,7 @@
       font-size: 20px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .welcome-header-sub {
@@ -166,13 +179,33 @@
       color: var(--text-tertiary);
     }
 
-    /* 中间内容区 - 自动填充 */
+    /* 中间内容区 */
     .welcome-content {
       flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 0 20px;
+      justify-content: flex-start;
+      padding: 8px 20px 0;
+      position: relative;
+    }
+
+    /* 徽章 - 悬浮在卡片上方 */
+    .letter-badge-float {
+      position: relative;
+      z-index: 2;
+      margin-bottom: -14px;
+    }
+
+    .letter-badge {
+      display: inline-block;
+      background: #F5F0E6;
+      color: #8B7355;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
     /* 欢迎信卡片 */
@@ -180,19 +213,10 @@
       width: 100%;
       background: var(--ivory-card);
       border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    }
-
-    .letter-badge {
-      display: inline-block;
-      background: var(--dongchedi-yellow-light);
-      color: var(--dongchedi-yellow-dark);
-      font-size: 12px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 12px;
-      margin-bottom: 16px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      position: relative;
+      z-index: 1;
     }
 
     .letter-content {
@@ -200,17 +224,17 @@
     }
 
     .letter-greeting {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .letter-body {
       font-size: 14px;
       color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 12px;
+      line-height: 1.65;
+      margin-bottom: 10px;
     }
 
     .letter-highlight {
@@ -218,71 +242,71 @@
       font-weight: 500;
     }
 
+    /* 功能列表容器 */
+    .letter-features-wrap {
+      background: #FAF8F5;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
     .letter-features {
       list-style: none;
       padding: 0;
-      margin: 12px 0;
+      margin: 0;
     }
 
     .letter-features li {
       font-size: 14px;
       color: var(--text-primary);
-      line-height: 1.8;
+      line-height: 1.9;
       display: flex;
       align-items: center;
     }
 
     .feature-dot {
-      color: var(--dongchedi-yellow);
-      margin-right: 8px;
-      font-size: 10px;
+      color: #D4AF37;
+      margin-right: 10px;
+      font-size: 8px;
     }
 
     .letter-closing {
       font-size: 13px;
       color: var(--text-tertiary);
       text-align: center;
-      margin-top: 16px;
-      line-height: 1.6;
+      margin-top: 14px;
+      line-height: 1.5;
     }
 
-    /* 底部按钮区 - 固定在下端 */
+    /* 底部按钮区 */
     .welcome-footer-fixed {
       flex-shrink: 0;
-      padding: 16px 20px 28px;
-      background: linear-gradient(180deg, transparent 0%, #F5F0E8 20%);
+      padding: 12px 20px 24px;
     }
 
     .welcome-btn {
       width: 100%;
       height: 50px;
-      background: var(--dongchedi-yellow);
+      background: linear-gradient(135deg, #F5D547 0%, #E6C230 100%);
       border: none;
       border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 16px rgba(255, 200, 0, 0.35);
-      letter-spacing: 0.5px;
-    }
-
-    .welcome-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(255, 200, 0, 0.45);
+      box-shadow: 0 4px 12px rgba(230, 180, 0, 0.25);
+      letter-spacing: 0.3px;
     }
 
     .welcome-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 8px rgba(255, 200, 0, 0.3);
+      transform: scale(0.98);
     }
 
     .welcome-footer-text {
       font-size: 11px;
       color: var(--text-tertiary);
       text-align: center;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     /* ========== Loading 页 ========== */
@@ -787,6 +811,8 @@
 </head>
 <body>
   <div class="phone-container" id="phoneContainer">
+    <!-- 灵动岛 -->
+    <div class="dynamic-island"></div>
 
     <!-- ========== 首页 - 欢迎信 ========== -->
     <div class="page welcome-page active" id="welcomePage">
@@ -828,18 +854,23 @@
 
         <!-- 中间内容区 -->
         <div class="welcome-content">
+          <!-- 徽章悬浮在卡片上方 -->
+          <div class="letter-badge-float">
+            <span class="letter-badge">专属欢迎信</span>
+          </div>
           <div class="letter-card">
-            <div class="letter-badge">专属欢迎信</div>
             <div class="letter-content">
               <p class="letter-greeting">感谢您选择懂车帝，张先生</p>
               <p class="letter-body">恭喜您开启新的用车生活，您的 <span class="letter-highlight">宝马i5 2025款 eDrive40L M运动套装</span> 已加入懂车帝车主服务。</p>
               <p class="letter-body">我们为您准备了专属养车档案，包含：</p>
-              <ul class="letter-features">
-                <li><span class="feature-dot">◆</span>未来12个月养车成本趋势预估</li>
-                <li><span class="feature-dot">◆</span>基于车况的风险诊断与预警</li>
-                <li><span class="feature-dot">◆</span>易损件更换时机与成本预测</li>
-                <li><span class="feature-dot">◆</span>同车型真实车主经验参考</li>
-              </ul>
+              <div class="letter-features-wrap">
+                <ul class="letter-features">
+                  <li><span class="feature-dot">◆</span>未来12个月养车成本趋势预估</li>
+                  <li><span class="feature-dot">◆</span>基于车况的风险诊断与预警</li>
+                  <li><span class="feature-dot">◆</span>易损件更换时机与成本预测</li>
+                  <li><span class="feature-dot">◆</span>同车型真实车主经验参考</li>
+                </ul>
+              </div>
               <p class="letter-closing">希望它能帮助您少走弯路，养车更省心。</p>
             </div>
           </div>
