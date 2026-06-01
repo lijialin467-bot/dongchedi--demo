@@ -2811,6 +2811,11 @@
               handleTopicClick(topic, chip.textContent.trim());
             });
           });
+          
+          // 推荐问题显示后，延迟发送换车建议
+          setTimeout(() => {
+            sendCarChangeSuggestion();
+          }, 3000);
         });
     }
 
@@ -3637,12 +3642,29 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
 
     closeBtn.addEventListener('click', () => showPage('welcomePage'));
 
+    // 记录对话页的来源页
+    let chatPageSource = 'reportPage';
+    
     swipeIndicator.addEventListener('click', () => {
+      chatPageSource = 'reportPage';
       showPage('chatPage');
       initChat();
     });
 
-    chatBackBtn.addEventListener('click', () => showPage('reportPage'));
+    chatBackBtn.addEventListener('click', () => {
+      // 如果当前在非"对话"tab，先切回对话tab
+      const activeTab = document.querySelector('.chat-tab.active');
+      if (activeTab && activeTab.dataset.tab !== 'chat') {
+        // 切换回对话tab
+        document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector('.chat-tab[data-tab="chat"]').classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+        document.getElementById('panelChat').style.display = 'flex';
+      } else {
+        // 在对话tab时，返回来源页
+        showPage(chatPageSource);
+      }
+    });
 
     chatSendBtn.addEventListener('click', handleUserInput);
     chatInput.addEventListener('keydown', (e) => {
@@ -3859,9 +3881,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       chatInput.disabled = false;
       chatSendBtn.disabled = false;
       chatInput.focus();
-      
-      // 对话结束后主动发送换车建议（仅首次）
-      sendCarChangeSuggestion();
     }
     
     // ========== 主动换车建议 ==========
