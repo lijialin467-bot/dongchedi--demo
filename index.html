@@ -768,13 +768,20 @@
     .chat-header {
       flex-shrink: 0;
       background: var(--ivory-card);
-      padding: 12px 20px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
     }
 
     .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header-right {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -844,7 +851,7 @@
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding: 16px 16px 8px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
     }
@@ -1547,62 +1554,114 @@
 
     /* ========== 对话页侧边Tab栏 ========== */
     .chat-tabs {
-      flex-shrink: 0;
-      display: flex;
+      position: absolute;
+      left: 0;
+      top: 54px;
+      bottom: 0;
+      width: 200px;
       background: var(--ivory-card);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0 8px;
-    }
-    .chat-tab {
-      flex: 1;
+      border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
+      padding: 12px 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+    .chat-tabs.collapsed {
+      transform: translateX(-100%);
+    }
+    .chat-tab {
+      display: flex;
       align-items: center;
-      padding: 8px 0;
+      padding: 12px 16px;
       cursor: pointer;
       position: relative;
       transition: all 0.2s;
+      gap: 12px;
     }
-    .chat-tab-icon { font-size: 20px; margin-bottom: 2px; }
-    .chat-tab-label { font-size: 10px; color: var(--text-tertiary); }
-    .chat-tab.active .chat-tab-label { color: var(--dongchedi-yellow-dark); font-weight: 600; }
-    .chat-tab.active::after {
+    .chat-tab-icon { 
+      font-size: 18px; 
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .chat-tab-label { 
+      font-size: 12px; 
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+    .chat-tab.active .chat-tab-label { 
+      color: var(--dongchedi-yellow-dark); 
+      font-weight: 600; 
+    }
+    .chat-tab.active {
+      background: var(--dongchedi-yellow-light);
+    }
+    .chat-tab.active::before {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 2px;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
       background: var(--dongchedi-yellow);
-      border-radius: 1px;
+      border-radius: 0 2px 2px 0;
     }
     .chat-tab-badge {
       position: absolute;
-      top: 4px;
-      right: calc(50% - 18px);
+      top: 8px;
+      right: 8px;
       width: 8px;
       height: 8px;
       background: #FF3B30;
       border-radius: 50%;
     }
+    /* 侧边栏切换按钮 */
+    .sidebar-toggle-btn {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 60px;
+      background: var(--dongchedi-yellow);
+      border: none;
+      border-radius: 0 8px 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 101;
+      font-size: 12px;
+      color: #fff;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    }
+    .chat-tabs.collapsed .sidebar-toggle-btn {
+      right: -20px;
+    }
     .tab-panel {
       flex: 1;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      padding-left: 16px;
     }
 
     /* ========== 首页场景推荐弹窗 ========== */
     .scene-sheet-overlay {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.4);
-      z-index: 200;
+      z-index: 9999;
       display: none;
+      visibility: hidden;
       align-items: flex-end;
       justify-content: center;
     }
-    .scene-sheet-overlay.active { display: flex; }
+    .scene-sheet-overlay.active {
+      display: flex !important;
+      visibility: visible !important;
+    }
     .scene-sheet {
       width: 100%;
       background: var(--ivory-bg);
@@ -1937,11 +1996,20 @@
       </div>
 
       <div class="chat-tabs" id="chatTabs">
+        <div style="padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border-color);margin-bottom:8px;">
+          <div class="chat-header-avatar" style="width:36px;height:36px;font-size:16px;">👩🏻‍🔧</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">AI养车助手</div>
+            <div style="font-size:11px;color:var(--text-tertiary);">在线</div>
+          </div>
+        </div>
         <div class="chat-tab active" data-tab="chat"><span class="chat-tab-icon">💬</span><span class="chat-tab-label">对话</span></div>
         <div class="chat-tab" data-tab="files"><span class="chat-tab-icon">📁</span><span class="chat-tab-label">档案</span></div>
         <div class="chat-tab" data-tab="network"><span class="chat-tab-icon">🌐</span><span class="chat-tab-label">经验</span></div>
-        <div class="chat-tab" data-tab="notify"><span class="chat-tab-icon">🔔</span><span class="chat-tab-label">消息</span><span class="chat-tab-badge"></span></div>
+        <div class="chat-tab" data-tab="notify"><span class="chat-tab-icon">🔔</span><span class="chat-tab-label" style="display:flex;align-items:center;gap:6px;">消息<span style="width:8px;height:8px;background:#FF3B30;border-radius:50%;display:inline-block;"></span></span></div>
         <div class="chat-tab" data-tab="settings"><span class="chat-tab-icon">⚙️</span><span class="chat-tab-label">设置</span></div>
+        <!-- 侧边栏切换按钮 -->
+        <div class="sidebar-toggle-btn" id="sidebarToggle">◀</div>
       </div>
 
       <div class="tab-panel" id="panelFiles" style="display:none;padding:16px;">
@@ -1994,9 +2062,226 @@
       </div>
 
       <div class="tab-panel" id="panelNetwork" style="display:none;padding:16px;">
-        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">车主经验网络</div>
-        <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px;">基于 2,360 位同车型车主真实反馈</div>
-        <div id="experienceList"></div>
+        <!-- AI数据驱动顶部卡片 -->
+        <div style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);border-radius:16px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+          <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle, rgba(255,184,0,0.15) 0%, transparent 70%);border-radius:50%;"></div>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,184,0,0.15);padding:4px 10px;border-radius:20px;margin-bottom:14px;">
+            <span style="font-size:10px;color:#00B578;">●</span>
+            <span style="font-size:12px;font-weight:600;color:#FFB800;">AI驱动</span>
+          </div>
+          <div style="font-size:18px;font-weight:600;color:#fff;margin-bottom:6px;position:relative;z-index:1;">真实的养车数据洞察</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;margin-bottom:18px;position:relative;z-index:1;">
+            基于抖音商城+懂车帝真实成交数据<br>
+            AI自动清洗 · 智能聚合 · 无广告干扰
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:18px;position:relative;z-index:1;">
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:20px;font-weight:700;color:#FFB800;margin-bottom:4px;">4.2万</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;">真实轮胎<br>成交记录</div>
+            </div>
+            <div style="text-align:center;flex:1;border-left:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.1);">
+              <div style="font-size:20px;font-weight:700;color:#FFB800;margin-bottom:4px;">12.8万</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;">真实评价<br>语义分析</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:20px;font-weight:700;color:#FFB800;margin-bottom:4px;">零广告</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.4;">100%真实<br>无刷评</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="color:#00B578;font-size:11px;">✓</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.7);">数据脱敏</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="color:#00B578;font-size:11px;">✓</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.7);">AI真实性校验</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="color:#00B578;font-size:11px;">✓</span>
+              <span style="font-size:11px;color:rgba(255,255,255,0.7);">实时更新</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 数据来源透明 -->
+        <div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #f0f0f0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+            <span style="font-size:14px;">🔒</span>
+            <span style="font-size:15px;font-weight:600;color:var(--text-primary);">数据来源透明</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:#00B578;font-size:13px;">✓</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text-primary);">抖音商城成交数据</div>
+                  <div style="font-size:11px;color:var(--text-tertiary);">真实的订单成交记录，非广告推广</div>
+                </div>
+              </div>
+              <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 8px;border-radius:10px;">已接入</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:#00B578;font-size:13px;">✓</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text-primary);">懂车帝车主评价</div>
+                  <div style="font-size:11px;color:var(--text-tertiary);">AI语义分析，识别真实使用体验</div>
+                </div>
+              </div>
+              <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 8px;border-radius:10px;">已接入</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:#00B578;font-size:13px;">✓</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text-primary);">合作门店维修数据</div>
+                  <div style="font-size:11px;color:var(--text-tertiary);">途虎、4S店真实保养维修记录</div>
+                </div>
+              </div>
+              <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 8px;border-radius:10px;">已接入</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:#FFB800;font-size:13px;">!</span>
+                <div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text-primary);">数据脱敏处理</div>
+                  <div style="font-size:11px;color:var(--text-tertiary);">所有数据均已脱敏，保护用户隐私</div>
+                </div>
+              </div>
+              <span style="font-size:10px;color:#FFB800;background:#FFF8E1;padding:2px 8px;border-radius:10px;">已启用</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 真实成交动态 -->
+        <div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #f0f0f0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:14px;">⚡</span>
+              <span style="font-size:15px;font-weight:600;color:var(--text-primary);">真实成交动态</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="width:6px;height:6px;background:#00B578;border-radius:50%;display:inline-block;"></span>
+              <span style="font-size:11px;color:#00B578;">实时</span>
+            </div>
+          </div>
+          <div id="liveFeedList" style="max-height:200px;overflow:hidden;position:relative;">
+            <div style="display:flex;flex-direction:column;gap:10px;" id="liveFeedInner">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">宝马i5</span> 车主购买了 <span style="font-weight:500;">米其林浩悦4</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">静音好评</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">Model 3</span> 车主购买了 <span style="font-weight:500;">倍耐力P7</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">静音好评</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">宝马i5</span> 车主购买了 <span style="font-weight:500;">马牌UC7</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">性价比高</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">迈腾</span> 车主购买了 <span style="font-weight:500;">米其林浩悦4</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">耐磨耐用</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">凯美瑞</span> 车主购买了 <span style="font-weight:500;">朝阳RP18</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">湿地防滑</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">宝马i5</span> 车主购买了 <span style="font-weight:500;">马牌UC7</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">操控精准</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">朗逸</span> 车主购买了 <span style="font-weight:500;">米其林浩悦4</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">静音好评</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">Model 3</span> 车主购买了 <span style="font-weight:500;">倍耐力P7</span></div>
+                <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">湿地防滑</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--text-tertiary);margin-top:10px;text-align:center;">
+            数据更新于 2026-05-31 23:17 | 样本：近30天 12,847 条真实记录
+          </div>
+        </div>
+
+        <!-- AI推荐产品 -->
+        <div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #f0f0f0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+            <span style="font-size:14px;">🎯</span>
+            <span style="font-size:15px;font-weight:600;color:var(--text-primary);">AI为您推荐</span>
+          </div>
+          <!-- AI推荐理由 -->
+          <div style="background:#F8F9FF;border-radius:10px;padding:12px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;">
+            <div style="width:28px;height:28px;background:var(--dongchedi-yellow-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🤖</div>
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+              基于宝马i5车主的真实成交数据，全国地区有 <b style="color:var(--dongchedi-yellow-dark);">2,847</b> 位车主选择了以下产品，关键词匹配静音舒适。
+            </div>
+          </div>
+          <!-- 产品卡片1 -->
+          <div style="background:#FAFAFA;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #f0f0f0;position:relative;">
+            <div style="display:inline-block;background:var(--dongchedi-yellow);color:#fff;font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;margin-bottom:8px;">最匹配</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <span style="font-size:15px;font-weight:600;color:var(--text-primary);">米其林浩悦4</span>
+              <span style="font-size:16px;font-weight:700;color:#FF3B30;">¥980<span style="font-size:11px;font-weight:400;color:var(--text-tertiary);">/条</span></span>
+            </div>
+            <!-- AI数据分析 -->
+            <div style="background:#fff;border-radius:8px;padding:10px;margin-bottom:10px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">📊 AI数据分析</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>同款车主选择率</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">42%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>平均使用寿命</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">4.2年</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>静音评分</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">9.2/10</span></div>
+              </div>
+              <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;">基于 4,231 条评价语义分析</div>
+            </div>
+            <!-- 标签 -->
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span style="font-size:10px;color:var(--dongchedi-yellow-dark);background:var(--dongchedi-yellow-light);padding:3px 8px;border-radius:8px;">静音舒适</span>
+              <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:3px 8px;border-radius:8px;">✓ 真实车主验证</span>
+            </div>
+            <!-- 操作按钮 -->
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;text-align:center;padding:8px;border:1px solid var(--border-color);border-radius:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;" onclick="goToShop('comfort')">查看详情</div>
+              <div style="flex:1;text-align:center;padding:8px;background:var(--dongchedi-yellow);border-radius:8px;font-size:12px;color:#fff;font-weight:500;cursor:pointer;" onclick="switchToNetworkTab()">查看同款车主经验</div>
+            </div>
+          </div>
+          <!-- 产品卡片2 -->
+          <div style="background:#FAFAFA;border-radius:12px;padding:14px;border:1px solid #f0f0f0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <span style="font-size:15px;font-weight:600;color:var(--text-primary);">马牌UC7</span>
+              <span style="font-size:16px;font-weight:700;color:#FF3B30;">¥850<span style="font-size:11px;font-weight:400;color:var(--text-tertiary);">/条</span></span>
+            </div>
+            <div style="background:#fff;border-radius:8px;padding:10px;margin-bottom:10px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">📊 AI数据分析</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>同款车主选择率</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">28%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>平均使用寿命</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">3.8年</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>静音评分</span><span style="font-weight:600;color:var(--dongchedi-yellow-dark);">8.7/10</span></div>
+              </div>
+              <div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;">基于 3,156 条评价语义分析</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span style="font-size:10px;color:var(--dongchedi-yellow-dark);background:var(--dongchedi-yellow-light);padding:3px 8px;border-radius:8px;">性价比高</span>
+              <span style="font-size:10px;color:var(--dongchedi-yellow-dark);background:var(--dongchedi-yellow-light);padding:3px 8px;border-radius:8px;">耐磨耐用</span>
+              <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:3px 8px;border-radius:8px;">✓ 真实车主验证</span>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;text-align:center;padding:8px;border:1px solid var(--border-color);border-radius:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;" onclick="goToShop('balanced')">查看详情</div>
+              <div style="flex:1;text-align:center;padding:8px;background:var(--dongchedi-yellow);border-radius:8px;font-size:12px;color:#fff;font-weight:500;cursor:pointer;" onclick="switchToNetworkTab()">查看同款车主经验</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="experienceList" style="padding-bottom:80px;"></div>
+
+        <!-- 底部固定操作栏 -->
+        <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border-color);padding:12px 16px 24px;display:flex;gap:10px;z-index:90;box-shadow:0 -4px 12px rgba(0,0,0,0.05);">
+          <div style="flex:1;text-align:center;padding:12px;background:#F5F5F5;border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;">🚗 我的车型</div>
+          <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(255,184,0,0.3);" onclick="goToShop('comfort')">查看全部匹配产品</div>
+        </div>
       </div>
 
       <div class="tab-panel" id="panelNotify" style="display:none;padding:16px;">
@@ -2011,7 +2296,7 @@
         <div style="background:linear-gradient(135deg,#F0F7FF,#E8F4FF);border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid #4A90D9;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="font-size:14px;font-weight:600;color:#4A90D9;">🔧 保养提醒</span>
-            <span style="font-size:11px;color:var(--text-tertiary);">明天</span>
+            <span style="font-size:11px;color:var(--text-tertiary);">昨天</span>
           </div>
           <div style="font-size:13px;color:var(--text-primary);line-height:1.5;">下次保养时间：2026年8月（约10,000公里）。空调滤芯建议6个月更换，费用200-350元。</div>
         </div>
@@ -2151,9 +2436,9 @@
         { id: 3, item: '刹车油', level: 'low', message: '新能源制动使用频率低，但仍需定期检查', estimatedCost: '400-600元', probability: '30%' }
       ],
       ownerExperiences: [
-        { user: '北京李车主', tip: '空调滤芯自己买京东自营件，去途虎安装，比4S店省一半', rating: 4.8 },
-        { user: '上海王车主', tip: '宝马i5能耗很低，家充桩每月电费不到100块', rating: 4.9 },
-        { user: '深圳赵车主', tip: '原厂轮胎偏硬，换米其林浩悦4静音效果提升明显', rating: 4.6 }
+        { user: '空调滤芯选购', tip: '86%车主选择自行购买配件+第三方安装，平均节省42%费用', rating: 4.8, data: '基于 2,340 条购买记录', action: '查看省钱攻略' },
+        { user: '能耗成本分析', tip: '家充桩用户月均电费￥87，比公共桩节省73%', rating: 4.9, data: '基于 1,856 条能耗数据', action: '查看充电方案' },
+        { user: '轮胎升级数据', tip: '米其林浩悦4静音轮胎满意度94%，复购率61%', rating: 4.6, data: '基于 892 条换胎记录', action: '查看轮胎方案' }
       ],
       savingsTips: [
         { title: '保险比价', desc: '对比三家报价，预计节省800-1200元', saving: '800-1200元' },
@@ -2348,6 +2633,66 @@
       if (el) el.remove();
     }
 
+    function removeThinkingMessage() {
+      const el = document.getElementById('thinkingRow');
+      if (el) el.remove();
+    }
+
+    // AI思考分析消息（带闪烁效果）
+    function addThinkingMessage(text) {
+      // 先移除已有的思考消息
+      removeThinkingMessage();
+      const row = document.createElement('div');
+      row.className = 'msg-row bot';
+      row.id = 'thinkingRow';
+      row.innerHTML = `
+        <div class="msg-avatar bot">👩🏻‍🔧</div>
+        <div class="msg-bubble" style="background:linear-gradient(135deg,#FFF8E1,#FFF4D6);border-left:3px solid var(--dongchedi-yellow);">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="display:inline-block;width:6px;height:6px;background:var(--dongchedi-yellow-dark);border-radius:50%;animation:thinkingBlink 1.4s infinite;"></span>
+            <span style="display:inline-block;width:6px;height:6px;background:var(--dongchedi-yellow-dark);border-radius:50%;animation:thinkingBlink 1.4s infinite 0.2s;"></span>
+            <span style="display:inline-block;width:6px;height:6px;background:var(--dongchedi-yellow-dark);border-radius:50%;animation:thinkingBlink 1.4s infinite 0.4s;"></span>
+            <span style="font-size:13px;color:var(--text-secondary);margin-left:4px;">${text}</span>
+          </div>
+        </div>
+      `;
+      chatContent.appendChild(row);
+      scrollChatToBottom();
+    }
+
+    // 添加思考动画CSS
+    if (!document.getElementById('thinkingStyle')) {
+      const style = document.createElement('style');
+      style.id = 'thinkingStyle';
+      style.textContent = `
+        @keyframes thinkingBlink {
+          0%, 60%, 100% { opacity: 1; transform: scale(1); }
+          30% { opacity: 0.4; transform: scale(0.8); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 显示车主经验详情
+    window.showExpDetail = function(index) {
+      const exp = carOwnerData.ownerExperiences[index];
+      addBotMessage(`
+        <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-top:8px;border-left:3px solid var(--dongchedi-yellow);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="font-size:12px;color:#fff;background:var(--dongchedi-yellow);padding:4px 12px;border-radius:12px;font-weight:500;">${exp.user}</div>
+            <div style="font-size:12px;color:var(--text-tertiary);">${exp.data}</div>
+          </div>
+          <div style="font-size:16px;color:var(--text-primary);line-height:1.6;padding:16px;background:#fff;border-radius:8px;font-weight:600;text-align:center;">
+            ${exp.tip}
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+            <span style="font-size:12px;color:#FFC800;">⭐ ${exp.rating} 数据可信度</span>
+            <span style="font-size:11px;color:var(--text-tertiary);">💡 AI分析的同车型车主真实购买记录</span>
+          </div>
+        </div>
+      `);
+    };
+
     // ========== 对话流程 ==========
     function initChat() {
       if (chatState.initialized) return;
@@ -2416,34 +2761,113 @@
 
     // --- 轮胎话题流程 ---
     async function startTireFlow() {
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
-      removeTypingIndicator();
+      // AI思考过程：拉取车辆信息
+      await addThinkingMessage('正在拉取您的车辆信息...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
 
-      // 真人式开场：先惊讶，再确认
-      await addBotMessage(`等等，我看看你的车况...`, 400);
+      await addThinkingMessage('正在分析轮胎磨损数据...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
+
+      // 给出结论
+      await addBotMessage(`你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`, 300);
+
+      await addBotMessage(`<div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:12px;padding:14px;margin-top:10px;border-left:3px solid #4CAF50;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <span style="font-size:16px;">✓</span>
+          <span style="font-size:14px;font-weight:600;color:#2E7D32;">后续需要更换时我会提醒你</span>
+        </div>
+        <div style="font-size:12px;color:#388E3C;">我会持续监测你的轮胎状态，当胎纹接近安全线或达到建议更换里程时，会主动通知你。</div>
+      </div>`, 400);
+
+      // 询问用车场景
+      await addBotMessage(`为了给你更精准的建议，想了解一下你的日常用车场景？`, 300);
       
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
+      const optRow = await addOptionButtons([
+        { value: 'city', label: '🏙️ 主要城市通勤，偶尔高速', type: 'radio' },
+        { value: 'highway', label: '🛣️ 经常跑高速，长途较多', type: 'radio' },
+        { value: 'mixed', label: '🔄 城市+高速各一半', type: 'radio' },
+        { value: 'suburb', label: '🌳 郊区/山路较多', type: 'radio' }
+      ], handleTireSceneSelect);
+    }
 
-      await addBotMessage(`哎你这车才${carOwnerData.car.mileage}公里？准新车啊！轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，远没到换的时候呢。`, 300);
+    async function handleTireSceneSelect(value, label) {
+      chatState.selectedTireScene = value;
+      await addUserMessage(label.replace(/[🏙️🛣️🔄🌳]\s*/, ''), 200);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 500));
-      removeTypingIndicator();
+      await addThinkingMessage('正在分析您的用车场景...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
-      // 反问用户真实意图
-      await addBotMessage(`不过既然你问了，我好奇一下——是听到什么说法觉得该换了吗？还是就想提前了解了解？`, 200);
+      // 根据场景给建议
+      const sceneAdvice = {
+        city: '城市通勤为主的话，均衡型轮胎就够用，舒适静音更重要。',
+        highway: '经常跑高速建议选操控稳定性好的轮胎，安全第一。',
+        mixed: '混合路况推荐均衡型轮胎，各方面表现都比较平衡。',
+        suburb: '郊区山路多建议选抓地力好的轮胎，操控更稳。'
+      };
+      await addBotMessage(sceneAdvice[value], 300);
+
+      await addThinkingMessage('正在生成下一步建议...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
+
+      await addBotMessage(`既然暂时不用换胎，你看看还想了解什么？`, 200);
       
-      // 先给结论，再问需求
-      await addBotMessage(`说实话，你这轮胎状态挺好的，${carOwnerData.car.tireUsage}用下来没什么问题的话，真不用急着换。`, 600);
+      const nextOptRow = await addOptionButtons([
+        { value: 'price', label: '💰 提前了解轮胎价格和方案', type: 'radio' },
+        { value: 'maintain', label: '🔧 轮胎保养注意事项', type: 'radio' },
+        { value: 'battery', label: '🔋 顺便看看电池健康度', type: 'radio' },
+        { value: 'save', label: '💡 了解其他省钱养车方案', type: 'radio' }
+      ], handleTireNextSelect);
+    }
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 400));
-      removeTypingIndicator();
+    async function handleTireNextSelect(value, label) {
+      await addUserMessage(label.replace(/[💰🔧🔋💡]\s*/, ''), 200);
+      
+      if (value === 'price') {
+        await addThinkingMessage('正在准备轮胎方案...');
+        await new Promise(r => setTimeout(r, 1000));
+        removeThinkingMessage();
+        // 继续原流程，询问优先级
+        await askTirePriority();
+      } else if (value === 'maintain') {
+        await addThinkingMessage('正在整理轮胎保养知识...');
+        await new Promise(r => setTimeout(r, 1200));
+        removeThinkingMessage();
+        await addBotMessage(`<div style="background:#FAFAFA;border-radius:12px;padding:14px;">
+          <div style="font-size:14px;font-weight:600;margin-bottom:10px;">🛞 轮胎保养小贴士</div>
+          <div style="font-size:13px;color:#666;line-height:1.8;">
+            • 每月检查一次胎压，保持在2.3-2.5bar<br>
+            • 每5000公里轮胎换位，延长使用寿命<br>
+            • 避免急刹急加速，减少轮胎磨损<br>
+            • 停车避开阳光直射，防止橡胶老化<br>
+            • 定期检查胎纹深度，低于3mm需更换
+          </div>
+        </div>`, 300);
+        await addThinkingMessage('正在思考其他建议...');
+        await new Promise(r => setTimeout(r, 1500));
+        removeThinkingMessage();
+        await addBotMessage(`还有其他想了解的吗？`, 200);
+        await addOptionButtons([
+          { value: 'price', label: '💰 了解轮胎价格方案', type: 'radio' },
+          { value: 'battery', label: '🔋 查看电池健康度', type: 'radio' },
+          { value: 'save', label: '💡 其他省钱方案', type: 'radio' }
+        ], handleTireNextSelect);
+      } else if (value === 'battery') {
+        await startBatteryFlow();
+      } else if (value === 'save') {
+        await startSaveFlow();
+      }
+    }
 
-      await addBotMessage(`不过如果你确实想换，或者想提前备着，我可以帮你看看怎么选更划算。你更在意哪方面？`, 200);
+    async function askTirePriority() {
+      await addThinkingMessage('正在分析轮胎选购要点...');
+      await new Promise(r => setTimeout(r, 1000));
+      removeThinkingMessage();
+
+      await addBotMessage(`好的，那我帮你提前做个功课。如果将来需要换胎，你更在意哪方面？`, 200);
       
       const optRow = await addOptionButtons([
         { value: 'save', label: '省钱，性价比高的', type: 'radio' },
@@ -2458,9 +2882,9 @@
       chatState.selectedPriority = value;
       await addUserMessage(label, 200);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 500));
-      removeTypingIndicator();
+      await addThinkingMessage('正在分析您的需求...');
+      await new Promise(r => setTimeout(r, 1000));
+      removeThinkingMessage();
 
       // 根据选择给反馈，再追问
       const feedbacks = {
@@ -2472,9 +2896,9 @@
       };
       await addBotMessage(feedbacks[value], 300);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 400));
-      removeTypingIndicator();
+      await addThinkingMessage('正在评估轮胎使用状况...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       await addBotMessage(`对了，最近开车有没有觉得哪里不对劲？比如...`, 200);
       await addCheckboxButtons([
@@ -2492,9 +2916,9 @@
       const symptomText = selectedValues.includes('none') ? '都没问题' : selectedLabels.join('、');
       await addUserMessage(symptomText, 200);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
-      removeTypingIndicator();
+      await addThinkingMessage('正在评估症状影响...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       if (hasSymptoms) {
         await addBotMessage(`有这些现象的话，确实该留意了。不过也别慌，我先帮你看看具体情况。`, 300);
@@ -2502,29 +2926,25 @@
         await addBotMessage(`没问题就好，那更不用急了。`, 200);
       }
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 500));
-      removeTypingIndicator();
+      await addThinkingMessage('正在调取车辆档案...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       // 展示档案，语气更口语化
       await addBotMessage(`刚调了下你的档案——${carOwnerData.car.fullName}，${carOwnerData.car.mileage}公里，轮胎用了${carOwnerData.car.tireUsage}。`, 300);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
-      removeTypingIndicator();
+      await addThinkingMessage('正在生成最终建议...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
 
       // 最终建议，不再重复"状态良好"
       await addBotMessage(`我的建议是：先别急着换。你这胎还能跑个两三万公里，等胎纹到3mm左右再换不迟。放心，我会帮你想着的，到时候会提醒你更换。`, 400);
 
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 500));
-      removeTypingIndicator();
+      await addThinkingMessage('正在准备轮胎方案...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       await addBotMessage(`不过既然你问了，我给你备几个方案，到时候直接参考就行：`, 200);
-
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
-      removeTypingIndicator();
 
       // 推荐方案（以备将来参考）
       await addBotMessage(`
@@ -2558,27 +2978,44 @@
         </div>
       `);
 
-      // 添加同车型车主经验
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
-      removeTypingIndicator();
+      // 添加AI分析过程 - 同车型数据
+      await addThinkingMessage('正在分析同车型车主购买数据...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
 
-      await addBotMessage('对了，看看其他宝马i5车主怎么说：');
-      let expHtml = '';
-      carOwnerData.ownerExperiences.forEach(exp => {
-        expHtml += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-top:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-size:12px;color:#666;">${exp.user}</span>
-            <span style="font-size:11px;color:#FFC800;">⭐ ${exp.rating}</span>
+      await addBotMessage('这是 <b>AI获取的最新同车型车主真实购买数据</b>，点击可查看详情：');
+      let expHtml = '<div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">';
+      carOwnerData.ownerExperiences.forEach((exp, index) => {
+        expHtml += `
+          <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #eee;" onclick="showExpDetail(${index})">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:11px;color:#fff;background:var(--dongchedi-yellow);padding:3px 10px;border-radius:10px;font-weight:500;">${exp.user}</span>
+              <span style="font-size:11px;color:var(--text-tertiary);">${exp.data}</span>
+            </div>
+            <div style="font-size:14px;color:var(--text-primary);line-height:1.6;font-weight:500;margin-bottom:10px;">${exp.tip}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;color:#FFC800;">⭐ ${exp.rating} 数据可信度</span>
+              <span style="font-size:12px;color:var(--dongchedi-yellow-dark);font-weight:500;">${exp.action} ›</span>
+            </div>
           </div>
-          <div style="font-size:13px;color:#333;line-height:1.5;">"${exp.tip}"</div>
-        </div>`;
+        `;
       });
+      expHtml += '</div>';
       await addBotMessage(expHtml);
+
+      // 跳转至经验网络按钮
+      await addBotMessage(`
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <div style="flex:1;background:linear-gradient(135deg, #FFF8E1 0%, #FFF4D6 100%);border-radius:12px;padding:14px;border-left:3px solid var(--dongchedi-yellow);cursor:pointer;text-align:center;" onclick="switchToNetworkTab()">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🌐 查看更多经验数据</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">进入经验网络，探索2,360+车主数据</div>
+          </div>
+        </div>
+      `);
 
       // 添加推荐逻辑解释入口
       await addBotMessage(`
-        <div style="background:linear-gradient(135deg, #FFF8E1 0%, #FFF4D6 100%);border-radius:12px;padding:14px;margin-top:10px;border-left:3px solid var(--dongchedi-yellow);cursor:pointer;" onclick="showWhyNotMostExpensive()">
+        <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #eee;cursor:pointer;margin-top:10px;" onclick="showWhyNotMostExpensive()">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <div>
               <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">🤔 为什么不直接推荐最贵的？</div>
@@ -2633,14 +3070,23 @@
 
     // --- 省钱话题流程 ---
     async function startSaveFlow() {
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
+      // AI思考过程
+      await addThinkingMessage('正在拉取您的车辆信息...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
+
+      await addThinkingMessage('正在分析年度养车成本数据...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
+
+      await addThinkingMessage('正在比对同车型车主省钱方案...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       await addBotMessage(`根据你的 <b>${carOwnerData.car.fullName}</b> 用车数据，我帮你算了一笔账：<br><br>你目前的月均养车成本约 <b>¥${carOwnerData.yearlyCost.monthly.min}-${carOwnerData.yearlyCost.monthly.max}</b>，年度总花费 <b>¥${carOwnerData.yearlyCost.total.min}-${carOwnerData.yearlyCost.total.max}</b>。`);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1200));
       removeTypingIndicator();
 
       let tipsHtml = '<div style="margin-top:8px;">';
@@ -2657,33 +3103,58 @@
       await addBotMessage(`这是我的省钱建议：${tipsHtml}<br>综合下来，今年预计能帮你省下 <b>¥${carOwnerData.savings.annual}</b>！`);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1200));
       removeTypingIndicator();
 
-      await addBotMessage(`还有其他车主的真实经验供你参考：`);
-      let expHtml2 = '';
-      carOwnerData.ownerExperiences.forEach(exp => {
-        expHtml2 += `<div style="background:#FAFAFA;border-radius:10px;padding:10px;margin-top:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-size:12px;color:#666;">${exp.user}</span>
-            <span style="font-size:11px;color:#FFC800;">⭐ ${exp.rating}</span>
+      await addThinkingMessage('正在拉取同车型车主省钱案例...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
+
+      let expHtml2 = '<div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">';
+      carOwnerData.ownerExperiences.forEach((exp, index) => {
+        expHtml2 += `
+          <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #eee;" onclick="showExpDetail(${index})">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:11px;color:#fff;background:var(--dongchedi-yellow);padding:3px 10px;border-radius:10px;font-weight:500;">${exp.user}</span>
+              <span style="font-size:11px;color:var(--text-tertiary);">${exp.data}</span>
+            </div>
+            <div style="font-size:14px;color:var(--text-primary);line-height:1.6;font-weight:500;margin-bottom:10px;">${exp.tip}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;color:#FFC800;">⭐ ${exp.rating} 数据可信度</span>
+              <span style="font-size:12px;color:var(--dongchedi-yellow-dark);font-weight:500;">${exp.action} ›</span>
+            </div>
           </div>
-          <div style="font-size:13px;color:#333;line-height:1.5;">"${exp.tip}"</div>
-        </div>`;
+        `;
       });
+      expHtml2 += '</div>';
       await addBotMessage(expHtml2);
+
+      // 跳转至经验网络按钮
+      await addBotMessage(`
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <div style="flex:1;background:linear-gradient(135deg, #FFF8E1 0%, #FFF4D6 100%);border-radius:12px;padding:14px;border-left:3px solid var(--dongchedi-yellow);cursor:pointer;text-align:center;" onclick="switchToNetworkTab()">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🌐 查看更多经验数据</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">进入经验网络，探索2,360+车主数据</div>
+          </div>
+        </div>
+      `);
     }
 
     // --- 异响话题流程 ---
     async function startNoiseFlow() {
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
+      // AI思考过程
+      await addThinkingMessage('正在拉取您的车辆信息...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
+
+      await addThinkingMessage('正在分析常见异响原因数据库...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
 
       await addBotMessage(`车辆异响可能的原因比较多，我来帮你逐步排查。<br><br>你的 <b>${carOwnerData.car.fullName}</b> 目前才行驶了 <b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，属于准新车阶段，异响大概率是小问题。`);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1200));
       removeTypingIndicator();
 
       await addBotMessage('异响出现在什么场景？', 200);
@@ -2696,7 +3167,7 @@
       ], async (value, label) => {
         await addUserMessage(label, 200);
         addTypingIndicator();
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 1500));
         removeTypingIndicator();
 
         await addBotMessage(`
@@ -2721,9 +3192,14 @@
 
     // --- 电池话题流程 ---
     async function startBatteryFlow() {
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
+      // AI思考过程
+      await addThinkingMessage('正在拉取电池管理系统数据...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
+
+      await addThinkingMessage('正在分析电池健康度...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
 
       await addBotMessage(`
         <div class="result-card">
@@ -2749,9 +3225,14 @@
 
     // --- 保养话题流程 ---
     async function startMaintainFlow() {
-      addTypingIndicator();
-      await new Promise(r => setTimeout(r, 800));
-      removeTypingIndicator();
+      // AI思考过程
+      await addThinkingMessage('正在拉取您的保养记录...');
+      await new Promise(r => setTimeout(r, 1200));
+      removeThinkingMessage();
+
+      await addThinkingMessage('正在分析易损件状态...');
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
 
       await addBotMessage(`根据你的用车情况，下次保养时间是 <b>${carOwnerData.nextMaintenance.date}</b>（约${carOwnerData.nextMaintenance.mileage}）。<br><br>这是你的保养提醒：`);
 
@@ -2770,7 +3251,7 @@
       await addBotMessage(alertHtml);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 1200));
       removeTypingIndicator();
 
       await addBotMessage(`另外，你的车保值率目前约 <b>${carOwnerData.depreciation.currentRate}</b>，${carOwnerData.depreciation.advice}。`);
@@ -3091,6 +3572,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
 
     // ========== Tab切换逻辑 ==========
     const chatTabs = document.getElementById('chatTabs');
+    const sidebarToggle = document.getElementById('sidebarToggle');
     const tabPanels = {
       chat: document.getElementById('chatContent'),
       files: document.getElementById('panelFiles'),
@@ -3098,6 +3580,12 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       notify: document.getElementById('panelNotify'),
       settings: document.getElementById('panelSettings')
     };
+
+    // 侧边栏展开/折叠
+    sidebarToggle.addEventListener('click', () => {
+      chatTabs.classList.toggle('collapsed');
+      sidebarToggle.textContent = chatTabs.classList.contains('collapsed') ? '▶' : '◀';
+    });
 
     chatTabs.addEventListener('click', (e) => {
       const tab = e.target.closest('.chat-tab');
@@ -3125,51 +3613,114 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       }
     });
 
+    // 跳转至经验网络Tab
+    window.switchToNetworkTab = function() {
+      const networkTab = chatTabs.querySelector('[data-tab="network"]');
+      if (networkTab) {
+        networkTab.click();
+      }
+    };
+
     // ========== 经验tab动态渲染 ==========
     function renderExperienceList() {
       const list = document.getElementById('experienceList');
       if (list.children.length > 0) return; // 已渲染过则不重复
+      
+      // 添加数据概览头部
+      const headerCard = document.createElement('div');
+      headerCard.style.cssText = 'background:linear-gradient(135deg, #FFF8E1 0%, #FFF4D6 100%);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--dongchedi-yellow);';
+      headerCard.innerHTML = `
+        <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">📊 同车型车主真实购买数据</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+          基于 <b>2,360</b> 位宝马i5车主的真实购买记录<br>
+          数据每日更新，确保信息时效性
+        </div>
+      `;
+      list.appendChild(headerCard);
+      
       carOwnerData.ownerExperiences.forEach(exp => {
         const card = document.createElement('div');
-        card.style.cssText = 'background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:10px;';
+        card.style.cssText = 'background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #eee;';
         card.innerHTML = `
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-            <div style="width:32px;height:32px;background:var(--dongchedi-yellow-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">👤</div>
-            <div style="flex:1;">
-              <div style="font-size:14px;font-weight:500;color:var(--text-primary);">${exp.user}</div>
-              <div style="font-size:11px;color:var(--text-tertiary);">⭐ ${exp.rating}</div>
-            </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:11px;color:#fff;background:var(--dongchedi-yellow);padding:3px 10px;border-radius:10px;font-weight:500;">${exp.user}</div>
+            <div style="font-size:11px;color:var(--text-tertiary);">${exp.data}</div>
           </div>
-          <div style="font-size:13px;color:var(--text-secondary);line-height:1.5;padding-left:42px;">"${exp.tip}"</div>
+          <div style="font-size:14px;color:var(--text-primary);line-height:1.6;font-weight:500;margin-bottom:10px;">${exp.tip}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:#FFC800;">⭐ ${exp.rating} 数据可信度</span>
+            <span style="font-size:12px;color:var(--dongchedi-yellow-dark);font-weight:500;">${exp.action} ›</span>
+          </div>
         `;
         list.appendChild(card);
       });
+
+      // 启动成交动态实时弹出
+      startLiveFeedPopup();
+    }
+
+    // ========== 真实成交动态实时弹出 ==========
+    function startLiveFeedPopup() {
+      const container = document.getElementById('liveFeedList');
+      const inner = document.getElementById('liveFeedInner');
+      if (!container || !inner) return;
+
+      // 成交数据模板
+      const feedData = [
+        { car: '宝马i5', product: '米其林浩悦4', tag: '静音好评' },
+        { car: 'Model 3', product: '倍耐力P7', tag: '静音好评' },
+        { car: '宝马i5', product: '马牌UC7', tag: '性价比高' },
+        { car: '迈腾', product: '米其林浩悦4', tag: '耐磨耐用' },
+        { car: '凯美瑞', product: '朝阳RP18', tag: '湿地防滑' },
+        { car: '朗逸', product: '米其林浩悦4', tag: '静音好评' },
+        { car: '轩逸', product: '朝阳RP18', tag: '湿地防滑' },
+        { car: 'Model 3', product: '倍耐力P7', tag: '湿地防滑' }
+      ];
+
+      let currentIndex = 0;
+
+      // 每隔3秒添加一条新记录
+      setInterval(() => {
+        const data = feedData[currentIndex % feedData.length];
+        currentIndex++;
+
+        // 创建新记录元素
+        const newItem = document.createElement('div');
+        newItem.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;opacity:0;transform:translateY(-10px);transition:all 0.5s ease;';
+        newItem.innerHTML = `
+          <div style="font-size:13px;color:var(--text-primary);"><span style="color:var(--dongchedi-yellow-dark);font-weight:500;">${data.car}</span> 车主购买了 <span style="font-weight:500;">${data.product}</span></div>
+          <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">${data.tag}</span>
+        `;
+
+        // 插入到顶部
+        inner.insertBefore(newItem, inner.firstChild);
+
+        // 触发动画
+        setTimeout(() => {
+          newItem.style.opacity = '1';
+          newItem.style.transform = 'translateY(0)';
+        }, 50);
+
+        // 保持最多8条记录
+        while (inner.children.length > 8) {
+          inner.removeChild(inner.lastChild);
+        }
+      }, 3000);
     }
 
     // ========== 场景推荐弹窗逻辑 ==========
     const sceneSheet = document.getElementById('sceneSheet');
     let selectedScene = null;
+    let isStartBtnClicked = false;
 
     startBtn.addEventListener('click', async () => {
-      sceneSheet.classList.add('active');
-    });
-
-    sceneSheet.addEventListener('click', async (e) => {
-      // 点击overlay背景关闭
-      if (e.target === sceneSheet) {
-        sceneSheet.classList.remove('active');
-        return;
-      }
-      // 点击场景卡片
-      const card = e.target.closest('.scene-sheet-card');
-      if (card) {
-        selectedScene = card.dataset.scene;
-        sceneSheet.classList.remove('active');
-        await runLoadingAnimation();
-        renderReport();
-        showPage('reportPage');
-        reportContent.scrollTop = 0;
-      }
+      if (isStartBtnClicked) return;
+      isStartBtnClicked = true;
+      // 直接进入 loading 界面
+      await runLoadingAnimation();
+      renderReport();
+      showPage('reportPage');
+      reportContent.scrollTop = 0;
     });
 
     async function handleUserInput() {
@@ -3198,7 +3749,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       } else {
         // 本地关键词匹配（无API Key时的降级方案）
         addTypingIndicator();
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 1500));
         removeTypingIndicator();
 
         const lowerText = text.toLowerCase();
@@ -3283,8 +3834,15 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             <div style="display:flex;align-items:center;gap:12px;">
               <div style="width:44px;height:44px;background:var(--dongchedi-yellow-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛒</div>
               <div style="flex:1;">
-                <div style="font-size:15px;font-weight:600;color:var(--text-primary);">在线购买</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                  <span style="font-size:15px;font-weight:600;color:var(--text-primary);">在线购买</span>
+                  <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">数据闭环</span>
+                </div>
                 <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">跳转抖音商城，自行购买后到店安装</div>
+                <div style="font-size:10px;color:var(--text-tertiary);margin-top:4px;display:flex;gap:8px;">
+                  <span>✓ 购买数据回流</span>
+                  <span>✓ 安装评价同步</span>
+                </div>
               </div>
               <span style="color:var(--text-tertiary);font-size:16px;">›</span>
             </div>
