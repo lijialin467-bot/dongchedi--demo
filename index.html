@@ -3940,7 +3940,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
           <div style="background:linear-gradient(135deg, #F8F9FF 0%, #F0F4FF 100%);border-radius:12px;padding:14px;margin-bottom:8px;border-left:3px solid #3B82F6;">
             <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">🚗 换车建议</div>
             <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;">
-              您的 <b>${carOwnerData.car.fullName}</b> 已行驶 <b>${carOwnerData.mileage.toLocaleString()}</b> 公里。根据当前市场行情，同级别热门新能源车型保值率表现：
+              您的 <b>${carOwnerData.car.fullName}</b> 已行驶 <b>${(carOwnerData.car.mileage || carOwnerData.mileage || 0).toLocaleString()}</b> 公里。根据当前市场行情，同级别热门新能源车型保值率表现：
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
