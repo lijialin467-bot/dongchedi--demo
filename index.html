@@ -3626,9 +3626,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       }
 
       await addBotMessage(`<span style="font-size:13px;color:#FF8F1F;font-weight:500;">💡 温馨提示</span><br><span style="font-size:13px;color:#666;line-height:1.6;">${tip}</span>`, 600);
-      
-      // 对话结束后，延迟发送换车建议（防抖：每次对话重置计时器）
-      scheduleCarSuggestion();
     }
 
     // 添加CSS闪烁动画（如果不存在）
@@ -3922,6 +3919,9 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       chatInput.disabled = false;
       chatSendBtn.disabled = false;
       chatInput.focus();
+      
+      // 整个对话流程结束后，调度换车建议（防抖8秒）
+      scheduleCarSuggestion();
     }
     
     // ========== 主动换车建议（防抖机制） ==========
