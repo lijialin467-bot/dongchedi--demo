@@ -4878,11 +4878,11 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showPlatformFeatures()">🌐 多平台</span>
       `;
       
-      // 插入到 input-area 前面
-      const inputArea = document.querySelector('.input-area');
-      const chatContainer = document.querySelector('.chat-container');
-      if (inputArea && chatContainer) {
-        chatContainer.insertBefore(quickActions, inputArea);
+      // 插入到 chat-footer 前面
+      const chatFooter = document.querySelector('.chat-footer');
+      const chatPage = document.getElementById('chatPage');
+      if (chatFooter && chatPage) {
+        chatPage.insertBefore(quickActions, chatFooter);
       }
     }
     
