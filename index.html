@@ -2339,45 +2339,45 @@
           </button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ========== 抖音商城跳转弹窗 ========== -->
-  <div class="booking-overlay" id="shopOverlay">
-    <div class="booking-panel" style="max-height:60%;">
-      <div class="booking-header">
-        <span class="booking-header-title" id="shopOverlayTitle">商品购买</span>
-        <div class="booking-close" onclick="closeShopOverlay()">
-          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <!-- ========== 抖音商城跳转弹窗 ========== -->
+      <div class="booking-overlay" id="shopOverlay">
+        <div class="booking-panel" style="max-height:60%;">
+          <div class="booking-header">
+            <span class="booking-header-title" id="shopOverlayTitle">商品购买</span>
+            <div class="booking-close" onclick="closeShopOverlay()">
+              <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </div>
+          </div>
+          <div class="booking-body" id="shopBody"></div>
         </div>
       </div>
-      <div class="booking-body" id="shopBody"></div>
-    </div>
-  </div>
 
-  <!-- ========== 预约弹窗 ========== -->
-  <div class="booking-overlay" id="bookingOverlay">
-    <div class="booking-panel">
-      <div class="booking-header">
-        <span class="booking-header-title" id="bookingTitle">预约到店</span>
-        <div class="booking-close" id="bookingClose">
-          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <!-- ========== 预约弹窗 ========== -->
+      <div class="booking-overlay" id="bookingOverlay">
+        <div class="booking-panel">
+          <div class="booking-header">
+            <span class="booking-header-title" id="bookingTitle">预约到店</span>
+            <div class="booking-close" id="bookingClose">
+              <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </div>
+          </div>
+          <div class="booking-steps" id="bookingSteps">
+            <div class="booking-step-dot active" data-step="1">1</div>
+            <div class="booking-step-line"></div>
+            <div class="booking-step-dot" data-step="2">2</div>
+            <div class="booking-step-line"></div>
+            <div class="booking-step-dot" data-step="3">3</div>
+            <div class="booking-step-line"></div>
+            <div class="booking-step-dot" data-step="4">4</div>
+          </div>
+          <div class="booking-body" id="bookingBody">
+            <!-- 由JS动态渲染 -->
+          </div>
+          <div class="booking-footer" id="bookingFooter">
+            <!-- 由JS动态渲染 -->
+          </div>
         </div>
-      </div>
-      <div class="booking-steps" id="bookingSteps">
-        <div class="booking-step-dot active" data-step="1">1</div>
-        <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step="2">2</div>
-        <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step="3">3</div>
-        <div class="booking-step-line"></div>
-        <div class="booking-step-dot" data-step="4">4</div>
-      </div>
-      <div class="booking-body" id="bookingBody">
-        <!-- 由JS动态渲染 -->
-      </div>
-      <div class="booking-footer" id="bookingFooter">
-        <!-- 由JS动态渲染 -->
       </div>
     </div>
   </div>
