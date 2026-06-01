@@ -314,36 +314,29 @@
       padding: 40px;
     }
 
-    .loading-car-icon {
-      width: 100px;
-      height: 100px;
-      background: var(--dongchedi-yellow-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 40px;
-    }
-
-    .loading-car-icon svg {
-      width: 48px;
-      height: 48px;
-      fill: var(--dongchedi-yellow-dark);
-    }
-
-    .loading-text {
+    .loading-line {
       font-size: 16px;
       color: var(--text-primary);
       font-weight: 500;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       text-align: center;
       min-height: 24px;
+      transition: opacity 0.3s ease;
     }
 
     .loading-savings-num {
       display: inline-block;
       min-width: 3.2em;
       text-align: left;
+    }
+
+    .loading-slogan {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      text-align: center;
+      margin-top: 20px;
+      min-height: 20px;
+      transition: opacity 0.3s ease;
     }
 
     .loading-progress {
@@ -1552,6 +1545,116 @@
     .booking-btn.primary:disabled { background: var(--border-color); color: var(--text-tertiary); cursor: not-allowed; }
     .booking-btn.secondary { background: var(--ivory-card); border: 1.5px solid var(--border-color); }
 
+    /* ========== 对话页侧边Tab栏 ========== */
+    .chat-tabs {
+      flex-shrink: 0;
+      display: flex;
+      background: var(--ivory-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 8px;
+    }
+    .chat-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .chat-tab-icon { font-size: 20px; margin-bottom: 2px; }
+    .chat-tab-label { font-size: 10px; color: var(--text-tertiary); }
+    .chat-tab.active .chat-tab-label { color: var(--dongchedi-yellow-dark); font-weight: 600; }
+    .chat-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 2px;
+      background: var(--dongchedi-yellow);
+      border-radius: 1px;
+    }
+    .chat-tab-badge {
+      position: absolute;
+      top: 4px;
+      right: calc(50% - 18px);
+      width: 8px;
+      height: 8px;
+      background: #FF3B30;
+      border-radius: 50%;
+    }
+    .tab-panel {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ========== 首页场景推荐弹窗 ========== */
+    .scene-sheet-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .scene-sheet-overlay.active { display: flex; }
+    .scene-sheet {
+      width: 100%;
+      background: var(--ivory-bg);
+      border-radius: 20px 20px 0 0;
+      padding: 12px 20px 28px;
+      animation: panelSlideUp 0.3s ease;
+    }
+    .scene-sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .scene-sheet-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .scene-sheet-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .scene-sheet-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--ivory-card);
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .scene-sheet-card:active { transform: scale(0.98); background: var(--dongchedi-yellow-light); }
+    .scene-sheet-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .scene-sheet-content { flex: 1; }
+    .scene-sheet-card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .scene-sheet-card-desc { font-size: 12px; color: var(--text-tertiary); }
+    .scene-sheet-arrow { color: var(--text-tertiary); font-size: 16px; }
+
     /* ========== 响应式适配 ========== */
     @media (max-width: 470px) {
       body { padding: 0; }
@@ -1623,6 +1726,46 @@
           </div>
         </div>
       </div>
+      <div class="scene-sheet-overlay" id="sceneSheet">
+        <div class="scene-sheet">
+          <div class="scene-sheet-handle"></div>
+          <div class="scene-sheet-title">选择你关心的场景</div>
+          <div class="scene-sheet-cards">
+            <div class="scene-sheet-card" data-scene="tire">
+              <div class="scene-sheet-icon" style="background:var(--dongchedi-yellow-light);">🛞</div>
+              <div class="scene-sheet-content">
+                <div class="scene-sheet-card-title">轮胎检测与推荐</div>
+                <div class="scene-sheet-card-desc">查看轮胎状态，获取更换建议</div>
+              </div>
+              <span class="scene-sheet-arrow">›</span>
+            </div>
+            <div class="scene-sheet-card" data-scene="save">
+              <div class="scene-sheet-icon" style="background:#F0FFF0;">💰</div>
+              <div class="scene-sheet-content">
+                <div class="scene-sheet-card-title">养车省钱方案</div>
+                <div class="scene-sheet-card-desc">保险、保养、充电全方位省钱</div>
+              </div>
+              <span class="scene-sheet-arrow">›</span>
+            </div>
+            <div class="scene-sheet-card" data-scene="maintain">
+              <div class="scene-sheet-icon" style="background:#F0F7FF;">🔧</div>
+              <div class="scene-sheet-content">
+                <div class="scene-sheet-card-title">保养与维修提醒</div>
+                <div class="scene-sheet-card-desc">保养时间、维修预警、门店推荐</div>
+              </div>
+              <span class="scene-sheet-arrow">›</span>
+            </div>
+            <div class="scene-sheet-card" data-scene="sell">
+              <div class="scene-sheet-icon" style="background:#FFF0F0;">📈</div>
+              <div class="scene-sheet-content">
+                <div class="scene-sheet-card-title">保值率与卖车建议</div>
+                <div class="scene-sheet-card-desc">当前估值、最佳出手时机</div>
+              </div>
+              <span class="scene-sheet-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ========== Loading 页 ========== -->
@@ -1653,16 +1796,13 @@
       </div>
 
       <div class="loading-body">
-        <div class="loading-car-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
-          </svg>
-        </div>
-        <p class="loading-text" id="loadingText">您的专属档案即将呈现</p>
-        <p class="loading-text" id="loadingText2" style="display:none;">每天和我聊天五分钟，今年预计为您节省 <span class="loading-savings-num" id="loadingSavingsNum">0</span> 元</p>
+        <p class="loading-line" id="loadingLine1">AI正在分析车况...</p>
+        <p class="loading-line" id="loadingLine2">保险方案比对中...</p>
         <div class="loading-progress">
           <div class="loading-progress-bar" id="progressBar"></div>
         </div>
+        <p class="loading-savings-num" id="loadingSavingsNum" style="margin-top:16px;font-size:14px;color:var(--text-secondary);">预计为您节省 <span id="loadingSavingsNumInner">0</span> 元/年</p>
+        <p class="loading-slogan" id="loadingSlogan"></p>
       </div>
     </div>
 
@@ -1794,6 +1934,116 @@
 
       <div class="chat-content" id="chatContent">
         <!-- 消息由JS动态生成 -->
+      </div>
+
+      <div class="chat-tabs" id="chatTabs">
+        <div class="chat-tab active" data-tab="chat"><span class="chat-tab-icon">💬</span><span class="chat-tab-label">对话</span></div>
+        <div class="chat-tab" data-tab="files"><span class="chat-tab-icon">📁</span><span class="chat-tab-label">档案</span></div>
+        <div class="chat-tab" data-tab="network"><span class="chat-tab-icon">🌐</span><span class="chat-tab-label">经验</span></div>
+        <div class="chat-tab" data-tab="notify"><span class="chat-tab-icon">🔔</span><span class="chat-tab-label">消息</span><span class="chat-tab-badge"></span></div>
+        <div class="chat-tab" data-tab="settings"><span class="chat-tab-icon">⚙️</span><span class="chat-tab-label">设置</span></div>
+      </div>
+
+      <div class="tab-panel" id="panelFiles" style="display:none;padding:16px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">我的车务档案</div>
+        <div style="display:flex;gap:12px;margin-bottom:20px;">
+          <div style="flex:1;background:var(--dongchedi-yellow-light);border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
+            <div style="font-size:28px;margin-bottom:4px;">📋</div>
+            <div style="font-size:12px;color:var(--text-primary);font-weight:500;">检测报告</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">3份</div>
+          </div>
+          <div style="flex:1;background:#F0F7FF;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
+            <div style="font-size:28px;margin-bottom:4px;">🔧</div>
+            <div style="font-size:12px;color:var(--text-primary);font-weight:500;">保养记录</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">5次</div>
+          </div>
+          <div style="flex:1;background:#F0FFF0;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
+            <div style="font-size:28px;margin-bottom:4px;">🛡️</div>
+            <div style="font-size:12px;color:var(--text-primary);font-weight:500;">保险单</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">2份</div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:10px;">最近文件</div>
+        <div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:var(--dongchedi-yellow-light);border-radius:8px;display:flex;align-items:center;justify-content:center;">📋</div>
+              <div><div style="font-size:14px;font-weight:500;color:var(--text-primary);">全车检测报告</div><div style="font-size:11px;color:var(--text-tertiary);">2026-05-15 · 低风险</div></div>
+            </div>
+            <span style="font-size:12px;color:var(--dongchedi-yellow-dark);">查看 ›</span>
+          </div>
+        </div>
+        <div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:#F0F7FF;border-radius:8px;display:flex;align-items:center;justify-content:center;">🔧</div>
+              <div><div style="font-size:14px;font-weight:500;color:var(--text-primary);">首次保养记录</div><div style="font-size:11px;color:var(--text-tertiary);">2026-03-20 · 三电检查</div></div>
+            </div>
+            <span style="font-size:12px;color:var(--dongchedi-yellow-dark);">查看 ›</span>
+          </div>
+        </div>
+        <div style="background:var(--ivory-card);border-radius:12px;padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:36px;height:36px;background:#F0FFF0;border-radius:8px;display:flex;align-items:center;justify-content:center;">🛡️</div>
+              <div><div style="font-size:14px;font-weight:500;color:var(--text-primary);">交强险+商业险</div><div style="font-size:11px;color:var(--text-tertiary);">2025-03-15 · ¥6,800/年</div></div>
+            </div>
+            <span style="font-size:12px;color:var(--dongchedi-yellow-dark);">查看 ›</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panelNetwork" style="display:none;padding:16px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">车主经验网络</div>
+        <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:16px;">基于 2,360 位同车型车主真实反馈</div>
+        <div id="experienceList"></div>
+      </div>
+
+      <div class="tab-panel" id="panelNotify" style="display:none;padding:16px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">消息中心</div>
+        <div style="background:linear-gradient(135deg,#FFF8E1,#FFF4D6);border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid #FF8F1F;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:600;color:#FF8F1F;">🛞 轮胎预警</span>
+            <span style="font-size:11px;color:var(--text-tertiary);">今天</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-primary);line-height:1.5;">你的轮胎已使用5个月，建议6个月后检查胎纹深度。当前胎纹7.8mm，状态良好。</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#F0F7FF,#E8F4FF);border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid #4A90D9;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:600;color:#4A90D9;">🔧 保养提醒</span>
+            <span style="font-size:11px;color:var(--text-tertiary);">明天</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-primary);line-height:1.5;">下次保养时间：2026年8月（约10,000公里）。空调滤芯建议6个月更换，费用200-350元。</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#F0FFF0,#E8FFE8);border-radius:12px;padding:14px;margin-bottom:10px;border-left:3px solid #00B578;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:600;color:#00B578;">💰 卖车建议</span>
+            <span style="font-size:11px;color:var(--text-tertiary);">本周</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-primary);line-height:1.5;">当前保值率68%，预计一年后约62%。准新车阶段保值率最高，建议3年内出手可保持较好残值。</div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panelSettings" style="display:none;padding:16px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">设置</div>
+        <div style="background:var(--ivory-card);border-radius:12px;overflow:hidden;">
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);cursor:pointer;">
+            <span style="font-size:14px;color:var(--text-primary);">车辆信息</span>
+            <span style="font-size:13px;color:var(--text-tertiary);">宝马i5 ›</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);cursor:pointer;">
+            <span style="font-size:14px;color:var(--text-primary);">消息通知</span>
+            <span style="font-size:13px;color:var(--text-tertiary);">已开启 ›</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);cursor:pointer;">
+            <span style="font-size:14px;color:var(--text-primary);">隐私设置</span>
+            <span style="font-size:13px;color:var(--text-tertiary);">›</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+            <span style="font-size:14px;color:var(--text-primary);">关于</span>
+            <span style="font-size:13px;color:var(--text-tertiary);">v1.0.0 ›</span>
+          </div>
+        </div>
       </div>
 
       <div class="chat-footer">
@@ -1947,9 +2197,11 @@
     const chatInput = document.getElementById('chatInput');
     const chatSendBtn = document.getElementById('chatSendBtn');
     const progressBar = document.getElementById('progressBar');
-    const loadingText = document.getElementById('loadingText');
-    const loadingText2 = document.getElementById('loadingText2');
+    const loadingLine1 = document.getElementById('loadingLine1');
+    const loadingLine2 = document.getElementById('loadingLine2');
     const loadingSavingsNum = document.getElementById('loadingSavingsNum');
+    const loadingSavingsNumInner = document.getElementById('loadingSavingsNumInner');
+    const loadingSlogan = document.getElementById('loadingSlogan');
     const reportContent = document.getElementById('reportContent');
 
     // ========== 页面切换 ==========
@@ -1962,10 +2214,23 @@
     function runLoadingAnimation() {
       return new Promise((resolve) => {
         showPage('loadingPage');
-        loadingText.style.display = '';
-        loadingText2.style.display = 'none';
-        loadingSavingsNum.textContent = '0';
+        loadingLine1.textContent = 'AI正在分析车况...';
+        loadingLine2.textContent = '保险方案比对中...';
+        loadingSavingsNumInner.textContent = '0';
         progressBar.style.width = '0%';
+
+        const slogans = ['为你的爱车量身定制养护方案', '已分析 10,000+ 同车型数据', '智能匹配最优保养策略', '省钱、省心、省时间'];
+        let sloganIndex = 0;
+        loadingSlogan.textContent = slogans[0];
+
+        const sloganInterval = setInterval(() => {
+          sloganIndex = (sloganIndex + 1) % slogans.length;
+          loadingSlogan.style.opacity = '0';
+          setTimeout(() => {
+            loadingSlogan.textContent = slogans[sloganIndex];
+            loadingSlogan.style.opacity = '1';
+          }, 150);
+        }, 1500);
 
         const duration = 3000;
         const startTime = Date.now();
@@ -1979,16 +2244,15 @@
 
           if (!switched && elapsed >= 1500) {
             switched = true;
-            loadingText.style.display = 'none';
-            loadingText2.style.display = '';
+            loadingLine1.textContent = '已完成车辆档案分析';
+            loadingLine2.textContent = '正在生成省钱方案...';
           }
 
-          if (switched) {
-            loadingSavingsNum.textContent = Math.floor(targetSavings * progress);
-          }
+          loadingSavingsNumInner.textContent = Math.floor(targetSavings * progress);
 
           if (progress >= 1) {
             clearInterval(updateInterval);
+            clearInterval(sloganInterval);
             resolve();
           }
         }, 30);
@@ -2250,20 +2514,19 @@
       removeTypingIndicator();
 
       // 最终建议，不再重复"状态良好"
-      await addBotMessage(`我的建议是：先别急着换。你这胎还能跑个两三万公里，等胎纹到3mm左右再换不迟。`, 400);
+      await addBotMessage(`我的建议是：先别急着换。你这胎还能跑个两三万公里，等胎纹到3mm左右再换不迟。放心，我会帮你想着的，到时候会提醒你更换。`, 400);
 
       addTypingIndicator();
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 500));
       removeTypingIndicator();
 
-      await addBotMessage(`不过既然问到了，我可以给你几个方案备着，到时候直接参考：`, 200);
+      await addBotMessage(`不过既然你问了，我给你备几个方案，到时候直接参考就行：`, 200);
 
       addTypingIndicator();
       await new Promise(r => setTimeout(r, 600));
       removeTypingIndicator();
 
       // 推荐方案（以备将来参考）
-      await addBotMessage('不过如果你将来需要换胎，这里有几个方案供你参考：');
       await addBotMessage(`
         <div class="plan-list">
           <div class="plan-item" data-plan="economy" onclick="goToShop('economy')">
@@ -2808,12 +3071,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     }
 
     // ========== 事件绑定 ==========
-    startBtn.addEventListener('click', async () => {
-      await runLoadingAnimation();
-      renderReport();
-      showPage('reportPage');
-      reportContent.scrollTop = 0;
-    });
 
     closeBtn.addEventListener('click', () => showPage('welcomePage'));
 
@@ -2829,6 +3086,89 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         handleUserInput();
+      }
+    });
+
+    // ========== Tab切换逻辑 ==========
+    const chatTabs = document.getElementById('chatTabs');
+    const tabPanels = {
+      chat: document.getElementById('chatContent'),
+      files: document.getElementById('panelFiles'),
+      network: document.getElementById('panelNetwork'),
+      notify: document.getElementById('panelNotify'),
+      settings: document.getElementById('panelSettings')
+    };
+
+    chatTabs.addEventListener('click', (e) => {
+      const tab = e.target.closest('.chat-tab');
+      if (!tab) return;
+      const tabName = tab.dataset.tab;
+
+      // 更新tab active状态
+      chatTabs.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // 切换面板显示
+      Object.keys(tabPanels).forEach(key => {
+        if (tabPanels[key]) {
+          tabPanels[key].style.display = key === tabName ? '' : 'none';
+        }
+      });
+
+      // 切换footer显示（对话tab显示footer，其他隐藏）
+      const chatFooter = document.querySelector('.chat-footer');
+      chatFooter.style.display = tabName === 'chat' ? '' : 'none';
+
+      // 如果切换到经验tab，渲染经验列表
+      if (tabName === 'network') {
+        renderExperienceList();
+      }
+    });
+
+    // ========== 经验tab动态渲染 ==========
+    function renderExperienceList() {
+      const list = document.getElementById('experienceList');
+      if (list.children.length > 0) return; // 已渲染过则不重复
+      carOwnerData.ownerExperiences.forEach(exp => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:10px;';
+        card.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div style="width:32px;height:32px;background:var(--dongchedi-yellow-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">👤</div>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:500;color:var(--text-primary);">${exp.user}</div>
+              <div style="font-size:11px;color:var(--text-tertiary);">⭐ ${exp.rating}</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.5;padding-left:42px;">"${exp.tip}"</div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // ========== 场景推荐弹窗逻辑 ==========
+    const sceneSheet = document.getElementById('sceneSheet');
+    let selectedScene = null;
+
+    startBtn.addEventListener('click', async () => {
+      sceneSheet.classList.add('active');
+    });
+
+    sceneSheet.addEventListener('click', (e) => {
+      // 点击overlay背景关闭
+      if (e.target === sceneSheet) {
+        sceneSheet.classList.remove('active');
+        return;
+      }
+      // 点击场景卡片
+      const card = e.target.closest('.scene-sheet-card');
+      if (card) {
+        selectedScene = card.dataset.scene;
+        sceneSheet.classList.remove('active');
+        await runLoadingAnimation();
+        renderReport();
+        showPage('reportPage');
+        reportContent.scrollTop = 0;
       }
     });
 
