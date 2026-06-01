@@ -3931,13 +3931,13 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     let hasSentCarSuggestion = false;
     let carSuggestionTimer = null;
     
-    // 调度换车建议：每次调用重置计时器，停顿8秒后才真正发送
+    // 调度换车建议：每次调用重置计时器，停顿15秒后才真正发送
     function scheduleCarSuggestion() {
       if (hasSentCarSuggestion) return;
       if (carSuggestionTimer) clearTimeout(carSuggestionTimer);
       carSuggestionTimer = setTimeout(() => {
         sendCarChangeSuggestion();
-      }, 8000);
+      }, 15000);
     }
     
     function sendCarChangeSuggestion() {
