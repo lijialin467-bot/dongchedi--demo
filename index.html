@@ -3154,7 +3154,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       sceneSheet.classList.add('active');
     });
 
-    sceneSheet.addEventListener('click', (e) => {
+    sceneSheet.addEventListener('click', async (e) => {
       // 点击overlay背景关闭
       if (e.target === sceneSheet) {
         sceneSheet.classList.remove('active');
