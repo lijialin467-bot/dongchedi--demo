@@ -3658,8 +3658,26 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         // 切换回对话tab
         document.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
         document.querySelector('.chat-tab[data-tab="chat"]').classList.add('active');
-        document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
-        document.getElementById('panelChat').style.display = 'flex';
+        
+        // 隐藏所有面板
+        Object.values(tabPanels).forEach(p => { if(p) p.style.display = 'none'; });
+        
+        // 显示对话内容
+        if (chatContent) {
+          chatContent.style.display = 'block';
+        }
+        
+        // 显示footer
+        const chatFooter = document.querySelector('.chat-footer');
+        if (chatFooter) {
+          chatFooter.style.display = 'block';
+        }
+        
+        // 显示快捷按钮
+        const quickActions = document.getElementById('quickActions');
+        if (quickActions) {
+          quickActions.style.display = 'flex';
+        }
       } else {
         // 在对话tab时，返回来源页
         showPage(chatPageSource);
@@ -3677,8 +3695,8 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     // ========== Tab切换逻辑 ==========
     const chatTabs = document.getElementById('chatTabs');
     const sidebarToggle = document.getElementById('sidebarToggle');
+    const chatContent = document.getElementById('chatContent');
     const tabPanels = {
-      chat: document.getElementById('chatContent'),
       files: document.getElementById('panelFiles'),
       network: document.getElementById('panelNetwork'),
       notify: document.getElementById('panelNotify'),
@@ -3700,16 +3718,29 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       chatTabs.querySelectorAll('.chat-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
 
-      // 切换面板显示
+      // 切换面板显示（对话内容单独处理）
       Object.keys(tabPanels).forEach(key => {
         if (tabPanels[key]) {
-          tabPanels[key].style.display = key === tabName ? '' : 'none';
+          tabPanels[key].style.display = key === tabName ? 'block' : 'none';
         }
       });
 
+      // 切换对话内容显示
+      if (chatContent) {
+        chatContent.style.display = tabName === 'chat' ? 'block' : 'none';
+      }
+
       // 切换footer显示（对话tab显示footer，其他隐藏）
       const chatFooter = document.querySelector('.chat-footer');
-      chatFooter.style.display = tabName === 'chat' ? '' : 'none';
+      if (chatFooter) {
+        chatFooter.style.display = tabName === 'chat' ? 'block' : 'none';
+      }
+
+      // 切换快捷按钮显示（只在对话tab显示）
+      const quickActions = document.getElementById('quickActions');
+      if (quickActions) {
+        quickActions.style.display = tabName === 'chat' ? 'flex' : 'none';
+      }
 
       // 如果切换到经验tab，渲染经验列表
       if (tabName === 'network') {
