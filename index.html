@@ -2842,6 +2842,9 @@
       } else if (topic === 'maintain') {
         await startMaintainFlow();
       }
+      
+      // 整个对话流程结束后，调度换车建议（防抖8秒）
+      scheduleCarSuggestion();
     }
 
     // --- 轮胎话题流程 ---
