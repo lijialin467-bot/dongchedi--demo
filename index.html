@@ -3830,7 +3830,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             </div>
           </div>
           <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">选择服务方式</div>
-          <div class="store-card" onclick="document.getElementById('shopOverlay').classList.remove('active');window.open('https://www.douyin.com','_blank');" style="margin-bottom:10px;">
+          <div class="store-card" onclick="startOnlinePurchaseFlow('${planType}')" style="margin-bottom:10px;">
             <div style="display:flex;align-items:center;gap:12px;">
               <div style="width:44px;height:44px;background:var(--dongchedi-yellow-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛒</div>
               <div style="flex:1;">
@@ -3838,11 +3838,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
                   <span style="font-size:15px;font-weight:600;color:var(--text-primary);">在线购买</span>
                   <span style="font-size:10px;color:#00B578;background:#E8F8F0;padding:2px 6px;border-radius:8px;">数据闭环</span>
                 </div>
-                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">跳转抖音商城，自行购买后到店安装</div>
-                <div style="font-size:10px;color:var(--text-tertiary);margin-top:4px;display:flex;gap:8px;">
-                  <span>✓ 购买数据回流</span>
-                  <span>✓ 安装评价同步</span>
-                </div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">模拟完整购买链路：商城→购买→评价</div>
               </div>
               <span style="color:var(--text-tertiary);font-size:16px;">›</span>
             </div>
@@ -3861,6 +3857,278 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       `;
       shopOverlay.classList.add('active');
     }
+
+    // ========== 在线购买完整链路模拟 ==========
+    function startOnlinePurchaseFlow(planType) {
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      const planPrices = { economy: '800-1200', balanced: '1200-1800', comfort: '1800-2400' };
+      
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopBody = document.getElementById('shopBody');
+      
+      // 步骤1：商城跳转
+      shopBody.innerHTML = `
+        <div style="padding:20px 0;">
+          <div style="text-align:center;margin-bottom:30px;">
+            <div style="width:60px;height:60px;background:linear-gradient(135deg, #1a1a2e, #16213e);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;">🛒</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">正在跳转抖音商城...</div>
+            <div style="font-size:13px;color:var(--text-secondary);">${planLabels[planType]}方案 · ${planBrands[planType]}</div>
+          </div>
+          
+          <!-- 进度指示器 -->
+          <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:30px;">
+            <div style="width:32px;height:32px;background:var(--dongchedi-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">1</div>
+            <div style="width:40px;height:2px;background:var(--dongchedi-yellow);"></div>
+            <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">2</div>
+            <div style="width:40px;height:2px;background:#E5E5E5;"></div>
+            <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">3</div>
+            <div style="width:40px;height:2px;background:#E5E5E5;"></div>
+            <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">4</div>
+          </div>
+          
+          <div style="text-align:center;font-size:13px;color:var(--text-tertiary);">
+            <div style="margin-bottom:8px;">🔗 商城跳转 → 🛍️ 下单购买 → 📦 物流配送 → ⭐ 安装评价</div>
+            <div style="font-size:11px;">数据将自动回流至AI养车助手</div>
+          </div>
+        </div>
+      `;
+      
+      // 2秒后进入步骤2：商品详情页
+      setTimeout(() => {
+        shopBody.innerHTML = `
+          <div style="padding:20px 0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+              <span style="font-size:12px;color:#fff;background:var(--dongchedi-yellow);padding:2px 8px;border-radius:8px;">抖音商城</span>
+              <span style="font-size:12px;color:var(--text-tertiary);">米其林官方旗舰店</span>
+            </div>
+            
+            <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:20px;">
+              <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">${planBrands[planType]} 轮胎</div>
+              <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">适配 ${carOwnerData.car.fullName} · 245/45 R18 · 4条装</div>
+              <div style="display:flex;align-items:baseline;gap:4px;">
+                <span style="font-size:20px;font-weight:700;color:#FF3B30;">¥${planPrices[planType]}</span>
+                <span style="font-size:12px;color:var(--text-tertiary);text-decoration:line-through;">¥${parseInt(planPrices[planType].split('-')[1]) * 1.2}</span>
+              </div>
+            </div>
+            
+            <!-- 进度指示器 -->
+            <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:24px;">
+              <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+              <div style="width:40px;height:2px;background:var(--dongchedi-yellow);"></div>
+              <div style="width:32px;height:32px;background:var(--dongchedi-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">2</div>
+              <div style="width:40px;height:2px;background:#E5E5E5;"></div>
+              <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">3</div>
+              <div style="width:40px;height:2px;background:#E5E5E5;"></div>
+              <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">4</div>
+            </div>
+            
+            <div style="display:flex;gap:12px;">
+              <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</div>
+              <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="startPurchaseConfirm('${planType}')">立即购买</div>
+            </div>
+          </div>
+        `;
+      }, 2000);
+    }
+    
+    // 步骤3：确认订单
+    function startPurchaseConfirm(planType) {
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      const planPrices = { economy: '800-1200', balanced: '1200-1800', comfort: '1800-2400' };
+      
+      const shopBody = document.getElementById('shopBody');
+      
+      shopBody.innerHTML = `
+        <div style="padding:20px 0;">
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">确认订单</div>
+          
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">${planBrands[planType]} 轮胎 × 4</div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+              <span style="color:var(--text-secondary);">商品金额</span>
+              <span style="color:var(--text-primary);">¥${planPrices[planType]}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+              <span style="color:var(--text-secondary);">运费</span>
+              <span style="color:#00B578;">免运费</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:12px;border-top:1px solid var(--border-color);">
+              <span style="color:var(--text-primary);font-weight:500;">实付金额</span>
+              <span style="color:#FF3B30;font-size:16px;font-weight:700;">¥${planPrices[planType]}</span>
+            </div>
+          </div>
+          
+          <!-- 进度指示器 -->
+          <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:24px;">
+            <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+            <div style="width:40px;height:2px;background:#00B578;"></div>
+            <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+            <div style="width:40px;height:2px;background:var(--dongchedi-yellow);"></div>
+            <div style="width:32px;height:32px;background:var(--dongchedi-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">3</div>
+            <div style="width:40px;height:2px;background:#E5E5E5;"></div>
+            <div style="width:32px;height:32px;background:#E5E5E5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;">4</div>
+          </div>
+          
+          <div style="background:#E8F8F0;border-radius:8px;padding:12px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#00B578;display:flex;align-items:center;gap:6px;">
+              <span>✓</span>
+              <span>购买后数据将自动同步至AI养车助手，用于优化推荐</span>
+            </div>
+          </div>
+          
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</div>
+            <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="completePurchase('${planType}')">确认支付</div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // 步骤4：完成购买 + 评价引导
+    function completePurchase(planType) {
+      const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      
+      const shopBody = document.getElementById('shopBody');
+      
+      shopBody.innerHTML = `
+        <div style="padding:20px 0;">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="width:60px;height:60px;background:#00B578;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;">✓</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">购买成功！</div>
+            <div style="font-size:13px;color:var(--text-secondary);">订单号：DC${Date.now().toString().slice(-8)}</div>
+          </div>
+          
+          <!-- 进度指示器 -->
+          <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:24px;">
+            <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+            <div style="width:40px;height:2px;background:#00B578;"></div>
+            <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+            <div style="width:40px;height:2px;background:#00B578;"></div>
+            <div style="width:32px;height:32px;background:#00B578;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">✓</div>
+            <div style="width:40px;height:2px;background:var(--dongchedi-yellow);"></div>
+            <div style="width:32px;height:32px;background:var(--dongchedi-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">4</div>
+          </div>
+          
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">📦 订单信息</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">${planBrands[planType]} 轮胎 × 4</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">预计3-5天送达</div>
+            <div style="font-size:12px;color:var(--dongchedi-yellow-dark);background:var(--dongchedi-yellow-light);padding:8px;border-radius:8px;margin-top:12px;">
+              💡 安装完成后记得回来评价，帮助其他车主做选择
+            </div>
+          </div>
+          
+          <div style="background:#E8F8F0;border-radius:8px;padding:12px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#00B578;display:flex;align-items:center;gap:6px;">
+              <span>✓</span>
+              <span>购买数据已回流至AI养车助手</span>
+            </div>
+          </div>
+          
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+            <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="startReviewFlow('${planType}')">模拟安装评价</div>
+          </div>
+        </div>
+      `;
+      
+      // 记录购买数据
+      const purchaseData = { 
+        planType, 
+        brand: planBrands[planType], 
+        orderId: 'DC' + Date.now().toString().slice(-8),
+        action: 'purchase_complete', 
+        timestamp: new Date().toISOString() 
+      };
+      const purchases = JSON.parse(localStorage.getItem('dc_purchases') || '[]');
+      purchases.push(purchaseData);
+      localStorage.setItem('dc_purchases', JSON.stringify(purchases));
+    }
+    
+    // 步骤5：评价流程
+    function startReviewFlow(planType) {
+      const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
+      
+      const shopBody = document.getElementById('shopBody');
+      
+      shopBody.innerHTML = `
+        <div style="padding:20px 0;">
+          <div style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">安装完成评价</div>
+          
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div style="font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:12px;">${planBrands[planType]} 轮胎</div>
+            <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;">
+              <span style="font-size:24px;cursor:pointer;" onclick="selectStar(1)">⭐</span>
+              <span style="font-size:24px;cursor:pointer;" onclick="selectStar(2)">⭐</span>
+              <span style="font-size:24px;cursor:pointer;" onclick="selectStar(3)">⭐</span>
+              <span style="font-size:24px;cursor:pointer;" onclick="selectStar(4)">⭐</span>
+              <span style="font-size:24px;cursor:pointer;" onclick="selectStar(5)">⭐</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-bottom:12px;">点击星星评分</div>
+            <textarea placeholder="分享您的使用体验，帮助其他车主..." style="width:100%;height:80px;border:1px solid var(--border-color);border-radius:8px;padding:10px;font-size:13px;resize:none;"></textarea>
+          </div>
+          
+          <div style="background:#E8F8F0;border-radius:8px;padding:12px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#00B578;line-height:1.6;">
+              <div style="margin-bottom:4px;">✓ 评价将同步至懂车帝平台</div>
+              <div style="margin-bottom:4px;">✓ 用于AI优化推荐算法</div>
+              <div>✓ 帮助其他车主做购买决策</div>
+            </div>
+          </div>
+          
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">跳过</div>
+            <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="submitReview('${planType}')">提交评价</div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // 提交评价
+    function submitReview(planType) {
+      const shopBody = document.getElementById('shopBody');
+      
+      shopBody.innerHTML = `
+        <div style="padding:20px 0;">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="width:60px;height:60px;background:#00B578;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;">✓</div>
+            <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">评价提交成功！</div>
+            <div style="font-size:13px;color:var(--text-secondary);">感谢您的反馈，已帮助其他车主做选择</div>
+          </div>
+          
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">🎁 评价福利</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+              <div style="margin-bottom:8px;">✓ 获得50积分，可兑换保养优惠券</div>
+              <div style="margin-bottom:8px;">✓ 评价已同步至懂车帝，帮助更多车主</div>
+              <div>✓ AI将根据您的反馈优化推荐</div>
+            </div>
+          </div>
+          
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">完成</div>
+        </div>
+      `;
+      
+      // 记录评价数据
+      const reviewData = { 
+        planType, 
+        rating: 5, 
+        action: 'review_complete', 
+        timestamp: new Date().toISOString() 
+      };
+      const reviews = JSON.parse(localStorage.getItem('dc_reviews') || '[]');
+      reviews.push(reviewData);
+      localStorage.setItem('dc_reviews', JSON.stringify(reviews));
+    }
+    
+    // 星星选择（简化版）
+    window.selectStar = function(n) {
+      // 实际项目中会高亮星星
+      console.log('Selected star:', n);
+    };
 
     const mockStores = [
       { id: 1, name: '懂车帝养车（朝阳大悦城店）', distance: '1.2km', rating: 4.8, orders: 2360, waitTime: '约30分钟', tags: ['官方认证', '免费洗车'], price: '¥1,400' },
