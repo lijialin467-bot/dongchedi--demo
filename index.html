@@ -2816,7 +2816,7 @@
           // 推荐问题显示后，延迟发送换车建议
           setTimeout(() => {
             sendCarChangeSuggestion();
-          }, 3000);
+          }, 5000);
         });
     }
 
@@ -3629,6 +3629,11 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       }
 
       await addBotMessage(`<span style="font-size:13px;color:#FF8F1F;font-weight:500;">💡 温馨提示</span><br><span style="font-size:13px;color:#666;line-height:1.6;">${tip}</span>`, 600);
+      
+      // 温馨提示后，检查是否需要发送换车建议
+      setTimeout(() => {
+        sendCarChangeSuggestion();
+      }, 3000);
     }
 
     // 添加CSS闪烁动画（如果不存在）
