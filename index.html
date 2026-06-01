@@ -3696,7 +3696,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     // ========== Tab切换逻辑 ==========
     const chatTabs = document.getElementById('chatTabs');
     const sidebarToggle = document.getElementById('sidebarToggle');
-    const chatContent = document.getElementById('chatContent');
+    // chatContent 已在前面声明
     const tabPanels = {
       files: document.getElementById('panelFiles'),
       network: document.getElementById('panelNetwork'),
@@ -3852,11 +3852,20 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
     startBtn.addEventListener('click', async () => {
       if (isStartBtnClicked) return;
       isStartBtnClicked = true;
-      // 直接进入 loading 界面
-      await runLoadingAnimation();
-      renderReport();
-      showPage('reportPage');
-      reportContent.scrollTop = 0;
+      console.log('立即查看按钮被点击');
+      try {
+        // 直接进入 loading 界面
+        await runLoadingAnimation();
+        console.log('Loading动画完成');
+        renderReport();
+        console.log('报告渲染完成');
+        showPage('reportPage');
+        console.log('切换到报告页');
+        reportContent.scrollTop = 0;
+      } catch (err) {
+        console.error('跳转失败:', err);
+        isStartBtnClicked = false;
+      }
     });
 
     async function handleUserInput() {
