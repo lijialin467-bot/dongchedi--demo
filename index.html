@@ -4467,8 +4467,445 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       });
     }
 
+    // ========== 增强功能模块 ==========
+    
+    // 1. 用户偏好设置和长期记忆系统
+    const UserMemory = {
+      get(key) {
+        const data = JSON.parse(localStorage.getItem('dc_user_memory') || '{}');
+        return data[key];
+      },
+      set(key, value) {
+        const data = JSON.parse(localStorage.getItem('dc_user_memory') || '{}');
+        data[key] = value;
+        data.lastUpdated = new Date().toISOString();
+        localStorage.setItem('dc_user_memory', JSON.stringify(data));
+      },
+      getAll() {
+        return JSON.parse(localStorage.getItem('dc_user_memory') || '{}');
+      }
+    };
+    
+    // 初始化用户偏好
+    function initUserPreferences() {
+      const prefs = UserMemory.getAll();
+      if (!prefs.initialized) {
+        UserMemory.set('initialized', true);
+        UserMemory.set('preferredBrands', ['米其林', '马牌']);
+        UserMemory.set('priceSensitivity', 'medium');
+        UserMemory.set('servicePreference', 'quality'); // quality/price/speed
+        UserMemory.set('notificationEnabled', true);
+        UserMemory.set('drivingHabits', {
+          dailyMileage: 50,
+          roadCondition: 'mixed', // city/highway/mixed
+          drivingStyle: 'normal' // aggressive/normal/gentle
+        });
+      }
+    }
+    
+    // 2. 语音输入功能
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('chatInput');
+        if (input) {
+          input.value = transcript;
+          sendMessage();
+        }
+      };
+    }
+    
+    function toggleVoiceInput() {
+      if (!recognition) {
+        alert('您的浏览器不支持语音输入');
+        return;
+      }
+      
+      const voiceBtn = document.getElementById('voiceBtn');
+      if (voiceBtn.classList.contains('recording')) {
+        recognition.stop();
+        voiceBtn.classList.remove('recording');
+        voiceBtn.style.color = '';
+      } else {
+        recognition.start();
+        voiceBtn.classList.add('recording');
+        voiceBtn.style.color = '#FF3B30';
+      }
+    }
+    
+    // 3. 拍照识别功能
+    function openCamera() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            // 模拟AI识别
+            addUserMessage('[图片]', event.target.result);
+            setTimeout(() => {
+              analyzeImage(event.target.result);
+            }, 1000);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    }
+    
+    function analyzeImage(imageData) {
+      // 模拟图像识别结果
+      const analyses = [
+        '检测到轮胎胎纹深度约5mm，建议关注磨损情况',
+        '识别到仪表盘故障灯，建议尽快检查',
+        '检测到刹车片厚度正常，可继续使用',
+        '识别到机油颜色较深，建议更换'
+      ];
+      const randomAnalysis = analyses[Math.floor(Math.random() * analyses.length)];
+      addBotMessage(`📷 图片识别结果：<br><br>${randomAnalysis}<br><br>如需更准确的诊断，建议到店检测。`, 600);
+    }
+    
+    // 4. 预测性维护系统
+    const PredictiveMaintenance = {
+      calculateTireLife() {
+        const habits = UserMemory.get('drivingHabits') || { dailyMileage: 50, roadCondition: 'mixed' };
+        const baseLife = 40000; // 基础寿命40,000公里
+        const dailyMileage = habits.dailyMileage || 50;
+        const roadFactor = { city: 0.9, highway: 1.1, mixed: 1.0 }[habits.roadCondition] || 1.0;
+        const styleFactor = { aggressive: 0.8, normal: 1.0, gentle: 1.2 }[habits.drivingStyle] || 1.0;
+        
+        const estimatedLife = Math.round(baseLife * roadFactor * styleFactor);
+        const daysRemaining = Math.round(estimatedLife / dailyMileage);
+        
+        return {
+          estimatedLife,
+          daysRemaining,
+          replaceDate: new Date(Date.now() + daysRemaining * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN')
+        };
+      },
+      
+      getWarnings() {
+        const warnings = [];
+        const carData = carOwnerData;
+        
+        // 基于里程的预警
+        if (carData.mileage > 45000) {
+          warnings.push({
+            type: 'urgent',
+            component: '轮胎',
+            message: '里程已超4.5万公里，建议尽快更换轮胎',
+            action: '查看推荐产品'
+          });
+        } else if (carData.mileage > 35000) {
+          warnings.push({
+            type: 'warning',
+            component: '轮胎',
+            message: '轮胎接近建议更换里程，请关注胎纹深度',
+            action: '预约检测'
+          });
+        }
+        
+        // 基于时间的预警
+        const lastMaintenance = new Date(carData.lastMaintenance);
+        const daysSinceMaintenance = Math.floor((Date.now() - lastMaintenance) / (1000 * 60 * 60 * 24));
+        if (daysSinceMaintenance > 180) {
+          warnings.push({
+            type: 'warning',
+            component: '保养',
+            message: `已${Math.round(daysSinceMaintenance / 30)}个月未保养，建议尽快安排`,
+            action: '预约保养'
+          });
+        }
+        
+        return warnings;
+      }
+    };
+    
+    // 5. 价格透明与比价系统
+    const PriceComparison = {
+      getPriceHistory(product) {
+        // 模拟历史价格数据
+        const history = JSON.parse(localStorage.getItem(`dc_price_history_${product}`) || '[]');
+        if (history.length === 0) {
+          // 生成模拟数据
+          const basePrice = 1000;
+          for (let i = 30; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            history.push({
+              date: date.toISOString().split('T')[0],
+              price: basePrice + Math.random() * 200 - 100
+            });
+          }
+          localStorage.setItem(`dc_price_history_${product}`, JSON.stringify(history));
+        }
+        return history;
+      },
+      
+      comparePrices(product) {
+        // 模拟多平台比价
+        return [
+          { platform: '抖音商城', price: 980, originalPrice: 1200, tag: '官方直营' },
+          { platform: '京东', price: 1050, originalPrice: 1200, tag: '自营' },
+          { platform: '天猫', price: 1100, originalPrice: 1200, tag: '旗舰店' },
+          { platform: '途虎', price: 1150, originalPrice: 1300, tag: '包安装' }
+        ].sort((a, b) => a.price - b.price);
+      }
+    };
+    
+    // 6. 会员与积分体系
+    const MembershipSystem = {
+      getLevel(points) {
+        if (points >= 10000) return { name: '钻石会员', level: 4, color: '#8B5CF6' };
+        if (points >= 5000) return { name: '铂金会员', level: 3, color: '#3B82F6' };
+        if (points >= 2000) return { name: '黄金会员', level: 2, color: '#F59E0B' };
+        return { name: '普通会员', level: 1, color: '#6B7280' };
+      },
+      
+      addPoints(action, amount) {
+        const currentPoints = parseInt(localStorage.getItem('dc_user_points') || '0');
+        const newPoints = currentPoints + amount;
+        localStorage.setItem('dc_user_points', newPoints.toString());
+        
+        // 记录积分明细
+        const records = JSON.parse(localStorage.getItem('dc_points_records') || '[]');
+        records.push({
+          action,
+          amount,
+          balance: newPoints,
+          timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('dc_points_records', JSON.stringify(records));
+        
+        return newPoints;
+      },
+      
+      getBenefits(level) {
+        const benefits = {
+          1: ['积分抵扣', '生日礼包'],
+          2: ['积分抵扣', '生日礼包', '专属折扣9.5折', '优先预约'],
+          3: ['积分抵扣', '生日礼包', '专属折扣9折', '优先预约', '免费检测'],
+          4: ['积分抵扣', '生日礼包', '专属折扣8.5折', '优先预约', '免费检测', '专属客服']
+        };
+        return benefits[level] || benefits[1];
+      }
+    };
+    
+    // 7. 智能客服与人工接管
+    function escalateToHuman() {
+      const messages = [
+        '正在为您转接人工客服...',
+        '当前排队人数：3人，预计等待2分钟',
+        '已为您优先接入专业技师顾问'
+      ];
+      
+      let i = 0;
+      const showMessage = () => {
+        if (i < messages.length) {
+          addBotMessage(messages[i], 800);
+          i++;
+          setTimeout(showMessage, 2000);
+        } else {
+          // 模拟人工客服接入
+          setTimeout(() => {
+            addBotMessage(`👨‍🔧 技师顾问：您好，我是懂车帝养车顾问，有什么可以帮您？<br><br><div style="display:flex;gap:8px;margin-top:12px;"><span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:4px 12px;border-radius:12px;font-size:12px;cursor:pointer;" onclick="addUserMessage('咨询轮胎更换')">咨询轮胎更换</span><span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:4px 12px;border-radius:12px;font-size:12px;cursor:pointer;" onclick="addUserMessage('预约保养')">预约保养</span><span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:4px 12px;border-radius:12px;font-size:12px;cursor:pointer;" onclick="addUserMessage('故障咨询')">故障咨询</span></div>`, 400);
+          }, 1500);
+        }
+      };
+      showMessage();
+    }
+    
+    // 8. 数据可视化仪表盘
+    function showDashboard() {
+      const tireLife = PredictiveMaintenance.calculateTireLife();
+      const warnings = PredictiveMaintenance.getWarnings();
+      const points = parseInt(localStorage.getItem('dc_user_points') || '0');
+      const level = MembershipSystem.getLevel(points);
+      
+      const dashboardHtml = `
+        <div style="padding:20px 0;">
+          <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">📊 车辆健康仪表盘</div>
+          
+          <!-- 健康度评分 -->
+          <div style="background:linear-gradient(135deg, var(--dongchedi-yellow-light), #FFF4D6);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;">
+            <div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px;">车辆健康度</div>
+            <div style="font-size:48px;font-weight:700;color:var(--dongchedi-yellow-dark);">${warnings.length > 0 ? '85' : '95'}</div>
+            <div style="font-size:13px;color:var(--text-secondary);">${warnings.length > 0 ? '有' + warnings.length + '项需要关注' : '状态良好'}</div>
+          </div>
+          
+          <!-- 预测性维护 -->
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">🔮 预测性维护</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">
+              预计轮胎剩余寿命：<strong>${tireLife.daysRemaining}天</strong>
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);">
+              建议更换时间：<strong>${tireLife.replaceDate}</strong>
+            </div>
+          </div>
+          
+          <!-- 用车成本 -->
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">💰 用车成本趋势</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:13px;color:var(--text-secondary);">本月保养</span>
+              <span style="font-size:13px;font-weight:600;">¥0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:13px;color:var(--text-secondary);">预计下月</span>
+              <span style="font-size:13px;font-weight:600;color:#FF3B30;">¥${warnings.length > 0 ? '2000-3000' : '500-800'}</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:8px;">基于您的驾驶习惯预测</div>
+          </div>
+          
+          <!-- 会员信息 -->
+          <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <div style="width:48px;height:48px;background:${level.color};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">👑</div>
+              <div>
+                <div style="font-size:15px;font-weight:600;color:var(--text-primary);">${level.name}</div>
+                <div style="font-size:12px;color:var(--text-tertiary);">${points} 积分</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-secondary);">
+              ${MembershipSystem.getBenefits(level.level).map(b => `✓ ${b}`).join('<br>')}
+            </div>
+          </div>
+          
+          ${warnings.length > 0 ? `
+          <!-- 预警信息 -->
+          <div style="background:#FFF1F0;border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid #FF4D4F;">
+            <div style="font-size:14px;font-weight:600;color:#FF4D4F;margin-bottom:12px;">⚠️ 需要关注</div>
+            ${warnings.map(w => `
+              <div style="margin-bottom:8px;">
+                <div style="font-size:13px;color:var(--text-primary);font-weight:500;">${w.component} - ${w.message}</div>
+                <div style="font-size:12px;color:var(--dongchedi-yellow-dark);margin-top:4px;cursor:pointer;" onclick="${w.action === '查看推荐产品' ? "goToShop('comfort')" : "openBooking('balanced')"}">${w.action} ›</div>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+          
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+        </div>
+      `;
+      
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopBody = document.getElementById('shopBody');
+      shopBody.innerHTML = dashboardHtml;
+      shopOverlay.classList.add('active');
+    }
+    
+    // 9. 跨平台生态适配提示
+    function showPlatformFeatures() {
+      const features = [
+        { icon: '📱', name: '微信小程序', desc: '扫码即用，无需下载', status: 'available' },
+        { icon: '🎵', name: '抖音小程序', desc: '刷视频顺便养车', status: 'available' },
+        { icon: '🚗', name: 'CarPlay/HiCar', desc: '车载语音控制', status: 'coming' },
+        { icon: '⌚', name: '智能手表', desc: '抬腕查看车辆状态', status: 'coming' }
+      ];
+      
+      const html = `
+        <div style="padding:20px 0;">
+          <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">🌐 多平台支持</div>
+          ${features.map(f => `
+            <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;${f.status === 'coming' ? 'opacity:0.6;' : ''}">
+              <div style="font-size:28px;">${f.icon}</div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:15px;font-weight:600;color:var(--text-primary);">${f.name}</span>
+                  ${f.status === 'coming' ? '<span style="font-size:10px;color:var(--text-tertiary);background:#F0F0F0;padding:2px 6px;border-radius:8px;">即将上线</span>' : ''}
+                </div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px;">${f.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+          
+          <div style="background:var(--dongchedi-yellow-light);border-radius:12px;padding:16px;margin-top:16px;">
+            <div style="font-size:14px;font-weight:600;color:var(--dongchedi-yellow-dark);margin-bottom:8px;">💡 当前使用提示</div>
+            <div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">
+              您当前正在使用H5网页版。建议添加到主屏幕，获得更接近原生App的体验。
+            </div>
+          </div>
+          
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;margin-top:16px;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+        </div>
+      `;
+      
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopBody = document.getElementById('shopBody');
+      shopBody.innerHTML = html;
+      shopOverlay.classList.add('active');
+    }
+    
+    // 10. 快捷功能按钮（添加到聊天界面）
+    function addQuickActions() {
+      const quickActions = document.createElement('div');
+      quickActions.id = 'quickActions';
+      quickActions.style.cssText = 'display:flex;gap:8px;padding:8px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;';
+      quickActions.innerHTML = `
+        <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showDashboard()">📊 仪表盘</span>
+        <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="openCamera()">📷 拍照识别</span>
+        <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="escalateToHuman()">👨‍🔧 人工客服</span>
+        <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showPlatformFeatures()">🌐 多平台</span>
+      `;
+      
+      const chatContent = document.getElementById('chatContent');
+      if (chatContent && !document.getElementById('quickActions')) {
+        chatContent.parentNode.insertBefore(quickActions, chatContent);
+      }
+    }
+    
+    // 修改输入框，添加语音和相机按钮
+    function enhanceChatInput() {
+      const inputArea = document.querySelector('.input-area');
+      if (inputArea) {
+        const voiceBtn = document.createElement('div');
+        voiceBtn.id = 'voiceBtn';
+        voiceBtn.style.cssText = 'width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text-tertiary);';
+        voiceBtn.innerHTML = '🎤';
+        voiceBtn.onclick = toggleVoiceInput;
+        
+        const cameraBtn = document.createElement('div');
+        cameraBtn.style.cssText = 'width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text-tertiary);';
+        cameraBtn.innerHTML = '📷';
+        cameraBtn.onclick = openCamera;
+        
+        // 在输入框前面插入按钮
+        const inputWrapper = inputArea.querySelector('.input-wrapper');
+        if (inputWrapper) {
+          inputArea.insertBefore(voiceBtn, inputWrapper);
+          inputArea.insertBefore(cameraBtn, inputWrapper);
+        }
+      }
+    }
+    
+    // 初始化所有增强功能
+    function initEnhancedFeatures() {
+      initUserPreferences();
+      addQuickActions();
+      enhanceChatInput();
+      
+      // 初始化积分（如果是新用户）
+      if (!localStorage.getItem('dc_user_points')) {
+        MembershipSystem.addPoints('注册奖励', 100);
+      }
+      
+      console.log('✅ 增强功能已加载：个性化记忆、语音输入、拍照识别、预测性维护、价格比对、会员体系、人工客服、数据仪表盘、多平台支持');
+    }
+    
     // ========== 初始化 ==========
     renderReport();
+    initEnhancedFeatures();
   </script>
 </body>
 </html>
