@@ -2346,8 +2346,8 @@
   <div class="booking-overlay" id="shopOverlay">
     <div class="booking-panel" style="max-height:60%;">
       <div class="booking-header">
-        <span class="booking-header-title">商品购买</span>
-        <div class="booking-close" onclick="document.getElementById('shopOverlay').classList.remove('active')">
+        <span class="booking-header-title" id="shopOverlayTitle">商品购买</span>
+        <div class="booking-close" onclick="closeShopOverlay()">
           <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </div>
       </div>
@@ -3843,7 +3843,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
               <span style="color:var(--text-tertiary);font-size:16px;">›</span>
             </div>
           </div>
-          <div class="store-card" onclick="document.getElementById('shopOverlay').classList.remove('active');openBooking('${planType}');">
+          <div class="store-card" onclick="closeShopOverlay();openBooking('${planType}');">
             <div style="display:flex;align-items:center;gap:12px;">
               <div style="width:44px;height:44px;background:var(--dongchedi-yellow-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏪</div>
               <div style="flex:1;">
@@ -3924,7 +3924,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             </div>
             
             <div style="display:flex;gap:12px;">
-              <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</div>
+              <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="closeShopOverlay()">取消</div>
               <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="startPurchaseConfirm('${planType}')">立即购买</div>
             </div>
           </div>
@@ -3979,7 +3979,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
           </div>
           
           <div style="display:flex;gap:12px;">
-            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">取消</div>
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="closeShopOverlay()">取消</div>
             <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="completePurchase('${planType}')">确认支付</div>
           </div>
         </div>
@@ -4029,7 +4029,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
           </div>
           
           <div style="display:flex;gap:12px;">
-            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="closeShopOverlay()">关闭</div>
             <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="startReviewFlow('${planType}')">模拟安装评价</div>
           </div>
         </div>
@@ -4080,7 +4080,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
           </div>
           
           <div style="display:flex;gap:12px;">
-            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">跳过</div>
+            <div style="flex:1;text-align:center;padding:12px;border:1px solid var(--border-color);border-radius:10px;font-size:13px;color:var(--text-secondary);cursor:pointer;" onclick="closeShopOverlay()">跳过</div>
             <div style="flex:2;text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="submitReview('${planType}')">提交评价</div>
           </div>
         </div>
@@ -4108,7 +4108,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             </div>
           </div>
           
-          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">完成</div>
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="closeShopOverlay()">完成</div>
         </div>
       `;
       
@@ -4469,6 +4469,16 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
 
     // ========== 增强功能模块 ==========
     
+    // 统一关闭弹窗函数（恢复标题）
+    function closeShopOverlay() {
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopTitle = document.getElementById('shopOverlayTitle');
+      if (shopOverlay && shopTitle && shopOverlay.dataset.originalTitle) {
+        shopTitle.textContent = shopOverlay.dataset.originalTitle;
+      }
+      shopOverlay.classList.remove('active');
+    }
+    
     // 1. 用户偏好设置和长期记忆系统
     const UserMemory = {
       get(key) {
@@ -4734,8 +4744,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       
       const dashboardHtml = `
         <div style="padding:20px 0;">
-          <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">📊 车辆健康仪表盘</div>
-          
           <!-- 健康度评分 -->
           <div style="background:linear-gradient(135deg, var(--dongchedi-yellow-light), #FFF4D6);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;">
             <div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px;">车辆健康度</div>
@@ -4789,20 +4797,26 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             ${warnings.map(w => `
               <div style="margin-bottom:8px;">
                 <div style="font-size:13px;color:var(--text-primary);font-weight:500;">${w.component} - ${w.message}</div>
-                <div style="font-size:12px;color:var(--dongchedi-yellow-dark);margin-top:4px;cursor:pointer;" onclick="${w.action === '查看推荐产品' ? "goToShop('comfort')" : "openBooking('balanced')"}">${w.action} ›</div>
+                <div style="font-size:12px;color:var(--dongchedi-yellow-dark);margin-top:4px;">${w.action}</div>
               </div>
             `).join('')}
           </div>
           ` : ''}
           
-          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="closeShopOverlay()">关闭</div>
         </div>
       `;
       
       const shopOverlay = document.getElementById('shopOverlay');
       const shopBody = document.getElementById('shopBody');
+      const shopTitle = document.getElementById('shopOverlayTitle');
+      const originalTitle = shopTitle.textContent;
+      shopTitle.textContent = '车辆健康仪表盘';
       shopBody.innerHTML = dashboardHtml;
       shopOverlay.classList.add('active');
+      
+      // 关闭时恢复原标题
+      shopOverlay.dataset.originalTitle = originalTitle;
     }
     
     // 9. 跨平台生态适配提示
@@ -4816,7 +4830,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       
       const html = `
         <div style="padding:20px 0;">
-          <div style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:20px;text-align:center;">🌐 多平台支持</div>
           ${features.map(f => `
             <div style="background:var(--ivory-card);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;${f.status === 'coming' ? 'opacity:0.6;' : ''}">
               <div style="font-size:28px;">${f.icon}</div>
@@ -4837,21 +4850,27 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
             </div>
           </div>
           
-          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;margin-top:16px;" onclick="document.getElementById('shopOverlay').classList.remove('active')">关闭</div>
+          <div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;margin-top:16px;" onclick="closeShopOverlay()">关闭</div>
         </div>
       `;
       
       const shopOverlay = document.getElementById('shopOverlay');
       const shopBody = document.getElementById('shopBody');
+      const shopTitle = document.getElementById('shopOverlayTitle');
+      shopTitle.textContent = '多平台支持';
       shopBody.innerHTML = html;
       shopOverlay.classList.add('active');
     }
     
-    // 10. 快捷功能按钮（添加到聊天界面）
+    // 10. 快捷功能按钮（添加到发送消息框上方）
     function addQuickActions() {
+      // 先移除已有的（如果存在）
+      const existing = document.getElementById('quickActions');
+      if (existing) existing.remove();
+      
       const quickActions = document.createElement('div');
       quickActions.id = 'quickActions';
-      quickActions.style.cssText = 'display:flex;gap:8px;padding:8px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;';
+      quickActions.style.cssText = 'display:flex;gap:8px;padding:8px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;background:var(--page-bg);border-bottom:1px solid var(--border-color);';
       quickActions.innerHTML = `
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showDashboard()">📊 仪表盘</span>
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="openCamera()">📷 拍照识别</span>
@@ -4859,9 +4878,11 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showPlatformFeatures()">🌐 多平台</span>
       `;
       
-      const chatContent = document.getElementById('chatContent');
-      if (chatContent && !document.getElementById('quickActions')) {
-        chatContent.parentNode.insertBefore(quickActions, chatContent);
+      // 插入到 input-area 前面
+      const inputArea = document.querySelector('.input-area');
+      const chatContainer = document.querySelector('.chat-container');
+      if (inputArea && chatContainer) {
+        chatContainer.insertBefore(quickActions, inputArea);
       }
     }
     
