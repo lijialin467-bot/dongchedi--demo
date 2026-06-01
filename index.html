@@ -2813,10 +2813,7 @@
             });
           });
           
-          // 推荐问题显示后，延迟发送换车建议
-          setTimeout(() => {
-            sendCarChangeSuggestion();
-          }, 5000);
+          // 推荐问题显示后，不再自动发送换车建议（改为对话结束后触发）
         });
     }
 
@@ -3630,10 +3627,8 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
 
       await addBotMessage(`<span style="font-size:13px;color:#FF8F1F;font-weight:500;">💡 温馨提示</span><br><span style="font-size:13px;color:#666;line-height:1.6;">${tip}</span>`, 600);
       
-      // 温馨提示后，检查是否需要发送换车建议
-      setTimeout(() => {
-        sendCarChangeSuggestion();
-      }, 3000);
+      // 对话结束后，延迟发送换车建议（防抖：每次对话重置计时器）
+      scheduleCarSuggestion();
     }
 
     // 添加CSS闪烁动画（如果不存在）
@@ -3929,8 +3924,19 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       chatInput.focus();
     }
     
-    // ========== 主动换车建议 ==========
+    // ========== 主动换车建议（防抖机制） ==========
     let hasSentCarSuggestion = false;
+    let carSuggestionTimer = null;
+    
+    // 调度换车建议：每次调用重置计时器，停顿8秒后才真正发送
+    function scheduleCarSuggestion() {
+      if (hasSentCarSuggestion) return;
+      if (carSuggestionTimer) clearTimeout(carSuggestionTimer);
+      carSuggestionTimer = setTimeout(() => {
+        sendCarChangeSuggestion();
+      }, 8000);
+    }
+    
     function sendCarChangeSuggestion() {
       if (hasSentCarSuggestion) return;
       hasSentCarSuggestion = true;
