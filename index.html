@@ -4073,141 +4073,169 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       shopOverlay.classList.add('active');
     }
 
-    // ========== AI智能比价功能 ==========
+    // ========== AI智能比价功能（云手机风格） ==========
     async function startPriceComparison(planType) {
       const planLabels = { economy: '经济型', balanced: '均衡型', comfort: '舒适型' };
       const planBrands = { economy: '朝阳/玲珑', balanced: '米其林/马牌', comfort: '米其林浩悦/马牌CC7' };
       const shopOverlay = document.getElementById('shopOverlay');
       const shopBody = document.getElementById('shopBody');
-      
       const shopTitle = document.getElementById('shopOverlayTitle');
       shopTitle.textContent = 'AI智能比价';
       
-      // 比价数据
-      const onlinePrices = [
-        { platform: '京东自营', price: 680, icon: '📦' },
-        { platform: '天猫旗舰店', price: 658, icon: '🏪' },
-        { platform: '途虎养车', price: 720, icon: '🔧' },
-        { platform: '汽配城渠道', price: 590, icon: '🏭' }
-      ];
-      
-      const storePrices = [
-        { name: '宝马4S店', price: 1580, extra: ' + 工时费¥500', icon: '🏢' },
-        { name: '途虎养车(望京店)', price: 980, extra: ' 包工时', icon: '🔧' },
-        { name: '车享家', price: 1100, extra: ' 包工时', icon: '🚗' },
-        { name: '认证汽修厂', price: 850, extra: ' 包工时', icon: '⚙️' }
-      ];
-      
-      const maxPrice = 2080; // 4S店总价
-      const bestPrice = 850; // 认证汽修厂
-      const savedAmount = maxPrice - bestPrice;
-      
-      // 初始界面：AI正在比价
-      shopBody.innerHTML = `
-        <div style="padding:16px 0;">
-          <div style="text-align:center;margin-bottom:16px;">
-            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🤖 AI正在为你比价...</div>
-            <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">${planLabels[planType]}方案 · ${planBrands[planType]}</div>
-          </div>
-          
-          <!-- 步骤1：获取配件价格 -->
-          <div id="priceStep1" style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:12px;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-              <span style="font-size:16px;">🔍</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-primary);" id="step1Title">正在获取配件价格...</span>
+      // 云手机浏览器框架
+      const browserFrame = (url, content, isLoading) => `
+        <div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:10px;border:1px solid #333;">
+          <div style="background:#2d2d2d;padding:6px 10px;display:flex;align-items:center;gap:6px;">
+            <div style="display:flex;gap:4px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#FF5F57;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#FEBC2E;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:#28C840;"></div>
             </div>
-            <div id="step1Content" style="font-size:12px;color:var(--text-secondary);"></div>
-          </div>
-          
-          <!-- 步骤2：查询门店报价 -->
-          <div id="priceStep2" style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:12px;opacity:0.4;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-              <span style="font-size:16px;">🏪</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-primary);" id="step2Title">正在查询周边门店报价...</span>
+            <div style="flex:1;background:#1a1a1a;border-radius:6px;padding:4px 8px;font-size:10px;color:#888;display:flex;align-items:center;gap:4px;">
+              <span style="color:#4A9EFF;">🔒</span>
+              <span style="color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${url}</span>
+              ${isLoading ? '<span style="margin-left:auto;color:#4A9EFF;animation:blink 1s infinite;">⏳</span>' : ''}
             </div>
-            <div id="step2Content" style="font-size:12px;color:var(--text-secondary);"></div>
           </div>
-          
-          <!-- 步骤3：计算性价比 -->
-          <div id="priceStep3" style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:12px;opacity:0.4;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-              <span style="font-size:16px;">🧮</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-primary);" id="step3Title">正在计算最终性价比...</span>
-            </div>
-            <div id="step3Content" style="font-size:12px;color:var(--text-secondary);"></div>
+          <div style="background:#fff;min-height:120px;padding:10px;font-size:11px;color:#333;line-height:1.5;">
+            ${content}
           </div>
-          
-          <!-- 结果区域（初始隐藏） -->
-          <div id="priceResult" style="display:none;"></div>
         </div>
       `;
       
-      // 步骤1：逐条显示配件价格
-      await new Promise(r => setTimeout(r, 800));
-      document.getElementById('priceStep1').style.opacity = '1';
-      const step1Content = document.getElementById('step1Content');
-      for (let i = 0; i < onlinePrices.length; i++) {
-        await new Promise(r => setTimeout(r, 600));
-        const p = onlinePrices[i];
-        step1Content.innerHTML += `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #E5E5E5;"><span>${p.icon} ${p.platform}</span><span style="font-weight:500;color:var(--text-primary);">¥${p.price}</span></div>`;
-      }
-      document.getElementById('step1Title').textContent = '✅ 配件价格获取完成';
-      document.getElementById('step1Title').style.color = '#00B578';
-      
-      // 步骤2：逐条显示门店报价
-      await new Promise(r => setTimeout(r, 500));
-      document.getElementById('priceStep2').style.opacity = '1';
-      const step2Content = document.getElementById('step2Content');
-      for (let i = 0; i < storePrices.length; i++) {
-        await new Promise(r => setTimeout(r, 700));
-        const s = storePrices[i];
-        step2Content.innerHTML += `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #E5E5E5;"><span>${s.icon} ${s.name}</span><span style="font-weight:500;color:var(--text-primary);">¥${s.price}${s.extra}</span></div>`;
-      }
-      document.getElementById('step2Title').textContent = '✅ 门店报价查询完成';
-      document.getElementById('step2Title').style.color = '#00B578';
-      
-      // 步骤3：计算过程
-      await new Promise(r => setTimeout(r, 500));
-      document.getElementById('priceStep3').style.opacity = '1';
-      const step3Content = document.getElementById('step3Content');
-      const calcSteps = [
-        '排除低于市场价20%的可疑低价',
-        '加权计算门店评分 + 距离 + 质保期',
-        '生成最终推荐排序'
-      ];
-      for (let i = 0; i < calcSteps.length; i++) {
-        await new Promise(r => setTimeout(r, 800));
-        step3Content.innerHTML += `<div style="padding:3px 0;"><span style="color:#00B578;">✓</span> ${calcSteps[i]}</div>`;
-      }
-      document.getElementById('step3Title').textContent = '✅ 性价比计算完成';
-      document.getElementById('step3Title').style.color = '#00B578';
-      
-      // 显示最终结果
-      await new Promise(r => setTimeout(r, 600));
-      const priceResult = document.getElementById('priceResult');
-      priceResult.style.display = 'block';
-      priceResult.innerHTML = `
-        <div style="background:linear-gradient(135deg, #E8F8F0, #D4F5E4);border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;border:1px solid #A7F3D0;">
-          <div style="font-size:14px;font-weight:600;color:#00B578;margin-bottom:4px;">✅ 比价完成！</div>
-          <div style="font-size:13px;color:var(--text-secondary);">为你找到最优方案，相比最高价节省</div>
-          <div style="font-size:32px;font-weight:700;color:#00B578;margin:8px 0;">¥${savedAmount}</div>
+      const loadingDots = (text) => `
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:13px;color:#666;">${text}</div>
+          <div style="display:flex;justify-content:center;gap:4px;margin-top:8px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#4A9EFF;animation:blink 0.6s infinite 0s;"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:#4A9EFF;animation:blink 0.6s infinite 0.2s;"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:#4A9EFF;animation:blink 0.6s infinite 0.4s;"></div>
+          </div>
         </div>
-        
-        <!-- 推荐方案 -->
-        <div style="background:var(--dongchedi-yellow-light);border-radius:12px;padding:14px;margin-bottom:12px;border-left:3px solid var(--dongchedi-yellow);">
-          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">🏆 AI推荐最优方案</div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
-            <span style="color:var(--text-secondary);">认证汽修厂</span>
+      `;
+      
+      // 添加blink动画
+      if (!document.getElementById('cloudPhoneStyle')) {
+        const style = document.createElement('style');
+        style.id = 'cloudPhoneStyle';
+        style.textContent = `@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}@keyframes typing{from{width:0}to{width:100%}}@keyframes scanLine{0%{top:0}100%{top:100%}}`;
+        document.head.appendChild(style);
+      }
+      
+      // 阶段0：AI正在启动浏览器
+      shopBody.innerHTML = `
+        <div style="padding:12px 0;">
+          <div style="text-align:center;margin-bottom:12px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">🤖 AI正在为你比价</div>
+            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">${planLabels[planType]}方案 · ${planBrands[planType]}</div>
+          </div>
+          <div id="browserContainer"></div>
+          <div id="priceSummary" style="display:none;"></div>
+        </div>
+      `;
+      
+      const container = document.getElementById('browserContainer');
+      
+      // 阶段1：打开懂车帝搜索
+      container.innerHTML = browserFrame('https://www.dongchedi.com/search?keyword=' + encodeURIComponent(planBrands[planType] + ' 轮胎价格'), loadingDots('正在打开懂车帝...'), true);
+      await new Promise(r => setTimeout(r, 1500));
+      container.innerHTML = browserFrame('https://www.dongchedi.com/search?keyword=' + encodeURIComponent(planBrands[planType] + ' 轮胎价格'), `
+        <div style="margin-bottom:8px;">
+          <div style="font-size:12px;font-weight:600;color:#333;margin-bottom:6px;">🔍 搜索结果：${planBrands[planType]} 轮胎</div>
+          <div style="background:#F5F5F5;border-radius:6px;padding:8px;margin-bottom:6px;">
+            <div style="font-size:11px;color:#333;font-weight:500;">米其林浩悦4 245/45R18</div>
+            <div style="font-size:10px;color:#999;">参考价 ¥680-720/条 · 4.8分 · 1.2万+评价</div>
+          </div>
+          <div style="background:#F5F5F5;border-radius:6px;padding:8px;margin-bottom:6px;">
+            <div style="font-size:11px;color:#333;font-weight:500;">马牌CC7 245/45R18</div>
+            <div style="font-size:10px;color:#999;">参考价 ¥650-690/条 · 4.7分 · 8600+评价</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:10px;color:#4A9EFF;">✅ 懂车帝数据已获取</div>
+      `, false);
+      await new Promise(r => setTimeout(r, 1200));
+      
+      // 阶段2：打开京东搜索
+      container.innerHTML += browserFrame('https://search.jd.com/Search?keyword=' + encodeURIComponent(planBrands[planType] + ' 245/45R18'), loadingDots('正在打开京东...'), true);
+      await new Promise(r => setTimeout(r, 1500));
+      const jdResults = `
+        <div style="margin-bottom:6px;">
+          <div style="font-size:11px;color:#E1251B;font-weight:600;margin-bottom:4px;">京东自营</div>
+          <div style="background:#FFF7F7;border-radius:6px;padding:6px;margin-bottom:4px;border-left:2px solid #E1251B;">
+            <div style="font-size:11px;color:#333;">${planBrands[planType]} 245/45R18 4条装</div>
+            <div style="font-size:12px;color:#E1251B;font-weight:700;">¥680 <span style="font-size:9px;color:#999;text-decoration:line-through;">¥899</span></div>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:10px;color:#4A9EFF;">✅ 京东价格已获取</div>
+      `;
+      container.lastElementChild.querySelector('div:last-child').innerHTML = jdResults;
+      await new Promise(r => setTimeout(r, 1000));
+      
+      // 阶段3：打开途虎养车
+      container.innerHTML += browserFrame('https://www.tuhu.cn/search?keyword=' + encodeURIComponent(planBrands[planType]), loadingDots('正在打开途虎养车...'), true);
+      await new Promise(r => setTimeout(r, 1500));
+      const thResults = `
+        <div style="margin-bottom:6px;">
+          <div style="font-size:11px;color:#FF6600;font-weight:600;margin-bottom:4px;">途虎养车</div>
+          <div style="background:#FFF8F0;border-radius:6px;padding:6px;margin-bottom:4px;border-left:2px solid #FF6600;">
+            <div style="font-size:11px;color:#333;">${planBrands[planType]} 适配${carOwnerData.car.fullName}</div>
+            <div style="font-size:12px;color:#FF6600;font-weight:700;">¥720/条 <span style="font-size:9px;color:#999;">包安装</span></div>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:10px;color:#4A9EFF;">✅ 途虎价格已获取</div>
+      `;
+      container.lastElementChild.querySelector('div:last-child').innerHTML = thResults;
+      await new Promise(r => setTimeout(r, 1000));
+      
+      // 阶段4：AI思考比价
+      container.innerHTML += browserFrame('AI 正在分析比价...', `
+        <div style="padding:8px 0;">
+          <div style="font-size:12px;font-weight:600;color:#333;margin-bottom:8px;">🧠 AI比价分析中...</div>
+          <div id="aiThinkSteps" style="font-size:11px;color:#666;"></div>
+        </div>
+      `, false);
+      
+      const thinkSteps = [
+        '✓ 已获取懂车帝参考价 ¥680-720',
+        '✓ 已获取京东自营价 ¥680',
+        '✓ 已获取途虎养车价 ¥720（含安装）',
+        '✓ 排除低于市场价20%的可疑渠道',
+        '✓ 加权计算：门店评分 + 距离 + 质保期',
+        '✓ 综合推荐：认证汽修厂 ¥850包工时（最优）'
+      ];
+      const thinkContainer = document.getElementById('aiThinkSteps');
+      for (let i = 0; i < thinkSteps.length; i++) {
+        await new Promise(r => setTimeout(r, 500));
+        thinkContainer.innerHTML += `<div style="padding:2px 0;${i === thinkSteps.length - 1 ? 'color:#00B578;font-weight:600;' : ''}">${thinkSteps[i]}</div>`;
+      }
+      await new Promise(r => setTimeout(r, 800));
+      
+      // 阶段5：显示最终结果
+      const savedAmount = 1230;
+      const priceSummary = document.getElementById('priceSummary');
+      priceSummary.style.display = 'block';
+      priceSummary.innerHTML = `
+        <div style="background:linear-gradient(135deg, #E8F8F0, #D4F5E4);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center;border:1px solid #A7F3D0;">
+          <div style="font-size:13px;font-weight:600;color:#00B578;">✅ 比价完成！</div>
+          <div style="font-size:11px;color:var(--text-secondary);">相比4S店原价 ¥2,080，为你节省</div>
+          <div style="font-size:36px;font-weight:700;color:#00B578;margin:4px 0;">¥${savedAmount}</div>
+        </div>
+        <div style="background:var(--dongchedi-yellow-light);border-radius:10px;padding:12px;margin-bottom:10px;border-left:3px solid var(--dongchedi-yellow);">
+          <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">🏆 AI推荐最优方案</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">
+            <span>认证汽修厂（望京店）</span>
             <span style="font-weight:600;color:#00B578;">¥850 包工时</span>
           </div>
-          <div style="font-size:11px;color:var(--text-tertiary);">评分4.8 · 距离3.2km · 质保1年</div>
+          <div style="font-size:10px;color:var(--text-tertiary);">评分4.8 · 距离3.2km · 质保1年</div>
         </div>
-        
         <div style="display:flex;gap:8px;">
-          <div style="flex:1;text-align:center;padding:10px;background:#F0F4FF;border:1px solid #C7D2FE;border-radius:10px;font-size:12px;color:#3B82F6;font-weight:500;cursor:pointer;" onclick="showPriceDetail()">📊 查看比价原始数据</div>
-          <div style="flex:1;text-align:center;padding:10px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:12px;color:#fff;font-weight:600;cursor:pointer;" onclick="closeShopOverlay();openBooking('${planType}');">🔧 立即预约最优门店</div>
+          <div style="flex:1;text-align:center;padding:10px;background:#F0F4FF;border:1px solid #C7D2FE;border-radius:10px;font-size:11px;color:#3B82F6;font-weight:500;cursor:pointer;" onclick="showPriceDetail()">📊 查看原始数据</div>
+          <div style="flex:1;text-align:center;padding:10px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:11px;color:#fff;font-weight:600;cursor:pointer;" onclick="closeShopOverlay();openBooking('${planType}');">🔧 立即预约</div>
         </div>
       `;
+      
+      // 滚动到底部
+      shopBody.parentElement.scrollTop = shopBody.parentElement.scrollHeight;
     }
     
     // 查看比价原始数据
@@ -5277,6 +5305,7 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="openCamera()">📷 拍照识别</span>
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="escalateToHuman()">👨‍🔧 人工客服</span>
         <span style="background:var(--dongchedi-yellow-light);color:var(--dongchedi-yellow-dark);padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showPlatformFeatures()">🌐 多平台</span>
+        <span style="background:linear-gradient(135deg, #E8F8F0, #D4F5E4);color:#00B578;padding:6px 12px;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;" onclick="showWeeklyReport()">📋 养车周报</span>
       `;
       
       // 插入到 chat-footer 前面
@@ -5287,6 +5316,67 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       }
     }
     
+    // 11. 养车周报
+    function showWeeklyReport() {
+      const shopOverlay = document.getElementById('shopOverlay');
+      const shopBody = document.getElementById('shopBody');
+      const shopTitle = document.getElementById('shopOverlayTitle');
+      shopTitle.textContent = '养车周报';
+      
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - 7);
+      const weekRange = weekStart.getMonth()+1 + '/' + weekStart.getDate() + ' - ' + (new Date().getMonth()+1) + '/' + new Date().getDate();
+      
+      shopBody.innerHTML = '<div style="padding:16px 0;">' +
+        '<div style="background:linear-gradient(135deg, #F0F7FF, #E0EDFF);border-radius:14px;padding:16px;margin-bottom:14px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+            '<div><div style="font-size:15px;font-weight:600;color:var(--text-primary);">📋 本周养车周报</div>' +
+            '<div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">' + weekRange + ' · ' + carOwnerData.car.fullName + '</div></div>' +
+            '<div style="background:#00B578;color:#fff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:500;">状态良好</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;">' +
+            '<div style="flex:1;background:#fff;border-radius:10px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--text-primary);">328</div><div style="font-size:10px;color:var(--text-tertiary);">本周行驶(km)</div></div>' +
+            '<div style="flex:1;background:#fff;border-radius:10px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--text-primary);">¥0</div><div style="font-size:10px;color:var(--text-tertiary);">本周花费</div></div>' +
+            '<div style="flex:1;background:#fff;border-radius:10px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:#00B578;">95</div><div style="font-size:10px;color:var(--text-tertiary);">健康评分</div></div>' +
+          '</div></div>' +
+        '<div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:12px;">' +
+          '<div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">📊 本周摘要</div>' +
+          '<div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">' +
+            '<div style="margin-bottom:4px;"><span style="color:#00B578;">✓</span> 轮胎状态正常，胎纹深度充足</div>' +
+            '<div style="margin-bottom:4px;"><span style="color:#00B578;">✓</span> 机油液位正常，无需补充</div>' +
+            '<div style="margin-bottom:4px;"><span style="color:#00B578;">✓</span> 本周无异常报警</div>' +
+            '<div><span style="color:#FFB800;">⚠</span> 下次保养预计还有 45 天</div>' +
+          '</div></div>' +
+        '<div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:12px;">' +
+          '<div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">🚗 用车习惯分析</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--text-secondary);">日均行驶</span><span style="font-weight:500;">47km</span></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--text-secondary);">主要路况</span><span style="font-weight:500;">城市道路 65%</span></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--text-secondary);">驾驶风格</span><span style="font-weight:500;">温和型 🌿</span></div>' +
+          '<div style="font-size:10px;color:var(--text-tertiary);margin-top:6px;">💡 温和驾驶有助于延长轮胎寿命约15%</div>' +
+        '</div>' +
+        '<div style="background:var(--dongchedi-yellow-light);border-radius:12px;padding:14px;margin-bottom:14px;border-left:3px solid var(--dongchedi-yellow);">' +
+          '<div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">🔮 AI预测与建议</div>' +
+          '<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;">' +
+            '<div style="margin-bottom:6px;">• 轮胎预计还可使用 <b>约320天</b></div>' +
+            '<div style="margin-bottom:6px;">• 建议下次保养时间：<b>2026年7月中旬</b></div>' +
+            '<div>• 预计下月养车成本：<b>¥500-800</b></div>' +
+          '</div></div>' +
+        '<div style="background:var(--ivory-card);border-radius:12px;padding:14px;margin-bottom:14px;">' +
+          '<div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">📈 近4周行驶趋势</div>' +
+          '<div style="display:flex;align-items:flex-end;gap:6px;height:60px;">' +
+            '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:#E0EDFF;border-radius:4px;height:35px;"></div><span style="font-size:9px;color:var(--text-tertiary);">W1</span></div>' +
+            '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:#C7D2FE;border-radius:4px;height:48px;"></div><span style="font-size:9px;color:var(--text-tertiary);">W2</span></div>' +
+            '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:#A7C4FF;border-radius:4px;height:28px;"></div><span style="font-size:9px;color:var(--text-tertiary);">W3</span></div>' +
+            '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:var(--dongchedi-yellow);border-radius:4px;height:42px;"></div><span style="font-size:9px;color:var(--text-tertiary);font-weight:600;">本周</span></div>' +
+          '</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-tertiary);margin-top:6px;"><span>280km</span><span>380km</span><span>220km</span><span>328km</span></div>' +
+        '</div>' +
+        '<div style="text-align:center;padding:12px;background:linear-gradient(135deg, var(--dongchedi-yellow), #FFA500);border-radius:10px;font-size:13px;color:#fff;font-weight:600;cursor:pointer;" onclick="closeShopOverlay()">关闭</div>' +
+      '</div>';
+      
+      shopOverlay.classList.add('active');
+    }
+
     // 修改输入框，添加语音和相机按钮
     function enhanceChatInput() {
       const inputArea = document.querySelector('.input-area');
