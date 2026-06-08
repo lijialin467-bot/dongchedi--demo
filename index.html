@@ -2942,8 +2942,8 @@
       await new Promise(r => setTimeout(r, 1200));
       removeThinkingMessage();
 
-      // 给出结论
-      await addBotMessage(`你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`, 300);
+      // 给出结论（先"说错"里程，触发自我反思机制演示）
+      await addBotMessage(`你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>8,500${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`, 300);
 
       await addBotMessage(`<div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:12px;padding:14px;margin-top:10px;border-left:3px solid #4CAF50;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
