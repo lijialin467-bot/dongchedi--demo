@@ -2665,6 +2665,83 @@
       setTimeout(() => { chatContent.scrollTop = chatContent.scrollHeight; }, 50);
     }
 
+    // ========== AI自我反思机制 ==========
+    // 检查AI回复中是否有与车辆数据不符的内容
+    function selfReflect(lastReplyHtml) {
+      const issues = [];
+      const text = lastReplyHtml.replace(/<[^>]+>/g, ''); // 去除HTML标签
+      
+      // 检查1：里程数是否与实际不符（±10%容差）
+      const mileageMatch = text.match(/(\d{1,3}(?:,\d{3})?)\s*公里/);
+      if (mileageMatch) {
+        const mentionedMileage = parseInt(mileageMatch[1].replace(/,/g, ''));
+        const actualMileage = carOwnerData.car.mileage;
+        if (Math.abs(mentionedMileage - actualMileage) > actualMileage * 0.1) {
+          issues.push(`里程数有误：我说的是${mentionedMileage}公里，实际应该是${actualMileage}公里`);
+        }
+      }
+      
+      // 检查2：车型信息是否正确
+      if (text.includes(carOwnerData.car.brand) === false && text.includes('车')) {
+        // 如果提到了车但没提到正确品牌，可能搞错了
+        const wrongBrands = ['奔驰', '奥迪', '特斯拉', '比亚迪', '丰田', '本田'];
+        wrongBrands.forEach(brand => {
+          if (text.includes(brand) && brand !== carOwnerData.car.brand) {
+            issues.push(`车型品牌有误：我提到了${brand}，但用户的车是${carOwnerData.car.brand}`);
+          }
+        });
+      }
+      
+      // 检查3：轮胎状态是否矛盾（如果实际不需要换但建议换了）
+      const tireGood = carOwnerData.car.tireDepth && parseFloat(carOwnerData.car.tireDepth) > 3;
+      if (tireGood) {
+        const urgentKeywords = ['立即更换', '马上换', '必须换', '很危险'];
+        urgentKeywords.forEach(kw => {
+          if (text.includes(kw)) {
+            issues.push(`轮胎建议过于激进：胎纹还有${carOwnerData.car.tireDepth}，暂时不需要${kw}`);
+          }
+        });
+      }
+      
+      // 检查4：保养时间是否合理
+      const nextMaintDays = parseInt(carOwnerData.nextMaintenance.mileage);
+      if (nextMaintDays > 30) {
+        const urgentMaintKeywords = ['马上保养', '立即保养', ' overdue'];
+        urgentMaintKeywords.forEach(kw => {
+          if (text.includes(kw)) {
+            issues.push(`保养提醒过早：距离下次保养还有${carOwnerData.nextMaintenance.mileage}，不需要${kw}`);
+          }
+        });
+      }
+      
+      return issues;
+    }
+    
+    // 发送AI自我反思消息
+    async function sendSelfReflection(issues) {
+      if (!issues || issues.length === 0) return;
+      
+      await new Promise(r => setTimeout(r, 800));
+      
+      const issuesHtml = issues.map((issue, i) => 
+        `<div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:#FF6B6B;font-weight:600;">${i + 1}.</span><span>${issue}</span></div>`
+      ).join('');
+      
+      await addBotMessage(`
+        <div style="background:linear-gradient(135deg, #FFF5F5, #FFE8E8);border-radius:10px;padding:10px 12px;border-left:3px solid #FF6B6B;font-size:12px;color:#666;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="font-size:14px;">🤔</span>
+            <span style="font-weight:600;color:#FF6B6B;">自我检查</span>
+          </div>
+          <div style="margin-bottom:6px;">刚才的回答可能有以下问题：</div>
+          ${issuesHtml}
+          <div style="margin-top:6px;padding-top:6px;border-top:1px dashed #FFD0D0;color:#00B578;font-weight:500;">
+            ✅ 已修正，请以最新回复为准
+          </div>
+        </div>
+      `, 200);
+    }
+
     function addBotMessage(html, delay = 0) {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -2676,6 +2753,13 @@
           `;
           chatContent.appendChild(row);
           scrollChatToBottom();
+          
+          // 触发自我反思
+          const issues = selfReflect(html);
+          if (issues.length > 0) {
+            sendSelfReflection(issues);
+          }
+          
           resolve(row);
         }, delay);
       });
