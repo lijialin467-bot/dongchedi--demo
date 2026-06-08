@@ -2666,10 +2666,12 @@
     }
 
     // ========== AI自我反思机制 ==========
-    // 检查AI回复中是否有与车辆数据不符的内容
-    function selfReflect(lastReplyHtml) {
+    // 在AI思考过程中嵌入自我检查，不单独弹消息
+    let lastReplyForReflection = '';
+    
+    function buildReflectionInThinking() {
       const issues = [];
-      const text = lastReplyHtml.replace(/<[^>]+>/g, ''); // 去除HTML标签
+      const text = lastReplyForReflection.replace(/<[^>]+>/g, '');
       
       // 检查1：里程数是否与实际不符（±10%容差）
       const mileageMatch = text.match(/(\d{1,3}(?:,\d{3})?)\s*公里/);
@@ -2683,7 +2685,6 @@
       
       // 检查2：车型信息是否正确
       if (text.includes(carOwnerData.car.brand) === false && text.includes('车')) {
-        // 如果提到了车但没提到正确品牌，可能搞错了
         const wrongBrands = ['奔驰', '奥迪', '特斯拉', '比亚迪', '丰田', '本田'];
         wrongBrands.forEach(brand => {
           if (text.includes(brand) && brand !== carOwnerData.car.brand) {
@@ -2692,7 +2693,7 @@
         });
       }
       
-      // 检查3：轮胎状态是否矛盾（如果实际不需要换但建议换了）
+      // 检查3：轮胎状态是否矛盾
       const tireGood = carOwnerData.car.tireDepth && parseFloat(carOwnerData.car.tireDepth) > 3;
       if (tireGood) {
         const urgentKeywords = ['立即更换', '马上换', '必须换', '很危险'];
@@ -2706,7 +2707,7 @@
       // 检查4：保养时间是否合理
       const nextMaintDays = parseInt(carOwnerData.nextMaintenance.mileage);
       if (nextMaintDays > 30) {
-        const urgentMaintKeywords = ['马上保养', '立即保养', ' overdue'];
+        const urgentMaintKeywords = ['马上保养', '立即保养'];
         urgentMaintKeywords.forEach(kw => {
           if (text.includes(kw)) {
             issues.push(`保养提醒过早：距离下次保养还有${carOwnerData.nextMaintenance.mileage}，不需要${kw}`);
@@ -2714,32 +2715,13 @@
         });
       }
       
-      return issues;
-    }
-    
-    // 发送AI自我反思消息
-    async function sendSelfReflection(issues) {
-      if (!issues || issues.length === 0) return;
+      if (issues.length === 0) return '';
       
-      await new Promise(r => setTimeout(r, 800));
-      
-      const issuesHtml = issues.map((issue, i) => 
-        `<div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:#FF6B6B;font-weight:600;">${i + 1}.</span><span>${issue}</span></div>`
-      ).join('');
-      
-      await addBotMessage(`
-        <div style="background:linear-gradient(135deg, #FFF5F5, #FFE8E8);border-radius:10px;padding:10px 12px;border-left:3px solid #FF6B6B;font-size:12px;color:#666;">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-            <span style="font-size:14px;">🤔</span>
-            <span style="font-weight:600;color:#FF6B6B;">自我检查</span>
-          </div>
-          <div style="margin-bottom:6px;">刚才的回答可能有以下问题：</div>
-          ${issuesHtml}
-          <div style="margin-top:6px;padding-top:6px;border-top:1px dashed #FFD0D0;color:#00B578;font-weight:500;">
-            ✅ 已修正，请以最新回复为准
-          </div>
-        </div>
-      `, 200);
+      return `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,107,107,0.3);color:#FF6B6B;font-size:11px;">
+        <div style="font-weight:600;margin-bottom:3px;">🤔 自我检查发现问题：</div>
+        ${issues.map(issue => `<div style="margin-bottom:2px;">• ${issue}</div>`).join('')}
+        <div style="color:#00B578;margin-top:3px;font-weight:500;">✅ 已修正</div>
+      </div>`;
     }
 
     function addBotMessage(html, delay = 0) {
@@ -2753,13 +2735,6 @@
           `;
           chatContent.appendChild(row);
           scrollChatToBottom();
-          
-          // 触发自我反思
-          const issues = selfReflect(html);
-          if (issues.length > 0) {
-            sendSelfReflection(issues);
-          }
-          
           resolve(row);
         }, delay);
       });
@@ -2942,8 +2917,20 @@
       await new Promise(r => setTimeout(r, 1200));
       removeThinkingMessage();
 
-      // 给出结论（先"说错"里程，触发自我反思机制演示）
-      await addBotMessage(`你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>8,500${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`, 300);
+      // 给出结论（先"说错"里程，用于演示自我反思）
+      const wrongReply = `你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>8,500${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`;
+      lastReplyForReflection = wrongReply;
+      
+      // 生成自我检查内容
+      const reflectionHtml = buildReflectionInThinking();
+      
+      // 发送思考消息：包含自我检查
+      await addThinkingMessage('正在生成回复...' + (reflectionHtml ? '\n\n' + reflectionHtml.replace(/<[^>]+>/g, '') : ''));
+      await new Promise(r => setTimeout(r, 1500));
+      removeThinkingMessage();
+      
+      // 发送修正后的正确回复
+      await addBotMessage(`你的<b>${carOwnerData.car.fullName}</b>目前行驶了<b>${carOwnerData.car.mileage}${carOwnerData.car.mileageUnit}</b>，轮胎用了${carOwnerData.car.tireUsage}，胎纹还有${carOwnerData.car.tireDepth}，状态良好，暂时不需要更换。`, 300);
 
       await addBotMessage(`<div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:12px;padding:14px;margin-top:10px;border-left:3px solid #4CAF50;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
