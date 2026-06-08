@@ -2901,9 +2901,6 @@
       } else if (topic === 'maintain') {
         await startMaintainFlow();
       }
-      
-      // 整个对话流程结束后，调度换车建议（防抖8秒）
-      scheduleCarSuggestion();
     }
 
     // --- 轮胎话题流程 ---
@@ -3750,6 +3747,11 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
         if (quickActions) {
           quickActions.style.display = 'flex';
         }
+        
+        // 从经验页返回时，触发换车建议
+        if (activeTab && activeTab.dataset.tab === 'network') {
+          scheduleCarSuggestion();
+        }
       } else {
         // 在对话tab时，返回来源页
         showPage(chatPageSource);
@@ -3993,9 +3995,6 @@ ${carOwnerData.savingsTips.map(t => `- ${t.title}：${t.desc}，可省${t.saving
       chatInput.disabled = false;
       chatSendBtn.disabled = false;
       chatInput.focus();
-      
-      // 整个对话流程结束后，调度换车建议（防抖8秒）
-      scheduleCarSuggestion();
     }
     
     // ========== 主动换车建议（防抖机制） ==========
